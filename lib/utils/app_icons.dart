@@ -22,4 +22,8 @@ class AppIcons {
   static const String mail = 'assets/icons/mail.svg';
   static const String phone = 'assets/icons/phone.svg';
   static const String user = 'assets/icons/user.svg';
+  static const String logo = 'assets/icons/logo.svg';
+  static const String redArrowRight = 'assets/icons/red_arrow_right.svg';
+  static const String warningTriangle = 'assets/icons/warning_triangle.svg';
+  static const String addImage = 'assets/icons/add_image.svg';
 }

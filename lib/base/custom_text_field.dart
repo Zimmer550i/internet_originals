@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 
@@ -78,7 +78,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               color: Colors.transparent,
               borderRadius:
                   isFocused ? BorderRadius.circular(widget.radius) : null,
-              border: Border(bottom: BorderSide(color: isFocused ? AppColors.red[400]! : AppColors.green[400]!)),
+              border: Border(
+                bottom: BorderSide(
+                  color:
+                      isFocused ? AppColors.red[400]! : AppColors.green[400]!,
+                ),
+              ),
             ),
             child: Row(
               spacing: 12,
@@ -86,8 +91,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 if (widget.leading != null)
                   SvgPicture.asset(
                     widget.leading!,
-                    height: 20,
-                    width: 20,
+                    height: 24,
+                    width: 24,
                     colorFilter: ColorFilter.mode(
                       isFocused ? AppColors.red[400]! : AppColors.green[100]!,
                       BlendMode.srcIn,
@@ -110,8 +115,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       });
                     },
                     style: TextStyle(
-                      fontVariations: [FontVariation("wght", 500)],
-                      color: AppColors.green.shade600,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.green[50],
                       height: 1,
                     ),
                     decoration: InputDecoration(
@@ -119,18 +124,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       contentPadding: EdgeInsets.zero,
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        fontVariations: [FontVariation("wght", 500)],
+                        fontWeight: FontWeight.w500,
                         color: AppColors.green[200],
                         fontSize: 14,
                       ),
                     ),
+                    cursorColor: AppColors.green[50],
                   ),
                 ),
                 if (widget.trailing != null)
                   SvgPicture.asset(
                     widget.trailing!,
-                    height: 20,
-                    width: 20,
+                    height: 24,
+                    width: 24,
                     colorFilter: ColorFilter.mode(
                       isFocused ? AppColors.red : AppColors.green[400]!,
                       BlendMode.srcIn,
@@ -145,8 +151,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     },
                     child: SvgPicture.asset(
                       isObscured ? AppIcons.eye : AppIcons.eyeOff,
-                      height: 20,
-                      width: 20,
+                      height: 24,
+                      width: 24,
                       colorFilter: ColorFilter.mode(
                         isFocused ? AppColors.red : AppColors.green[200]!,
                         BlendMode.srcIn,
@@ -160,13 +166,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.errorText != null)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              widget.errorText!,
-              style: TextStyle(
-                fontVariations: [FontVariation("wght", 400)],
-                fontSize: 12,
-                color: AppColors.red,
-              ),
+            child: Row(
+              spacing: 8,
+              children: [
+                SvgPicture.asset(
+                  AppIcons.warningTriangle,
+                  height: 16,
+                  width: 16,
+                  colorFilter: ColorFilter.mode(
+                    AppColors.green[50]!,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                Text(
+                  widget.errorText!,
+                  style: TextStyle(fontSize: 12, color: AppColors.green[50]),
+                ),
+              ],
             ),
           ),
       ],
