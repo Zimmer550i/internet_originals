@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:internet_originals/base/custom_app_bar.dart';
-import 'package:internet_originals/base/custom_button.dart';
-import 'package:internet_originals/base/custom_text_field.dart';
-import 'package:internet_originals/base/profile_picture.dart';
-import 'package:internet_originals/screens/auth/account_under_review.dart';
+import 'package:internet_originals/views/base/custom_app_bar.dart';
+import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/base/profile_picture.dart';
+import 'package:internet_originals/views/screens/auth/account_under_review.dart';
 
 class UserInformation extends StatefulWidget {
   const UserInformation({super.key});

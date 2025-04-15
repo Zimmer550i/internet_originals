@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/base/custom_button.dart';
-import 'package:internet_originals/base/custom_text_field.dart';
-import 'package:internet_originals/screens/auth/email_verification.dart';
+import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/auth/email_verification.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:internet_originals/base/custom_app_bar.dart';
-import 'package:internet_originals/base/custom_button.dart';
-import 'package:internet_originals/base/custom_text_field.dart';
+import 'package:internet_originals/views/base/custom_app_bar.dart';
+import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 
 class DesignPattern extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:internet_originals/screens/auth/splash.dart';
+import 'package:internet_originals/views/screens/auth/splash.dart';
 import 'package:internet_originals/themes/dark_theme.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_constants.dart';

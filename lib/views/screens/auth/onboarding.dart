@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/screens/auth/login.dart';
+import 'package:internet_originals/views/screens/auth/login.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/svg.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:internet_originals/screens/auth/onboarding.dart';
+import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/svg.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/base/custom_app_bar.dart';
-import 'package:internet_originals/base/custom_button.dart';
-import 'package:internet_originals/screens/auth/reset_password.dart';
-import 'package:internet_originals/screens/auth/user_information.dart';
+import 'package:internet_originals/views/base/custom_app_bar.dart';
+import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/screens/auth/reset_password.dart';
+import 'package:internet_originals/views/screens/auth/user_information.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:pinput/pinput.dart';
 

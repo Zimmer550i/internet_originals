@@ -26,4 +26,6 @@ class AppIcons {
   static const String redArrowRight = 'assets/icons/red_arrow_right.svg';
   static const String warningTriangle = 'assets/icons/warning_triangle.svg';
   static const String addImage = 'assets/icons/add_image.svg';
+  static const String profile = 'assets/icons/profile.svg';
+  static const String profileDark = 'assets/icons/profile_dark.svg';
 }
