@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/views/screens/auth/login.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class Onboarding extends StatelessWidget {
   const Onboarding({super.key});
@@ -30,7 +30,7 @@ class Onboarding extends StatelessWidget {
                     onTap: () {
                       Get.off(() => Login());
                     },
-                    child: Svg(
+                    child: CustomSvg(
                       asset: AppIcons.redArrowRight,
                       height: 60,
                       width: 60,

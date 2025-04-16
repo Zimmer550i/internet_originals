@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/screens/talent/home/talent_home.dart';
 
 class TalentApp extends StatefulWidget {
   const TalentApp({super.key});
@@ -16,7 +17,7 @@ class _TalentAppState extends State<TalentApp> {
   PageController controller = PageController();
 
   List<Widget> pages = [
-    FlutterLogo(size: 50),
+    TalentHome(),
     FlutterLogo(size: 500),
     FlutterLogo(size: 50),
     FlutterLogo(size: 500),
@@ -63,8 +64,8 @@ class _TalentAppState extends State<TalentApp> {
 
   BottomNavigationBarItem item(int index) {
     return BottomNavigationBarItem(
-      icon: Svg(asset: icons[index]),
-      activeIcon: Svg(asset: iconsDark[index]),
+      icon: CustomSvg(asset: icons[index]),
+      activeIcon: CustomSvg(asset: iconsDark[index]),
       label: labels[index],
     );
   }

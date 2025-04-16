@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/auth/forgot_password.dart';
 import 'package:internet_originals/views/screens/auth/registration.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
-import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
-import 'package:internet_originals/views/screens/talent/talent_app.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -34,14 +33,14 @@ class _LoginState extends State<Login> {
                 title: Text("Talent"),
                 onTap: () {
                   Navigator.of(context).pop();
-                  Get.to(() => TalentApp());
+                  Get.toNamed(AppRoutes.talentApp);
                 },
               ),
               ListTile(
                 title: Text("Sub Admin"),
                 onTap: () {
                   Navigator.of(context).pop();
-                  Get.to(() => SubAdminApp());
+                  Get.toNamed(AppRoutes.subAdminApp);
                 },
               ),
             ],
@@ -62,7 +61,7 @@ class _LoginState extends State<Login> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                Svg(asset: AppIcons.logo, height: 64, width: 193),
+                CustomSvg(asset: AppIcons.logo, height: 64, width: 193),
                 const SizedBox(height: 40),
                 CustomTextField(
                   hintText: "Enter Email",

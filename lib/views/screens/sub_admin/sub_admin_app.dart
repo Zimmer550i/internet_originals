@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class SubAdminApp extends StatefulWidget {
   const SubAdminApp({super.key});
@@ -72,8 +72,8 @@ class _SubAdminAppState extends State<SubAdminApp> {
 
   BottomNavigationBarItem item(int index) {
     return BottomNavigationBarItem(
-      icon: Svg(asset: icons[index]),
-      activeIcon: Svg(asset: iconsDark[index]),
+      icon: CustomSvg(asset: icons[index]),
+      activeIcon: CustomSvg(asset: iconsDark[index]),
       label: labels[index],
     );
   }

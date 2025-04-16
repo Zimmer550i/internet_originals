@@ -12,14 +12,14 @@ class CustomButton extends StatefulWidget {
   final double? textSize;
   final bool isLoading;
   final String? leading;
-  final double padding;
+  final EdgeInsets? padding;
   final double radius;
   const CustomButton({
     super.key,
     required this.text,
     this.onTap,
     this.leading,
-    this.padding = 40,
+    this.padding,
     this.radius = 4,
     this.textSize = 18,
     this.isSecondary = false,
@@ -43,7 +43,7 @@ class _CustomButtonState extends State<CustomButton> {
         duration: Duration(milliseconds: 100),
         height: widget.height,
         width: widget.width,
-        padding: EdgeInsets.symmetric(horizontal: widget.padding),
+        padding: widget.padding ?? EdgeInsets.symmetric(horizontal: 40),
         decoration: BoxDecoration(
           color:
               widget.isSecondary

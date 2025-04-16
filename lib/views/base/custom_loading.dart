@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class CustomLoading extends StatefulWidget {
   final double size;
@@ -33,7 +33,7 @@ class CustomLoadingState extends State<CustomLoading>
       builder: (context, child) {
         return Transform.rotate(
           angle: _rotation.value,
-          child: Svg(
+          child: CustomSvg(
             asset: AppIcons.loading,
             height: widget.size,
             width: widget.size,

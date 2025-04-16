@@ -6,7 +6,7 @@ import 'package:internet_originals/views/screens/auth/email_verification.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class Registration extends StatefulWidget {
   const Registration({super.key});
@@ -47,7 +47,7 @@ class _RegistrationState extends State<Registration> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  Svg(asset: AppIcons.logo, height: 64, width: 193),
+                  CustomSvg(asset: AppIcons.logo, height: 64, width: 193),
                   const SizedBox(height: 40),
                   CustomTextField(
                     hintText: "Name",

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/svg.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -32,7 +32,7 @@ class _SplashState extends State<Splash> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (errorText != "") SizedBox(height: 70),
-            Svg(asset: AppIcons.logo, width: null, height: null),
+            CustomSvg(asset: AppIcons.logo, width: 302, height: 100),
             if (errorText != "")
               Padding(
                 padding: const EdgeInsets.only(top: 50),

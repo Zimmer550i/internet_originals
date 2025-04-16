@@ -1,6 +1,7 @@
 class AppIcons {
   static const String arrowLeft = 'assets/icons/arrow_left.svg';
   static const String bigTick = 'assets/icons/big_tick.svg';
+  static const String bigBlackTick = 'assets/icons/big_black_tick.svg';
   static const String campaignsDark = 'assets/icons/campaigns_dark.svg';
   static const String campaigns = 'assets/icons/campaigns.svg';
   static const String eyeOff = 'assets/icons/eye-off.svg';
@@ -28,4 +29,7 @@ class AppIcons {
   static const String addImage = 'assets/icons/add_image.svg';
   static const String profile = 'assets/icons/profile.svg';
   static const String profileDark = 'assets/icons/profile_dark.svg';
+  static const String bell = 'assets/icons/bell.svg';
+  static const String bellWithAlert = 'assets/icons/bell_with_alert.svg';
+  static const String clock = 'assets/icons/clock.svg';
 }
