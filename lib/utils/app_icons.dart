@@ -32,4 +32,5 @@ class AppIcons {
   static const String bell = 'assets/icons/bell.svg';
   static const String bellWithAlert = 'assets/icons/bell_with_alert.svg';
   static const String clock = 'assets/icons/clock.svg';
+  static const String chevronRight = 'assets/icons/chevron_right.svg';
 }

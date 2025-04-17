@@ -1,0 +1,26 @@
+{
+  "cSpell.words": [
+    "Archivo",
+    "fanari",
+    "googleapis",
+    "Nhentai",
+    "Skeletonizer"
+  ],
+  "cmake.sourceDirectory": "J:/projects/fanari/linux",
+  "files.associations": {
+    "*.ejs": "html",
+    ".fantomasignore": "ignore",
+    "array": "cpp",
+    "chrono": "cpp",
+    "format": "cpp",
+    "forward_list": "cpp",
+    "initializer_list": "cpp",
+    "list": "cpp",
+    "vector": "cpp",
+    "xhash": "cpp",
+    "xiosbase": "cpp",
+    "xstring": "cpp",
+    "xtree": "cpp",
+    "xutility": "cpp"
+  }
+}

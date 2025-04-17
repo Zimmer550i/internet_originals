@@ -72,8 +72,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
           },
           child: Container(
-            height: 48,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 48 + 8, // Added 8 for 4 padding on top and bottom
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:
@@ -124,7 +124,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       contentPadding: EdgeInsets.zero,
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                         color: AppColors.green[200],
                         fontSize: 14,
                       ),

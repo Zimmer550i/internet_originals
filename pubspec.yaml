@@ -34,6 +34,10 @@ flutter:
     - assets/icons/
     - assets/images/
     - assets/language/
+    - assets/icons/profile/
+    - assets/icons/personal_information/
+    - assets/icons/social_platforms/
+    - assets/icons/settings_security/
   
   fonts:
     - family: OpenSans

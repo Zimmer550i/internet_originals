@@ -3,6 +3,7 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_home.dart';
+import 'package:internet_originals/views/screens/talent/profile/profile.dart';
 
 class TalentApp extends StatefulWidget {
   const TalentApp({super.key});
@@ -20,7 +21,7 @@ class _TalentAppState extends State<TalentApp> {
     TalentHome(),
     FlutterLogo(size: 500),
     FlutterLogo(size: 50),
-    FlutterLogo(size: 500),
+    Profile(),
   ];
 
   List<String> labels = ["Home", "Campaigns", "Payments", "Profile"];

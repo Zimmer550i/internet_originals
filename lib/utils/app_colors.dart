@@ -30,16 +30,16 @@ class AppColors {
     });
 
     static MaterialColor red = MaterialColor(0xffDC2626, {
-    25: Color(0xffFEF2F2),
-    50: Color(0xffFEE2E2),
-    100: Color(0xffFECACA),
-    200: Color(0xffFCA5A5),
-    300: Color(0xffF87171),
-    400: Color(0xffEF4444),
-    500: Color(0xffDC2626),
-    600: Color(0xffB91C1C),
-    700: Color(0xff991B1B),
-    800: Color(0xff7F1D1D),
-    900: Color(0xff450A0A),
-  });
+        25: Color(0xffFEF2F2),
+        50: Color(0xffFEE2E2),
+        100: Color(0xffFECACA),
+        200: Color(0xffFCA5A5),
+        300: Color(0xffF87171),
+        400: Color(0xffEF4444),
+        500: Color(0xffDC2626),
+        600: Color(0xffB91C1C),
+        700: Color(0xff991B1B),
+        800: Color(0xff7F1D1D),
+        900: Color(0xff450A0A),
+    });
 }
