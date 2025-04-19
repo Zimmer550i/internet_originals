@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 class Formatter {
-  static String timeFormatter({TimeOfDay? time, DateTime? dateTime, bool showDate = false}) {
+  static String timeFormatter({
+    TimeOfDay? time,
+    DateTime? dateTime,
+    bool showDate = false,
+  }) {
     String rtn = "";
 
     if (time == null && dateTime != null) {
@@ -92,7 +96,10 @@ class Formatter {
     return rtn;
   }
 
-  static String durationFormatter(Duration duration, {bool showSeconds = false}) {
+  static String durationFormatter(
+    Duration duration, {
+    bool showSeconds = false,
+  }) {
     String rtn = "";
 
     if (duration.inDays != 0) {
@@ -113,12 +120,46 @@ class Formatter {
       duration -= Duration(hours: duration.inMinutes);
     }
 
-    if(showSeconds){
+    if (showSeconds) {
       rtn += " ";
       rtn += duration.inSeconds.toString();
       rtn += "s";
     }
 
     return rtn;
+  }
+
+  static final months = [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  static String prettyDate(int timestamp, {bool showTime = false}) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+    int hour = date.hour;
+    if (hour > 12) {
+      hour -= 12;
+    }
+
+    if (hour == 0) {
+      hour = 12;
+    }
+
+    if (showTime) {
+      return '${hour < 10 ? '0${hour}' : hour} : ${date.minute < 10 ? '0${date.minute}' : date.minute} ${date.hour < 12 ? 'AM' : 'PM'}, ${date.day} ${months[date.month - 1]} ${date.year - 2000}';
+    } else {
+      return '${date.day} ${months[date.month - 1]} ${date.year - 2000}';
+    }
   }
 }

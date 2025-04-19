@@ -38,6 +38,7 @@ flutter:
     - assets/icons/personal_information/
     - assets/icons/social_platforms/
     - assets/icons/settings_security/
+    - assets/icons/payments/
   
   fonts:
     - family: OpenSans
