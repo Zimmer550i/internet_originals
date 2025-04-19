@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/social_platform.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_modal.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:get/get.dart';
 
 class SocialPlatforms extends StatefulWidget {
   const SocialPlatforms({super.key});
@@ -80,6 +82,9 @@ class _SocialPlatformsState extends State<SocialPlatforms> {
               CustomButton(
                 text: 'Add Social Platform',
                 leading: 'assets/icons/social_platforms/add_circle.svg',
+                onTap: () {
+                  Get.toNamed(AppRoutes.addSocials);
+                },
               ),
             ],
           ),

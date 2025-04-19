@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:internet_originals/design_pattern.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/profile/about_us.dart';
+import 'package:internet_originals/views/screens/talent/profile/add_socials.dart';
 import 'package:internet_originals/views/screens/talent/profile/change_password.dart';
 import 'package:internet_originals/views/screens/talent/profile/personal_information.dart';
 import 'package:internet_originals/views/screens/talent/profile/privacy_policy.dart';
 import 'package:internet_originals/views/screens/talent/profile/settings_security.dart';
+import 'package:internet_originals/views/screens/talent/profile/social_added.dart';
 import 'package:internet_originals/views/screens/talent/profile/social_platforms.dart';
 import 'package:internet_originals/views/screens/talent/profile/terms_service.dart';
 import 'package:internet_originals/views/screens/talent/talent_app.dart';
@@ -22,6 +24,9 @@ class AppRoutes {
   static String privacyPolicy = "/privacy_policy";
   static String termsService = "/terms_service";
   static String aboutUs = "/about_us";
+  static String addSocials = "/add_socials";
+  static String socialAdded = "/social_added";
+
 
   static Map<String, Widget> routeWidgets = {
     designPattern: DesignPattern(),
@@ -34,6 +39,8 @@ class AppRoutes {
     privacyPolicy: PrivacyPolicy(),
     termsService: TermsService(),
     aboutUs: AboutUs(),
+    addSocials: AddSocials(),
+    socialAdded: SocialAdded(),
   };
 
   static List<GetPage> pages = [
