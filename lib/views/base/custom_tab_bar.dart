@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 
+final GlobalKey<CustomTabBarState> talentCampaignTabBarKey =
+    GlobalKey<CustomTabBarState>();
+
 class CustomTabBar extends StatefulWidget {
   final List<String> options;
   final Function(int) onChange;
@@ -11,10 +14,10 @@ class CustomTabBar extends StatefulWidget {
   });
 
   @override
-  State<CustomTabBar> createState() => _CustomTabBarState();
+  State<CustomTabBar> createState() => CustomTabBarState();
 }
 
-class _CustomTabBarState extends State<CustomTabBar> {
+class CustomTabBarState extends State<CustomTabBar> {
   int index = 0;
 
   @override

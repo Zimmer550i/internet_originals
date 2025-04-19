@@ -73,7 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           },
           child: Container(
             height: 48,
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: widget.leading == null ? 8 : 20),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:

@@ -18,31 +18,29 @@ class HomeBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       title: Row(
         children: [
-          const SizedBox(width: 20,),
-          ClipOval(
-            child: Image.asset("assets/images/user.png", height: 44, width: 44),
-          ),
-          const SizedBox(width: 8,),
-          Expanded(
-            child: Row(
+          const SizedBox(width: 20),
+          if (isHome)
+            Row(
               children: [
-                Text("Hi, ", 
-                  style: TextStyle(
-                    fontSize: 20,
+                ClipOval(
+                  child: Image.asset(
+                    "assets/images/user.png",
+                    height: 44,
+                    width: 44,
                   ),
                 ),
-                Text("Susan", 
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
+                const SizedBox(width: 8),
+                Text("Hi, ", style: TextStyle(fontSize: 20)),
+                Text(
+                  "Susan",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
-                Expanded(child: Container()),
-                CustomSvg(asset: AppIcons.bellWithAlert),
-                const SizedBox(width: 20,),
               ],
             ),
-          ),
+          if (!isHome) CustomSvg(asset: AppIcons.logo, width: 76, height: 25),
+          Spacer(),
+          CustomSvg(asset: AppIcons.bellWithAlert),
+          const SizedBox(width: 20),
         ],
       ),
     );

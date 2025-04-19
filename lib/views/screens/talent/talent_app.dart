@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/screens/talent/campaign/talent_campaign.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_home.dart';
+
+final GlobalKey<TalentAppState> talentAppKey = GlobalKey<TalentAppState>();
 
 class TalentApp extends StatefulWidget {
   const TalentApp({super.key});
 
   @override
-  State<TalentApp> createState() => _TalentAppState();
+  State<TalentApp> createState() => TalentAppState();
 }
 
-class _TalentAppState extends State<TalentApp> {
+class TalentAppState extends State<TalentApp> {
   int index = 0;
-
-  PageController controller = PageController();
 
   List<Widget> pages = [
     TalentHome(),
-    FlutterLogo(size: 500),
+    TalentCampaign(),
     FlutterLogo(size: 50),
     FlutterLogo(size: 500),
   ];
@@ -68,5 +69,11 @@ class _TalentAppState extends State<TalentApp> {
       activeIcon: CustomSvg(asset: iconsDark[index]),
       label: labels[index],
     );
+  }
+
+  void changePage(int val) {
+    setState(() {
+      index = val;
+    });
   }
 }

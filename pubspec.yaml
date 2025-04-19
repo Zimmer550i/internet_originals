@@ -36,6 +36,6 @@ flutter:
     - assets/language/
   
   fonts:
-    - family: OpenSans
+    - family: Open-Sans
       fonts:
         - asset: assets/fonts/OpenSans-VariableFont_wdth,wght.ttf
