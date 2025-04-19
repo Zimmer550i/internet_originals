@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 
 class Earnings extends StatelessWidget {

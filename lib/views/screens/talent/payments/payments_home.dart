@@ -101,7 +101,7 @@ class _PaymentsHomeState extends State<PaymentsHome> {
                     status: item['status'],
                   ),
                 );
-              }).toList(),
+              }),
             if (selectedOption == 1)
               ..._paidPayments.map((item) {
                 return Padding(
@@ -114,7 +114,7 @@ class _PaymentsHomeState extends State<PaymentsHome> {
                     amount: item['amount'],
                   ),
                 );
-              }).toList(),
+              }),
             if (selectedOption == 2) Earnings(),
           ],
         ),

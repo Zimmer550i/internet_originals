@@ -42,7 +42,7 @@ showCustomModal({
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(height: 12),
-                    Container(
+                    SizedBox(
                       width: (MediaQuery.of(context).size.width - 36) * 0.75,
                       child: Text(
                         title,
