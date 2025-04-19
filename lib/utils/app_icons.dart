@@ -38,4 +38,5 @@ class AppIcons {
   static const String signature = 'assets/icons/signature.svg';
   static const String star = 'assets/icons/star.svg';
   static const String starDark = 'assets/icons/star_dark.svg';
+  static const String chevronRight = 'assets/icons/chevron_right.svg';
 }

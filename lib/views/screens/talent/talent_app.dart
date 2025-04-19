@@ -4,6 +4,8 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_campaign.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_home.dart';
+import 'package:internet_originals/views/screens/talent/payments/payments_home.dart';
+import 'package:internet_originals/views/screens/talent/profile/profile.dart';
 
 final GlobalKey<TalentAppState> talentAppKey = GlobalKey<TalentAppState>();
 
@@ -20,8 +22,8 @@ class TalentAppState extends State<TalentApp> {
   List<Widget> pages = [
     TalentHome(),
     TalentCampaign(),
-    FlutterLogo(size: 50),
-    FlutterLogo(size: 500),
+    PaymentsHome(),
+    Profile(),
   ];
 
   List<String> labels = ["Home", "Campaigns", "Payments", "Profile"];

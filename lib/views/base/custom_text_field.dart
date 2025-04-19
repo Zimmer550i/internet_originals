@@ -72,8 +72,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
           },
           child: Container(
-            height: 48,
-            padding: EdgeInsets.symmetric(horizontal: widget.leading == null ? 8 : 20),
+            height: 52,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:
@@ -86,7 +86,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
             ),
             child: Row(
-              spacing: 12,
+              spacing: 8,
               children: [
                 if (widget.leading != null)
                   SvgPicture.asset(
@@ -124,7 +124,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       contentPadding: EdgeInsets.zero,
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                         color: AppColors.green[200],
                         fontSize: 14,
                       ),
