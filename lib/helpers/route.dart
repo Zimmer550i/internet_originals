@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/design_pattern.dart';
+import 'package:internet_originals/views/screens/sub_admin/settings/personal_information.dart';
+import 'package:internet_originals/views/screens/sub_admin/settings/privacy_policy.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/payments/cach_payment_submitted.dart';
 import 'package:internet_originals/views/screens/talent/payments/invoice_submitted.dart';
@@ -36,6 +38,8 @@ class AppRoutes {
   static String paymentTerms = "/payment_terms";
   static String invoiceSubmitted = "/invoice_submitted";
   static String cashPaymentSubmitted = "/cash_payment_submitted";
+  static String adminPersonalInformation = "/admin_personal_information";
+  static String adminPrivacyPolicy = "/admin_privacy_policy";
 
 
   static Map<String, Widget> routeWidgets = {
@@ -56,6 +60,8 @@ class AppRoutes {
     paymentTerms: PaymentTerms(),
     invoiceSubmitted: InvoiceSubmitted(),
     cashPaymentSubmitted: CashPaymentSubmitted(),
+    adminPersonalInformation: AdminPersonalInformation(),
+    adminPrivacyPolicy: AdminPrivacyPolicy(),
   };
 
   static List<GetPage> pages = [
