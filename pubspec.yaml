@@ -42,6 +42,6 @@ flutter:
     - assets/icons/notification/
   
   fonts:
-    - family: OpenSans
+    - family: Open-Sans
       fonts:
         - asset: assets/fonts/OpenSans-VariableFont_wdth,wght.ttf

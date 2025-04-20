@@ -72,8 +72,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
           },
           child: Container(
-            height: 48 + 8, // Added 8 for 4 padding on top and bottom
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            height: 52,
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:
@@ -86,7 +86,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
             ),
             child: Row(
-              spacing: 12,
+              spacing: 8,
               children: [
                 if (widget.leading != null)
                   SvgPicture.asset(

@@ -77,7 +77,7 @@ class _SocialPlatformsState extends State<SocialPlatforms> {
                     _removeTap(item.id);
                   },
                 );
-              }).toList(),
+              }),
               SizedBox(height: 36),
               CustomButton(
                 text: 'Add Social Platform',

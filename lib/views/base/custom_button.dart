@@ -41,8 +41,8 @@ class _CustomButtonState extends State<CustomButton> {
       onTap: widget.isLoading ? null : widget.onTap,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 100),
-        height: widget.height,
-        width: widget.width,
+        height: widget.padding != null ? null : widget.height,
+        width: widget.padding != null ? null : widget.width,
         padding: widget.padding ?? EdgeInsets.symmetric(horizontal: 40),
         decoration: BoxDecoration(
           color:
@@ -83,7 +83,7 @@ class _CustomButtonState extends State<CustomButton> {
                       widget.text,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: widget.textSize,
+                        fontSize: widget.width == null || widget.padding!= null ? 14 : widget.textSize,
                         color:
                             widget.isSecondary
                                 ? AppColors.red[600]

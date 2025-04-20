@@ -1,18 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/base/task_card.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_all_pending_tasks.dart';
+import 'package:internet_originals/views/screens/talent/talent_app.dart';
 
-class TalentHome extends StatelessWidget {
+class TalentHome extends StatefulWidget {
   const TalentHome({super.key});
+
+  @override
+  State<TalentHome> createState() => _TalentHomeState();
+}
+
+class _TalentHomeState extends State<TalentHome> {
+  int selectedTab = 0;
+  List<String> status = ["pending", "active", "completed"];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeBar(),
+      appBar: HomeBar(isHome: true),
       body: Align(
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
@@ -71,7 +81,9 @@ class TalentHome extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    talentAppKey.currentState?.changePage(1);
+                  },
                   child: Row(
                     children: [
                       Text(
@@ -101,7 +113,11 @@ class TalentHome extends StatelessWidget {
                 const SizedBox(height: 12),
                 CustomTabBar(
                   options: ["Requested", "Active", "Completed"],
-                  onChange: (val) {},
+                  onChange: (val) {
+                    setState(() {
+                      selectedTab = val;
+                    });
+                  },
                 ),
 
                 ListView.builder(
@@ -111,11 +127,7 @@ class TalentHome extends StatelessWidget {
                   itemBuilder: (val, index) {
                     return Padding(
                       padding: const EdgeInsets.only(top: 16.0),
-                      child: Container(
-                        height: 165,
-                        width: double.infinity,
-                        color: AppColors.red,
-                      ),
+                      child: CampaignCard(status: status[selectedTab],),
                     );
                   },
                 ),
