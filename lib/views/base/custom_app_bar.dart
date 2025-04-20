@@ -43,7 +43,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                       height: 24,
                       width: 24,
                       colorFilter: ColorFilter.mode(
-                        Color(0xff4e4e4e),
+                        AppColors.green[50]!,
                         BlendMode.srcIn,
                       ),
                     ),
@@ -56,7 +56,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[500],
+              color: AppColors.green[50],
             ),
           ),
           if (trailing != null)

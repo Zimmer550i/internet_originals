@@ -69,9 +69,11 @@ class _NotificationHomeState extends State<NotificationHome> {
               SizedBox(height: 18),
               CustomButton(
                 leading: 'assets/icons/notification/template.svg',
-                text: 'Send Template',
+                text: 'See Template',
                 isSecondary: true,
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(AppRoutes.notificationTemplates);
+                },
               ),
               SizedBox(height: 24),
               GestureDetector(
