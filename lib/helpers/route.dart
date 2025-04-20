@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/design_pattern.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/notification_history.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
+import 'package:internet_originals/views/screens/sub_admin/settings/about_us.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/personal_information.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/privacy_policy.dart';
+import 'package:internet_originals/views/screens/sub_admin/settings/terms_service.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/payments/cach_payment_submitted.dart';
 import 'package:internet_originals/views/screens/talent/payments/invoice_submitted.dart';
@@ -40,6 +44,10 @@ class AppRoutes {
   static String cashPaymentSubmitted = "/cash_payment_submitted";
   static String adminPersonalInformation = "/admin_personal_information";
   static String adminPrivacyPolicy = "/admin_privacy_policy";
+  static String adminTermsService = "/admin_terms_service";
+  static String adminAboutUs = "/admin_about_us";
+  static String notificationHistory = "/notification_history";
+  static String sendNotification = "/send_notification";
 
 
   static Map<String, Widget> routeWidgets = {
@@ -62,6 +70,10 @@ class AppRoutes {
     cashPaymentSubmitted: CashPaymentSubmitted(),
     adminPersonalInformation: AdminPersonalInformation(),
     adminPrivacyPolicy: AdminPrivacyPolicy(),
+    adminTermsService: AdminTermsService(),
+    adminAboutUs: AdminAboutUs(),
+    notificationHistory: NotificationHistory(),
+    sendNotification: SendNotification(),
   };
 
   static List<GetPage> pages = [

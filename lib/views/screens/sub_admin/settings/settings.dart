@@ -61,12 +61,16 @@ class _SettingsHomeState extends State<SettingsHome> {
           SettingsTab(
             leadingIcon: "assets/icons/settings_security/terms_service.svg",
             title: "Terms & Condition",
-            onTap: () {},
+            onTap: () {
+              Get.toNamed(AppRoutes.adminTermsService);
+            },
           ),
           SettingsTab(
             leadingIcon: "assets/icons/settings_security/about_us.svg",
             title: "About Us",
-            onTap: () {},
+            onTap: () {
+              Get.toNamed(AppRoutes.adminAboutUs);
+            },
           ),
           SettingsTab(
             leadingIcon: "assets/icons/profile/log_out.svg",
