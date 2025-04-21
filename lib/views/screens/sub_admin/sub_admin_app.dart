@@ -5,6 +5,7 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/campaigns_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/influencer_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/notification_home.dart';
+import 'package:internet_originals/views/screens/sub_admin/payments/payments_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/settings.dart';
 class SubAdminApp extends StatefulWidget {
   const SubAdminApp({super.key});
@@ -21,7 +22,7 @@ class _SubAdminAppState extends State<SubAdminApp> {
   List<Widget> pages = [
     CampaignsHome(),
     InfluencerHome(),
-    FlutterLogo(size: 50),
+    AdminPaymentsHome(),
     NotificationHome(),
     SettingsHome(),
   ];
