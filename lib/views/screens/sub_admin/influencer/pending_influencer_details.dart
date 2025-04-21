@@ -168,7 +168,7 @@ class _PendingInfluencerDetailsState extends State<PendingInfluencerDetails> {
                         ),
                         const SizedBox(width: 12),
                         CustomButton(
-                          text: 'Approved',
+                          text: 'Approve',
                           onTap: () {},
                           width:
                               (MediaQuery.of(context).size.width -
