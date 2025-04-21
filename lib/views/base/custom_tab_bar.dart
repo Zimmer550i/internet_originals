@@ -22,12 +22,19 @@ class CustomTabBarState extends State<CustomTabBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 20,
-      children: [
-        for (int i = 0; i < widget.options.length; i++)
-          Expanded(child: button(i)),
-      ],
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        child: Row(
+          spacing: 20,
+          children: [
+            for (int i = 0; i < widget.options.length; i++)
+              button(i),
+          ],
+        ),
+      ),
     );
   }
 
@@ -42,6 +49,7 @@ class CustomTabBarState extends State<CustomTabBar> {
         });
       },
       child: AnimatedContainer(
+        width: (MediaQuery.of(context).size.width-52)/3,
         duration: Duration(milliseconds: 100),
         height: 28,
         padding: EdgeInsets.all(4),
@@ -51,13 +59,15 @@ class CustomTabBarState extends State<CustomTabBar> {
           border: isSelected ? null : Border.all(color: AppColors.green[400]!),
         ),
         child: Center(
-          child: Text(
-            widget.options[pos],
-            style: TextStyle(
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              fontSize: isSelected ? 16 : 14,
-              color: isSelected ? Colors.white : AppColors.green[200],
-              height: 1,
+          child: FittedBox(
+            child: Text(
+              widget.options[pos],
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontSize: isSelected ? 16 : 14,
+                color: isSelected ? Colors.white : AppColors.green[200],
+                height: 1,
+              ),
             ),
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/campaigns_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/influencer_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/notification_home.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/settings.dart';
@@ -18,7 +19,7 @@ class _SubAdminAppState extends State<SubAdminApp> {
   PageController controller = PageController();
 
   List<Widget> pages = [
-    FlutterLogo(size: 50),
+    CampaignsHome(),
     InfluencerHome(),
     FlutterLogo(size: 50),
     NotificationHome(),

@@ -37,6 +37,8 @@ class AppIcons {
   static const String price = 'assets/icons/price.svg';
   static const String signature = 'assets/icons/signature.svg';
   static const String star = 'assets/icons/star.svg';
+  static const String search = 'assets/icons/search.svg';
   static const String starDark = 'assets/icons/star_dark.svg';
+  static const String addCircle = 'assets/icons/add_circle.svg';
   static const String chevronRight = 'assets/icons/chevron_right.svg';
 }
