@@ -39,6 +39,7 @@ flutter:
     - assets/icons/social_platforms/
     - assets/icons/settings_security/
     - assets/icons/payments/
+    - assets/icons/notification/
   
   fonts:
     - family: Open-Sans
