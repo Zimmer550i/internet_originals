@@ -6,6 +6,7 @@ import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/create_new_campaign.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
 
 class CampaignsHome extends StatefulWidget {
@@ -53,6 +54,9 @@ class _CampaignsHomeState extends State<CampaignsHome> {
                   text: "Create New Campaign",
                   leading: AppIcons.addCircle,
                   isSecondary: true,
+                  onTap: () {
+                    Get.to(() => CreateNewCampaign());
+                  },
                 ),
               if (!showingResult)
                 Padding(

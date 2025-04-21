@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
+import 'package:internet_originals/utils/custom_svg.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? title;
@@ -9,8 +10,10 @@ class CustomTextField extends StatefulWidget {
   final String? errorText;
   final String? leading;
   final String? trailing;
+  final Color? trailingColor;
   final TextInputType? textInputType;
   final bool isDisabled;
+  final bool autoFocus;
   final double radius;
   final TextEditingController? controller;
   final bool isPassword;
@@ -23,11 +26,13 @@ class CustomTextField extends StatefulWidget {
     this.trailing,
     this.isPassword = false,
     this.isDisabled = false,
+    this.autoFocus = false,
     this.radius = 2,
     this.textInputType,
     this.controller,
     this.onTap,
     this.errorText,
+    this.trailingColor,
   });
 
   @override
@@ -101,6 +106,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 Expanded(
                   child: TextField(
                     focusNode: focusNode,
+                    autofocus: widget.autoFocus,
                     controller: widget.controller,
                     keyboardType:
                         widget.leading == ""
@@ -129,18 +135,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         fontSize: 14,
                       ),
                     ),
-                    cursorColor: AppColors.green[50],
+                    cursorColor: AppColors.red,
                   ),
                 ),
                 if (widget.trailing != null)
-                  SvgPicture.asset(
-                    widget.trailing!,
-                    height: 24,
-                    width: 24,
-                    colorFilter: ColorFilter.mode(
-                      isFocused ? AppColors.red : AppColors.green[400]!,
-                      BlendMode.srcIn,
-                    ),
+                  CustomSvg(
+                    asset: widget.trailing!,
+                    size: 24,
+                    color:
+                        widget.trailingColor ??
+                        (isFocused ? AppColors.red : AppColors.green[400]!),
                   ),
                 if (widget.isPassword)
                   GestureDetector(
