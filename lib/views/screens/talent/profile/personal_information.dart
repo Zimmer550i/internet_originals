@@ -14,6 +14,10 @@ class PersonalInformation extends StatefulWidget {
 
 class _PersonalInformationState extends State<PersonalInformation> {
   bool _isEditing = false;
+  TextEditingController nameController = TextEditingController(text: 'Susan Marvin');
+  TextEditingController emailController = TextEditingController(text: 'susan@gmail.com');
+  TextEditingController phoneController = TextEditingController(text: '+88012 3456-7897');
+  TextEditingController locationController = TextEditingController(text: 'Susan Marvin');
 
   _updateProfile() {
     setState(() {
@@ -42,7 +46,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 isDisabled: !_isEditing,
-                hintText: 'Susan Marvin',
+                controller: nameController,
                 leading: 'assets/icons/personal_information/user.svg',
               ),
             ),
@@ -50,16 +54,15 @@ class _PersonalInformationState extends State<PersonalInformation> {
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 isDisabled: !_isEditing,
-                hintText: 'susan@gmail.com',
+                controller: emailController,
                 leading: 'assets/icons/personal_information/mail.svg',
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 12),
-
               child: CustomTextField(
                 isDisabled: !_isEditing,
-                hintText: '+88012 3456-7897',
+                controller: phoneController,
                 leading: 'assets/icons/personal_information/phone.svg',
               ),
             ),
@@ -67,7 +70,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 isDisabled: !_isEditing,
-                hintText: 'Susan Marvin',
+                controller: locationController,
                 leading: 'assets/icons/personal_information/location.svg',
               ),
             ),

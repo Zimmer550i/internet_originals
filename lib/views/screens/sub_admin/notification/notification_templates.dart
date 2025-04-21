@@ -49,14 +49,14 @@ class _NotificationTemplatesState extends State<NotificationTemplates> {
                         padding: const EdgeInsets.only(top: 12),
                         child: SoftNotificationItem(),
                       );
-                    }).toList(),
+                    }),
                   if (selectedOption == 1)
                     ...softNotifications.map((item) {
                       return Padding(
                         padding: const EdgeInsets.only(top: 12),
                         child: HardNotificationItem(),
                       );
-                    }).toList(),
+                    }),
                   SizedBox(height: 72),
                 ],
               ),

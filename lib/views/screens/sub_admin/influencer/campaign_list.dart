@@ -60,7 +60,7 @@ class _CampaignListState extends State<CampaignList> {
                     amount: item['amount'],
                   ),
                 );
-              }).toList(),
+              }),
               SizedBox(height: 72),
             ],
           ),

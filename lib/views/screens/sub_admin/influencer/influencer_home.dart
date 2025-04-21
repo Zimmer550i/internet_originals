@@ -120,7 +120,7 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                       createdAt: item['created_at'],
                     ),
                   );
-                }).toList(),
+                }),
               if (selectedOption == 1)
                 CustomSearchBar(
                   hintText: 'Search by name or social handle',
@@ -137,7 +137,7 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                       username: item['username'],
                     ),
                   );
-                }).toList(),
+                }),
               SizedBox(height: 72),
             ],
           ),
