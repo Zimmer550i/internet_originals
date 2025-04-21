@@ -15,6 +15,7 @@ class HomeBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       automaticallyImplyLeading: false,
       backgroundColor: AppColors.green[700],
+      surfaceTintColor: AppColors.green[700],
       titleSpacing: 0,
       title: Row(
         children: [
