@@ -82,6 +82,7 @@ class _SettingsHomeState extends State<SettingsHome> {
                 title: 'Are you sure you want to',
                 highlight: 'Logout?',
                 leftButtonText: 'Logout',
+                onLeftButtonClick: () => Get.back(),
                 rightButtonText: 'Cancel',
               );
             },

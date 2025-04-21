@@ -83,7 +83,7 @@ class _NotificationHistoryState extends State<NotificationHistory> {
                     onTap: () {},
                   ),
                 );
-              }).toList(),
+              }),
               SizedBox(height: 72),
             ],
           ),
