@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
 
 class NewCampaign extends StatelessWidget {
   const NewCampaign({super.key});
@@ -34,6 +36,9 @@ class NewCampaign extends StatelessWidget {
                     text: "Add Influencers",
                     width: null,
                     height: 40,
+                    onTap: () {
+                      Get.to(() => AddInfluencers());
+                    },
                   ),
                 ),
               ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
-import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/screens/sub_admin/payments/payment_item.dart';
 
@@ -111,7 +110,7 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
                       status: AdminPaymentStatus.pending,
                     ),
                   );
-                }).toList(),
+                }),
               if (selectedOption == 1)
                 ...processed.map((item) {
                   return Padding(
@@ -125,7 +124,7 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
                       status: AdminPaymentStatus.processed,
                     ),
                   );
-                }).toList(),
+                }),
               SizedBox(height: 72),
             ],
           ),
