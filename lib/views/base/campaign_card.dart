@@ -380,7 +380,7 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
         ),
-        if (status != "pending")
+        if (status != "pending" && status != null)
           Row(
             children: [
               Container(
