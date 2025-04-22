@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
-import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/notification_item.dart';
 
 class NotificationHome extends StatefulWidget {
@@ -36,22 +36,7 @@ class _NotificationHomeState extends State<NotificationHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.green[700],
-        titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomSvg(asset: AppIcons.logo),
-
-              CustomSvg(asset: AppIcons.bellWithAlert),
-            ],
-          ),
-        ),
-      ),
+      appBar: HomeBar(isHome: false),
       backgroundColor: AppColors.green[700],
       body: SingleChildScrollView(
         child: Padding(

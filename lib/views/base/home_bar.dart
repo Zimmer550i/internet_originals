@@ -40,7 +40,12 @@ class HomeBar extends StatelessWidget implements PreferredSizeWidget {
             ),
           if (!isHome) CustomSvg(asset: AppIcons.logo, width: 76, height: 25),
           Spacer(),
-          CustomSvg(asset: AppIcons.bellWithAlert),
+          GestureDetector(
+            onTap: () {
+              showTimePicker(context: context, initialTime: TimeOfDay.now());
+            },
+            child: CustomSvg(asset: AppIcons.bellWithAlert),
+          ),
           const SizedBox(width: 20),
         ],
       ),
