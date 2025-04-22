@@ -3,6 +3,7 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
+import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/talent/payments/earnings.dart';
 import 'package:internet_originals/views/screens/talent/payments/paid_payment_item.dart';
 import 'package:internet_originals/views/screens/talent/payments/pending_payment_item.dart';
@@ -57,22 +58,7 @@ class _PaymentsHomeState extends State<PaymentsHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.green[700],
-        titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomSvg(asset: AppIcons.logo),
-
-              CustomSvg(asset: AppIcons.bellWithAlert),
-            ],
-          ),
-        ),
-      ),
+      appBar: HomeBar(isHome: false),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Column(

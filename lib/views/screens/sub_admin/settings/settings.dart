@@ -5,6 +5,7 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_modal.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/base/home_bar.dart';
 
 class SettingsHome extends StatefulWidget {
   const SettingsHome({super.key});
@@ -17,22 +18,7 @@ class _SettingsHomeState extends State<SettingsHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.green[700],
-        titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomSvg(asset: AppIcons.logo),
-
-              CustomSvg(asset: AppIcons.bellWithAlert),
-            ],
-          ),
-        ),
-      ),
+      appBar: HomeBar(isHome: false),
       backgroundColor: AppColors.green[700],
       body: Column(
         children: [

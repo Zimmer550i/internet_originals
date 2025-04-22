@@ -4,6 +4,7 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
+import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/sub_admin/payments/payment_item.dart';
 
 class AdminPaymentsHome extends StatefulWidget {
@@ -67,21 +68,7 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.green[700],
-        titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomSvg(asset: AppIcons.logo),
-              CustomSvg(asset: AppIcons.bellWithAlert),
-            ],
-          ),
-        ),
-      ),
+      appBar: HomeBar(isHome: false),
       backgroundColor: AppColors.green[700],
       body: SingleChildScrollView(
         child: Padding(
