@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
-import 'package:internet_originals/utils/timepicker.dart';
 
 class HomeBar extends StatelessWidget implements PreferredSizeWidget {
   final bool isHome;
@@ -43,7 +42,7 @@ class HomeBar extends StatelessWidget implements PreferredSizeWidget {
           Spacer(),
           GestureDetector(
             onTap: () {
-              showCustomTimePicker(context);
+              showTimePicker(context: context, initialTime: TimeOfDay.now());
             },
             child: CustomSvg(asset: AppIcons.bellWithAlert),
           ),
