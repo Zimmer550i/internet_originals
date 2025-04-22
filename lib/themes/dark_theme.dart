@@ -19,10 +19,19 @@ ThemeData dark() {
       dialBackgroundColor: AppColors.green[100],
       dialHandColor: AppColors.red[500], // The clock hand
       dialTextColor: AppColors.green[700],
-      cancelButtonStyle: ButtonStyle(
+      inputDecorationTheme: InputDecorationTheme(
+        // The manual text input section
+        fillColor: AppColors.green[100],
+        filled: true,
+        border: UnderlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      cancelButtonStyle: ButtonStyle( // Cancel Button
         foregroundColor: WidgetStatePropertyAll(Colors.white),
       ),
-      confirmButtonStyle: ButtonStyle(
+      confirmButtonStyle: ButtonStyle( // Confirm Button
         foregroundColor: WidgetStatePropertyAll(Colors.white),
       ),
       dialTextStyle: TextStyle(
