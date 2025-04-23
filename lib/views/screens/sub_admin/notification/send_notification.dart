@@ -9,6 +9,7 @@ import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_drop_down.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/select_recipient.dart';
 
 class SendNotification extends StatefulWidget {
   const SendNotification({super.key});
@@ -50,7 +51,7 @@ class _SendNotificationState extends State<SendNotification> {
                       ),
                       const SizedBox(height: 16),
                       GestureDetector(
-                        onTap: () => Get.back(),
+                        onTap: () => Get.to(()=> SelectRecipient()),
                         behavior: HitTestBehavior.translucent,
                         child: Container(
                           height: 52,
