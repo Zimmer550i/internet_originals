@@ -13,7 +13,6 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   _updatePassword() {
-    //TODO: call update password api
   }
 
   @override

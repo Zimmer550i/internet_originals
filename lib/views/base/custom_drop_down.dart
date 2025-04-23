@@ -58,34 +58,32 @@ class _CustomDropDownState extends State<CustomDropDown> {
             });
           },
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(widget.radius),
-              border: Border.all(width: 0.5, color: AppColors.red.shade400),
+              border: Border(
+                bottom: BorderSide(color: AppColors.green[400]!),
+              ),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 48,
+                  height: 52,
                   child: Row(
                     children: [
-                      currentVal == null
+                      currentVal == null || isExpanded
                           ? Text(
                             widget.hintText ?? "Select One",
                             style: TextStyle(
-                              fontVariations: [FontVariation("wght", 500)],
-                              color: AppColors.green[400],
+                              color: AppColors.green[200],
                               fontSize: 14,
                             ),
                           )
                           : Text(
                             currentVal!,
                             style: TextStyle(
-                              fontVariations: [FontVariation("wght", 500)],
-                              color: AppColors.green.shade600,
-                              height: 1,
+                              color: AppColors.green[50],
+                              fontSize: 14,
                             ),
                           ),
                       const Spacer(),
@@ -116,24 +114,25 @@ class _CustomDropDownState extends State<CustomDropDown> {
                                     });
                                   },
                                   child: Container(
-                                    height: 48,
+                                    height: 52,
                                     decoration: BoxDecoration(
                                       border: Border(
                                         top: BorderSide(
-                                          color: AppColors.red[300]!,
+                                          color: AppColors.green[400]!,
                                           width: 0.5,
                                         ),
                                       ),
                                     ),
-                                    child: Center(
-                                      child: Text(
-                                        e,
-                                        style: TextStyle(
-                                          fontVariations: [
-                                            FontVariation("wght", 500),
-                                          ],
-                                          color: AppColors.green[700],
-                                          fontSize: 14,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          e,
+                                          style: TextStyle(
+                                            color: AppColors.green[50],
+                                            fontSize: 14,
+                                          ),
                                         ),
                                       ),
                                     ),

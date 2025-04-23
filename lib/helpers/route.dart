@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/design_pattern.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/notification_history.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/notification_templates.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/about_us.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/personal_information.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/privacy_policy.dart';
@@ -80,9 +77,6 @@ class AppRoutes {
     adminPrivacyPolicy: AdminPrivacyPolicy(),
     adminTermsService: AdminTermsService(),
     adminAboutUs: AdminAboutUs(),
-    notificationHistory: NotificationHistory(),
-    sendNotification: SendNotification(),
-    notificationTemplates: NotificationTemplates(),
   };
 
   static List<GetPage> pages = [

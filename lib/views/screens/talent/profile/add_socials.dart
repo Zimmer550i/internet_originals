@@ -31,7 +31,6 @@ class _AddSocialsState extends State<AddSocials> {
   }
 
   _addSocials() {
-    // TODO: Make api call to create the social
 
 
     // final reqBody = {

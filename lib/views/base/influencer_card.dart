@@ -76,7 +76,7 @@ class InfluencerCard extends StatelessWidget {
   }
 
   Widget handleStatus() {
-    if (status == null) {
+    if (status != null) {
       return Row(
         children: [
           Container(

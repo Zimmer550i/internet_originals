@@ -32,7 +32,6 @@ class _SocialPlatformsState extends State<SocialPlatforms> {
   ];
 
   _removeItem(String targetId) {
-    //TODO: call remove api
 
     List<SocialPlatFormModel> newItems = [];
     for (SocialPlatFormModel item in _socialItems) {

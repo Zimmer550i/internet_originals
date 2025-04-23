@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/notification_item.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/influencer_list.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
 
 class NotificationHome extends StatefulWidget {
   const NotificationHome({super.key});
@@ -15,102 +17,136 @@ class NotificationHome extends StatefulWidget {
 }
 
 class _NotificationHomeState extends State<NotificationHome> {
-  List<Map<String, dynamic>> resentNotifications = [
-    {
-      'type': NotificationType.soft,
-      'status': NotificationStatus.sent,
-      'created_at': 1745147285555,
-    },
-    {
-      'type': NotificationType.soft,
-      'status': NotificationStatus.scheduled,
-      'created_at': 1745147285555,
-    },
-    {
-      'type': NotificationType.hard,
-      'status': NotificationStatus.sent,
-      'created_at': 1745147285555,
-    },
-  ];
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HomeBar(isHome: false),
-      backgroundColor: AppColors.green[700],
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              SizedBox(height: 12),
-              CustomButton(
-                leading: "assets/icons/notification/send.svg",
-                text: 'Send Notification',
-                onTap: () {
-                  Get.toNamed(AppRoutes.sendNotification);
+      appBar: HomeBar(),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            CustomButton(
+              text: "Send Notification",
+              leading: "assets/icons/notification/send.svg",
+              onTap: () => Get.to(() => SendNotification()),
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: "See Templates",
+              leading: 'assets/icons/notification/template.svg',
+              isSecondary: true,
+            ),
+            const SizedBox(height: 24),
+            CustomTabBar(
+              options: ["Scheduled", "Sent"],
+              onChange: (val) {
+                setState(() {
+                  index = val;
+                });
+              },
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 10,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.green[600],
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: AppColors.green[400]!),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Soft Notification",
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 18 / 12,
+                              color: AppColors.red[300],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            "Deadline Reminder",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              height: 20 / 14,
+                              color: AppColors.green[25],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Your campaign “Adidas Running” requires you to upload performance metrics",
+                            style: TextStyle(
+                              // color: AppColors.green[100],
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          GestureDetector(
+                            onTap: () => Get.to(() => InfluencerList()),
+                            behavior: HitTestBehavior.translucent,
+                            child: Text(
+                              "10 Talents",
+                              style: TextStyle(
+                                color: AppColors.red[300],
+                                fontSize: 12,
+                                height: 18 / 12,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.red[300],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            spacing: 8,
+                            children: [
+                              CustomSvg(
+                                asset: AppIcons.calendar,
+                                size: 16,
+                                color: AppColors.red[300],
+                              ),
+                              Text(
+                                "Feb 12, 2025 | ",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              CustomSvg(
+                                asset: AppIcons.clock,
+                                size: 16,
+                                color: AppColors.red[300],
+                              ),
+                              Text(
+                                "10:53 AM",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
-              SizedBox(height: 18),
-              CustomButton(
-                leading: 'assets/icons/notification/template.svg',
-                text: 'See Template',
-                isSecondary: true,
-                onTap: () {
-                  Get.toNamed(AppRoutes.notificationTemplates);
-                },
-              ),
-              SizedBox(height: 24),
-              GestureDetector(
-                onTap: () {
-                  Get.toNamed(AppRoutes.notificationHistory);
-                },
-                child: Container(
-                  color: Colors.transparent,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Notification History',
-                        style: TextStyle(
-                          color: AppColors.green[100],
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Spacer(),
-                      Text(
-                        'See All',
-                        style: TextStyle(
-                          color: AppColors.green[100],
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      SizedBox(width: 4),
-                      CustomSvg(
-                        asset: 'assets/icons/notification/arrow_right.svg',
-                        width: 20,
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ...resentNotifications.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 18),
-                  child: NotificationItem(
-                    type: item['type'],
-                    status: item['status'],
-                    createdAt: item['created_at'],
-                    onTap: () {
-
-                    },
-                  ),
-                );
-              }),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
