@@ -11,27 +11,37 @@ ThemeData dark() {
       displayColor: AppColors.green[50],
     ),
     timePickerTheme: TimePickerThemeData(
-      backgroundColor: AppColors.green[600],
-      hourMinuteColor: AppColors.green[100],
-      hourMinuteTextColor: AppColors.green[700],
-      dayPeriodColor: AppColors.green[100],
-      dayPeriodTextColor: AppColors.green[700],
-      dialBackgroundColor: AppColors.green[100],
-      dialHandColor: AppColors.red[500], // The clock hand
-      dialTextColor: AppColors.green[700],
+      dayPeriodBorderSide: BorderSide(
+        color: AppColors.green[400]!
+      ),
+      timeSelectorSeparatorTextStyle: WidgetStatePropertyAll(
+        TextStyle(color: AppColors.green[100], fontSize: 50),
+      ),
+      backgroundColor: AppColors.green[700],
+      hourMinuteColor: AppColors.green[400],
+      hourMinuteTextColor: AppColors.green[25],
+      dayPeriodColor: AppColors.red,
+      dayPeriodTextColor: AppColors.green[25],
+      dialBackgroundColor: AppColors.green[400],
+      dialHandColor: AppColors.red,
+      dialTextColor: AppColors.green[25],
+      dayPeriodTextStyle: TextStyle(
+        fontWeight: FontWeight.w900,
+      ),
       inputDecorationTheme: InputDecorationTheme(
-        // The manual text input section
-        fillColor: AppColors.green[100],
         filled: true,
+        fillColor: AppColors.green[400],
         border: UnderlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide.none,
         ),
       ),
-      cancelButtonStyle: ButtonStyle( // Cancel Button
+      cancelButtonStyle: ButtonStyle(
+        // Cancel Button
         foregroundColor: WidgetStatePropertyAll(Colors.white),
       ),
-      confirmButtonStyle: ButtonStyle( // Confirm Button
+      confirmButtonStyle: ButtonStyle(
+        // Confirm Button
         foregroundColor: WidgetStatePropertyAll(Colors.white),
       ),
       dialTextStyle: TextStyle(
