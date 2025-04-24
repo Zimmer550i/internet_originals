@@ -9,6 +9,7 @@ import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_drop_down.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/notification_templates.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/select_recipient.dart';
 
 class SendNotification extends StatefulWidget {
@@ -51,7 +52,7 @@ class _SendNotificationState extends State<SendNotification> {
                       ),
                       const SizedBox(height: 16),
                       GestureDetector(
-                        onTap: () => Get.to(()=> SelectRecipient()),
+                        onTap: () => Get.to(() => SelectRecipient()),
                         behavior: HitTestBehavior.translucent,
                         child: Container(
                           height: 52,
@@ -89,7 +90,9 @@ class _SendNotificationState extends State<SendNotification> {
                         children: [
                           Expanded(
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Get.to(() => NotificationTemplates());
+                              },
                               behavior: HitTestBehavior.translucent,
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -237,10 +240,11 @@ class _SendNotificationState extends State<SendNotification> {
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () async {
-                                    TimeOfDay? pickedTime = await showTimePicker(
-                                      context: context,
-                                      initialTime: time ?? TimeOfDay.now(),
-                                    );
+                                    TimeOfDay? pickedTime =
+                                        await showTimePicker(
+                                          context: context,
+                                          initialTime: time ?? TimeOfDay.now(),
+                                        );
 
                                     if (pickedTime != null) {
                                       setState(() {

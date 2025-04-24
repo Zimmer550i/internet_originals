@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomDropDown extends StatefulWidget {
   final String? title;
-  final String? initialPick;
+  final int? initialPick;
   final String? hintText;
   final List<String> options;
   final double radius;
@@ -32,7 +32,9 @@ class _CustomDropDownState extends State<CustomDropDown> {
   @override
   void initState() {
     super.initState();
-    currentVal = widget.initialPick;
+    if (widget.initialPick != null) {
+      currentVal = widget.options[widget.initialPick!];
+    }
   }
 
   @override
@@ -60,9 +62,7 @@ class _CustomDropDownState extends State<CustomDropDown> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: AppColors.green[400]!),
-              ),
+              border: Border(bottom: BorderSide(color: AppColors.green[400]!)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -126,7 +126,9 @@ class _CustomDropDownState extends State<CustomDropDown> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
+                                        padding: const EdgeInsets.only(
+                                          left: 8.0,
+                                        ),
                                         child: Text(
                                           e,
                                           style: TextStyle(

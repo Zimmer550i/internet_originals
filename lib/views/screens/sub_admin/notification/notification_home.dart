@@ -7,6 +7,7 @@ import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/influencer_list.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/notification_templates.dart';
 import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
 
 class NotificationHome extends StatefulWidget {
@@ -38,6 +39,8 @@ class _NotificationHomeState extends State<NotificationHome> {
               text: "See Templates",
               leading: 'assets/icons/notification/template.svg',
               isSecondary: true,
+              onTap:
+                  () => Get.to(() => NotificationTemplates(isEditable: true)),
             ),
             const SizedBox(height: 24),
             CustomTabBar(

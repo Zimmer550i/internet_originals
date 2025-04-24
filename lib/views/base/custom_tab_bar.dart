@@ -6,9 +6,11 @@ final GlobalKey<CustomTabBarState> talentCampaignTabBarKey =
 
 class CustomTabBar extends StatefulWidget {
   final List<String> options;
+  final int buttonsPerScreen;
   final Function(int) onChange;
   const CustomTabBar({
     super.key,
+    this.buttonsPerScreen = 3,
     required this.options,
     required this.onChange,
   });
@@ -29,10 +31,7 @@ class CustomTabBarState extends State<CustomTabBar> {
         clipBehavior: Clip.none,
         child: Row(
           spacing: 20,
-          children: [
-            for (int i = 0; i < widget.options.length; i++)
-              button(i),
-          ],
+          children: [for (int i = 0; i < widget.options.length; i++) button(i)],
         ),
       ),
     );
@@ -49,7 +48,10 @@ class CustomTabBarState extends State<CustomTabBar> {
         });
       },
       child: AnimatedContainer(
-        width: (MediaQuery.of(context).size.width-52)/3,
+        width:
+            (MediaQuery.of(context).size.width -
+                ((widget.buttonsPerScreen + 1) * 20)) /
+            widget.buttonsPerScreen,
         duration: Duration(milliseconds: 100),
         height: 28,
         padding: EdgeInsets.all(4),
