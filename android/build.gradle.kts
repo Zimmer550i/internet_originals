@@ -1,3 +1,5 @@
+val kotlin_version = "1.8.22"  // Use double quotes and declare a `val` instead of `ext`
+
 allprojects {
     repositories {
         google()

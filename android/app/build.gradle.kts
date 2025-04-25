@@ -3,11 +3,12 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services") version "4.4.2" apply true
 }
 
 android {
     namespace = "com.example.internet_originals"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -37,6 +38,13 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    implementation("com.google.firebase:firebase-core:20.1.0")
+    implementation("com.google.firebase:firebase-messaging:23.0.0") // Firebase Messaging dependency
+    implementation("com.dexterous.flutterlocalnotifications:flutter_local_notifications:9.1.4") // Firebase Messaging dependency
+    // Add any other Firebase dependencies as needed
 }
 
 flutter {

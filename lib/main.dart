@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:internet_originals/views/screens/auth/splash.dart';
 import 'package:internet_originals/themes/dark_theme.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -17,6 +18,8 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   Map<String, Map<String, String>> languages = await di.init();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -40,7 +43,7 @@ class MyApp extends StatelessWidget {
           builder: (localizeController) {
             return ScreenUtilInit(
               designSize: const Size(393, 852),
-              minTextAdapt: true, 
+              minTextAdapt: true,
               splitScreenMode: true,
               builder: (_, child) {
                 return GetMaterialApp(
