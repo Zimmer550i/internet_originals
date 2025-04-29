@@ -231,21 +231,6 @@ class LocalNotificationService {
     _onDidReceiveNotificationResponse(notificationResponse);
    }
 
-  static void _onDidReceiveLocalNotification(
-      int id, String? title, String? body, String? payload) async {
-     if (kDebugMode) {
-      print('--- Deprecated: onDidReceiveLocalNotification (iOS Foreground) ---');
-      print('ID: $id, Title: $title, Payload: $payload');
-    }
-     if (payload != null && payload.isNotEmpty) {
-      try {
-        final Map<String, dynamic> data = jsonDecode(payload);
-        _handleMessageData(data, tapped: false);
-      } catch (e) {
-         if (kDebugMode) print("Error decoding payload in deprecated handler: $e");
-      }
-    }
-  }
 
   static void _handleMessageData(Map<String, dynamic> data, {required bool tapped}) {
     if (kDebugMode) {

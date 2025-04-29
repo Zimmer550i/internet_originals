@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:internet_originals/helpers/local_notification_service.dart';
+import 'package:internet_originals/services/local_notification_service.dart';
 import 'package:internet_originals/views/screens/auth/splash.dart';
 import 'package:internet_originals/themes/dark_theme.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -14,7 +14,7 @@ import 'package:get/get.dart';
 import 'controllers/localization_controller.dart';
 import 'controllers/theme_controller.dart';
 import 'helpers/di.dart' as di;
-import 'helpers/route.dart'; // Import the new notification service file
+import 'helpers/route.dart';
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -56,7 +56,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.languages});
   final Map<String, Map<String, String>> languages;
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ThemeController>(
