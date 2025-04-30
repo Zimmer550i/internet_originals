@@ -160,22 +160,22 @@ class _RegistrationState extends State<Registration> {
     String conPass,
   ) {
     if (name.isEmpty) {
-      nameError = "This field cannot be null";
+      nameError = "This field cannot be empty";
     } else {
       nameError = null;
     }
     if (email.isEmpty) {
-      emailError = "This field cannot be null";
+      emailError = "This field cannot be empty";
     } else {
       emailError = null;
     }
     if (phone.isEmpty) {
-      phoneError = "This field cannot be null";
+      phoneError = "This field cannot be empty";
     } else {
       phoneError = null;
     }
     if (pass.isEmpty) {
-      passError = "This field cannot be null";
+      passError = "This field cannot be empty";
     } else {
       passError = null;
     }

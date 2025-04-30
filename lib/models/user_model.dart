@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
+UserModel userFromJson(String str) => UserModel.fromJson(json.decode(str));
 
-String userModelToJson(UserModel data) => json.encode(data.toJson());
+String userToJson(UserModel data) => json.encode(data.toJson());
 
 class UserModel {
     String id;
@@ -11,10 +11,10 @@ class UserModel {
     String email;
     String phone;
     bool verified;
+    String status;
     String loginStatus;
     DateTime createdAt;
     DateTime updatedAt;
-    int v;
     String? address;
     String? image;
     String? fcmToken;
@@ -26,10 +26,10 @@ class UserModel {
         required this.email,
         required this.phone,
         required this.verified,
+        required this.status,
         required this.loginStatus,
         required this.createdAt,
         required this.updatedAt,
-        required this.v,
         required this.address,
         required this.image,
         required this.fcmToken,
@@ -42,10 +42,10 @@ class UserModel {
         String? email,
         String? phone,
         bool? verified,
+        String? status,
         String? loginStatus,
         DateTime? createdAt,
         DateTime? updatedAt,
-        int? v,
         String? address,
         String? image,
         String? fcmToken,
@@ -57,10 +57,10 @@ class UserModel {
             email: email ?? this.email,
             phone: phone ?? this.phone,
             verified: verified ?? this.verified,
+            status: status ?? this.status,
             loginStatus: loginStatus ?? this.loginStatus,
             createdAt: createdAt ?? this.createdAt,
             updatedAt: updatedAt ?? this.updatedAt,
-            v: v ?? this.v,
             address: address ?? this.address,
             image: image ?? this.image,
             fcmToken: fcmToken ?? this.fcmToken,
@@ -73,10 +73,10 @@ class UserModel {
         email: json["email"],
         phone: json["phone"],
         verified: json["verified"],
+        status: json["status"],
         loginStatus: json["loginStatus"],
         createdAt: DateTime.parse(json["createdAt"]),
         updatedAt: DateTime.parse(json["updatedAt"]),
-        v: json["__v"],
         address: json["address"],
         image: json["image"],
         fcmToken: json["fcmToken"],
@@ -89,10 +89,10 @@ class UserModel {
         "email": email,
         "phone": phone,
         "verified": verified,
+        "status": status,
         "loginStatus": loginStatus,
         "createdAt": createdAt.toIso8601String(),
         "updatedAt": updatedAt.toIso8601String(),
-        "__v": v,
         "address": address,
         "image": image,
         "fcmToken": fcmToken,

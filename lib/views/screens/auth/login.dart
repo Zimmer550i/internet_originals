@@ -5,6 +5,8 @@ import 'package:internet_originals/utils/app_constants.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/auth/account_under_review.dart';
+import 'package:internet_originals/views/screens/auth/email_verification.dart';
 import 'package:internet_originals/views/screens/auth/forgot_password.dart';
 import 'package:internet_originals/views/screens/auth/registration.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -42,6 +44,17 @@ class _LoginState extends State<Login> {
 
     if (message == "success") {
       showSnackBar(message, isError: false);
+    } else if (message ==
+        "Please verify your account, then try to login again") {
+      final message = await auth.sendOtp(email);
+      if (message == "success") {
+        showSnackBar("OTP sent to $email");
+        Get.to(() => EmailVerification());
+      } else {
+        showSnackBar(message);
+      }
+    } else if (message == "Your account is pending, please contact admin") {
+      Get.to(() => AccountUnderReview());
     } else {
       showSnackBar(message);
     }
@@ -49,34 +62,6 @@ class _LoginState extends State<Login> {
     setState(() {
       isLoading = false;
     });
-
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text("Choose Role"),
-    //       content: Column(
-    //         mainAxisSize: MainAxisSize.min,
-    //         children: [
-    //           ListTile(
-    //             title: Text("Talent"),
-    //             onTap: () {
-    //               Navigator.of(context).pop();
-    //               Get.toNamed(AppRoutes.talentApp);
-    //             },
-    //           ),
-    //           ListTile(
-    //             title: Text("Sub Admin"),
-    //             onTap: () {
-    //               Navigator.of(context).pop();
-    //               Get.toNamed(AppRoutes.subAdminApp);
-    //             },
-    //           ),
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
@@ -25,9 +26,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     emailController.text = widget.email;
   }
 
-  void sendOtpCallback() {
-    Get.to(() => EmailVerification(bearer: "asdfasdf"));
-    showSnackBar("Otp sent to ${emailController.text.trim()}");
+  void sendOtpCallback() async {
+    final message = await Get.find<AuthController>().forgotPassword(
+      emailController.text.trim(),
+    );
+
+    if (message == "success") {
+      Get.to(() => EmailVerification(resetPass: true));
+      showSnackBar("Otp sent to ${emailController.text.trim()}");
+    } else {
+      showSnackBar(message);
+    }
   }
 
   @override

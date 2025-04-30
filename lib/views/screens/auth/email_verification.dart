@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/screens/auth/reset_password.dart';
@@ -8,8 +10,9 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:pinput/pinput.dart';
 
 class EmailVerification extends StatefulWidget {
-  final String? bearer;
-  const EmailVerification({super.key, this.bearer});
+  final bool resetPass;
+  final String? email;
+  const EmailVerification({super.key, this.resetPass = false, this.email});
 
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
@@ -17,12 +20,37 @@ class EmailVerification extends StatefulWidget {
 
 class _EmailVerificationState extends State<EmailVerification> {
   TextEditingController otpController = TextEditingController();
+  final auth = Get.find<AuthController>();
 
-  void otpVerification() {
-    if (widget.bearer == null) {
-      Get.to(() => UserInformation());
+  void otpVerification() async {
+    if (!widget.resetPass) {
+      final message = await auth.verifyEmail(
+        widget.email ?? "wasiul0491@gmail.com",
+        otpController.text.trim(),
+      );
+      if (message == "success") {
+        Get.to(() => UserInformation());
+      } else {
+        showSnackBar(message);
+      }
     } else {
-      Get.to(() => ResetPassword());
+      final message = await auth.verifyEmail(
+        widget.email ?? "wasiul0491@gmail.com",
+        otpController.text.trim(),
+      );
+      if (message == "success") {
+        Get.to(() => ResetPassword());
+      } else {
+        showSnackBar(message);
+      }
+    }
+  }
+
+  void resendOtp() async {
+    final message = await auth.sendOtp(widget.email ?? "wasiul0491@gmail.com");
+
+    if (message == "success") {
+      showSnackBar("OTP sent to ${widget.email ?? "wasiul0491@gmail.com"}");
     }
   }
 
@@ -38,9 +66,7 @@ class _EmailVerificationState extends State<EmailVerification> {
             child: Column(
               children: [
                 Text(
-                  widget.bearer == null
-                      ? "Verify Your Email"
-                      : "Reset Password",
+                  !widget.resetPass ? "Verify Your Email" : "Reset Password",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 24,
@@ -83,16 +109,16 @@ class _EmailVerificationState extends State<EmailVerification> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Don't have an account?",
+                      "Don’t get code?",
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.green[100],
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {},
+                      onTap: resendOtp,
                       child: Text(
-                        " Register Now",
+                        " Resend",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
