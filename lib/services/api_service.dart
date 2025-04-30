@@ -1,16 +1,58 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:internet_originals/services/shared_prefs_service.dart';
 
 class ApiService {
-  final String baseUrl = 'http://192.168.10.199:5005/api/v1';
+  final String devUrl = "http://192.168.10.199:5005/api/v1";
+  final String prodUrl = "";
+  final bool inDevelopment = true;
+  final bool showAPICalls = true;
+
+  late final String baseUrl;
   final Dio _dio = Dio();
 
   ApiService() {
+    baseUrl = inDevelopment ? devUrl : prodUrl;
     _dio.options.baseUrl = baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 10);
     _dio.options.receiveTimeout = const Duration(seconds: 10);
     _dio.options.headers = {'Content-Type': 'application/json'};
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          if (showAPICalls) {
+            debugPrint('📤 REQUEST => PATH: ${options.path}');
+            debugPrint('📤 DATA: ${options.data}');
+          }
+          handler.next(options);
+        },
+        onResponse: (response, handler) {
+          if (showAPICalls) {
+            debugPrint(
+              '✅ RESPONSE [${response.statusCode}] => PATH: ${response.requestOptions.path}',
+            );
+            debugPrint(response.data);
+          }
+          handler.next(response);
+        },
+        onError: (error, handler) {
+          if (showAPICalls) {
+            debugPrint(
+              '❌ ERROR [${error.response?.statusCode}] => PATH: ${error.requestOptions.path}',
+            );
+            debugPrint(error.response?.data);
+          }
+
+          if (error.response?.statusCode == 401) {
+            SharedPrefsService.remove('token');
+          }
+
+          handler.next(error);
+        },
+      ),
+    );
   }
 
   Future<Options> _getOptions(bool authReq) async {
@@ -24,12 +66,6 @@ class ApiService {
       );
     }
     return Options(headers: {'Content-Type': 'application/json'});
-  }
-
-  void _handleUnauthorizedError(DioException e) {
-    if (e.response?.statusCode == 401) {
-      SharedPrefsService.remove('token');
-    }
   }
 
   // Create
@@ -76,12 +112,17 @@ class ApiService {
       );
       return response;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        _handleUnauthorizedError(e);
-      }
-      rethrow;
+      print(e);
+      debugPrint(
+        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
+      );
+      debugPrint('❗ API Error Data: ${e.response?.data}');
+      throw Exception(
+        e.response?.data['message'] ??
+            'Something went wrong. Please try again.',
+      );
     } catch (e) {
-      rethrow;
+      throw Exception('Unexpected error occurred');
     }
   }
 
@@ -100,12 +141,16 @@ class ApiService {
       );
       return response;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        _handleUnauthorizedError(e);
-      }
-      rethrow;
+      debugPrint(
+        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
+      );
+      debugPrint('❗ API Error Data: ${e.response?.data}');
+      throw Exception(
+        e.response?.data['message'] ??
+            'Something went wrong. Please try again.',
+      );
     } catch (e) {
-      rethrow;
+      throw Exception('Unexpected error occurred');
     }
   }
 
@@ -120,12 +165,16 @@ class ApiService {
       final response = await _dio.patch(endpoint, data: data, options: options);
       return response;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        _handleUnauthorizedError(e);
-      }
-      rethrow;
+      debugPrint(
+        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
+      );
+      debugPrint('❗ API Error Data: ${e.response?.data}');
+      throw Exception(
+        e.response?.data['message'] ??
+            'Something went wrong. Please try again.',
+      );
     } catch (e) {
-      rethrow;
+      throw Exception('Unexpected error occurred');
     }
   }
 
@@ -136,12 +185,16 @@ class ApiService {
       final response = await _dio.delete(endpoint, options: options);
       return response;
     } on DioException catch (e) {
-      if (e.response?.statusCode == 401) {
-        _handleUnauthorizedError(e);
-      }
-      rethrow;
+      debugPrint(
+        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
+      );
+      debugPrint('❗ API Error Data: ${e.response?.data}');
+      throw Exception(
+        e.response?.data['message'] ??
+            'Something went wrong. Please try again.',
+      );
     } catch (e) {
-      rethrow;
+      throw Exception('Unexpected error occurred');
     }
   }
 
