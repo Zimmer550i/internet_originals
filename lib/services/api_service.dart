@@ -1,6 +1,7 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:internet_originals/services/shared_prefs_service.dart';
 
 class ApiService {
@@ -10,191 +11,122 @@ class ApiService {
   final bool showAPICalls = true;
 
   late final String baseUrl;
-  final Dio _dio = Dio();
 
   ApiService() {
     baseUrl = inDevelopment ? devUrl : prodUrl;
-    _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = const Duration(seconds: 10);
-    _dio.options.receiveTimeout = const Duration(seconds: 10);
-    _dio.options.headers = {'Content-Type': 'application/json'};
-
-    _dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          if (showAPICalls) {
-            debugPrint('📤 REQUEST => PATH: ${options.path}');
-            debugPrint('📤 DATA: ${options.data}');
-          }
-          handler.next(options);
-        },
-        onResponse: (response, handler) {
-          if (showAPICalls) {
-            debugPrint(
-              '✅ RESPONSE [${response.statusCode}] => PATH: ${response.requestOptions.path}',
-            );
-            debugPrint(response.data);
-          }
-          handler.next(response);
-        },
-        onError: (error, handler) {
-          if (showAPICalls) {
-            debugPrint(
-              '❌ ERROR [${error.response?.statusCode}] => PATH: ${error.requestOptions.path}',
-            );
-            debugPrint(error.response?.data);
-          }
-
-          if (error.response?.statusCode == 401) {
-            SharedPrefsService.remove('token');
-          }
-
-          handler.next(error);
-        },
-      ),
-    );
   }
 
-  Future<Options> _getOptions(bool authReq) async {
+  void _logResponse(http.Response response, String method, Uri uri) {
+    debugPrint('📥 [$method] Response from ${uri.toString()}');
+    debugPrint('✅ Status Code: ${response.statusCode}');
+    debugPrint('📦 Body: ${response.body}');
+  }
+
+  Future<Map<String, String>> _getHeaders(bool authReq) async {
+    Map<String, String> headers = {'Content-Type': 'application/json'};
     if (authReq) {
       final token = await SharedPrefsService.get('token');
-      return Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      headers['Authorization'] = 'Bearer $token';
     }
-    return Options(headers: {'Content-Type': 'application/json'});
+    return headers;
   }
 
   // Create
-  Future<Response> post(
+  Future<http.Response> post(
     String endpoint,
     Map<String, dynamic> data, {
     bool authReq = false,
   }) async {
     try {
-      bool hasFile = data.values.any(
-        (value) => value is File? && value != null,
-      );
+      final headers = await _getHeaders(authReq);
+      final uri = Uri.parse('$baseUrl$endpoint');
 
-      dynamic payload;
+      http.Response response;
+
+      bool hasFile = data.values.any((value) => value is File);
+
       if (hasFile) {
-        final formData = FormData();
+        var request = http.MultipartRequest('POST', uri);
+        request.headers.addAll(headers);
+
         for (final entry in data.entries) {
           final key = entry.key;
           final value = entry.value;
           if (value is File) {
-            formData.files.add(
-              MapEntry(
-                key,
-                await MultipartFile.fromFile(
-                  value.path,
-                  filename: value.path.split('/').last,
-                ),
-              ),
-            );
+            request.files.add(await http.MultipartFile.fromPath(key, value.path));
           } else {
-            formData.fields.add(MapEntry(key, value.toString()));
+            request.fields[key] = value.toString();
           }
         }
-        payload = formData;
+
+        var streamedResponse = await request.send();
+        response = await http.Response.fromStream(streamedResponse);
       } else {
-        payload = data;
+        response = await http.post(uri, headers: headers, body: jsonEncode(data));
       }
 
-      final options = await _getOptions(authReq);
-      final response = await _dio.post(
-        endpoint,
-        data: payload,
-        options: options,
-      );
+      if (showAPICalls) _logResponse(response, 'POST', uri);
+
       return response;
-    } on DioException catch (e) {
-      print(e);
-      debugPrint(
-        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
-      );
-      debugPrint('❗ API Error Data: ${e.response?.data}');
-      throw Exception(
-        e.response?.data['message'] ??
-            'Something went wrong. Please try again.',
-      );
     } catch (e) {
-      throw Exception('Unexpected error occurred');
+      debugPrint('❗ POST Error: $e');
+      throw Exception('Something went wrong. Please try again.');
     }
   }
 
   // Read
-  Future<Response> get(
+  Future<http.Response> get(
     String endpoint, {
     Map<String, dynamic>? queryParams,
     bool authReq = false,
   }) async {
     try {
-      final options = await _getOptions(authReq);
-      final response = await _dio.get(
-        endpoint,
-        queryParameters: queryParams,
-        options: options,
-      );
+      final headers = await _getHeaders(authReq);
+      final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+      final response = await http.get(uri, headers: headers);
+
+      if (showAPICalls) _logResponse(response, 'GET', uri);
+
       return response;
-    } on DioException catch (e) {
-      debugPrint(
-        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
-      );
-      debugPrint('❗ API Error Data: ${e.response?.data}');
-      throw Exception(
-        e.response?.data['message'] ??
-            'Something went wrong. Please try again.',
-      );
     } catch (e) {
-      throw Exception('Unexpected error occurred');
+      debugPrint('❗ GET Error: $e');
+      throw Exception('Something went wrong. Please try again.');
     }
   }
 
   // Patch (Update)
-  Future<Response> patch(
+  Future<http.Response> patch(
     String endpoint,
     Map<String, dynamic> data, {
     bool authReq = false,
   }) async {
     try {
-      final options = await _getOptions(authReq);
-      final response = await _dio.patch(endpoint, data: data, options: options);
+      final headers = await _getHeaders(authReq);
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http.patch(uri, headers: headers, body: jsonEncode(data));
+
+      if (showAPICalls) _logResponse(response, 'PATCH', uri);
+
       return response;
-    } on DioException catch (e) {
-      debugPrint(
-        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
-      );
-      debugPrint('❗ API Error Data: ${e.response?.data}');
-      throw Exception(
-        e.response?.data['message'] ??
-            'Something went wrong. Please try again.',
-      );
     } catch (e) {
-      throw Exception('Unexpected error occurred');
+      debugPrint('❗ PATCH Error: $e');
+      throw Exception('Something went wrong. Please try again.');
     }
   }
 
   // Delete
-  Future<Response> delete(String endpoint, {bool authReq = false}) async {
+  Future<http.Response> delete(String endpoint, {bool authReq = false}) async {
     try {
-      final options = await _getOptions(authReq);
-      final response = await _dio.delete(endpoint, options: options);
+      final headers = await _getHeaders(authReq);
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final response = await http.delete(uri, headers: headers);
+
+      if (showAPICalls) _logResponse(response, 'DELETE', uri);
+
       return response;
-    } on DioException catch (e) {
-      debugPrint(
-        '❗ API Error: ${e.response?.statusCode} ${e.response?.statusMessage}',
-      );
-      debugPrint('❗ API Error Data: ${e.response?.data}');
-      throw Exception(
-        e.response?.data['message'] ??
-            'Something went wrong. Please try again.',
-      );
     } catch (e) {
-      throw Exception('Unexpected error occurred');
+      debugPrint('❗ DELETE Error: $e');
+      throw Exception('Something went wrong. Please try again.');
     }
   }
 

@@ -5,7 +5,8 @@ import 'package:internet_originals/utils/custom_svg.dart';
 class CustomLoading extends StatefulWidget {
   final double size;
   final int secondsPerRotation;
-  const CustomLoading({super.key, this.size = 40, this.secondsPerRotation = 2});
+  final Color? color;
+  const CustomLoading({super.key, this.size = 40, this.secondsPerRotation = 2, this.color});
 
   @override
   CustomLoadingState createState() => CustomLoadingState();
@@ -37,6 +38,7 @@ class CustomLoadingState extends State<CustomLoading>
             asset: AppIcons.loading,
             height: widget.size,
             width: widget.size,
+            color: widget.color,
           ),
         );
       },

@@ -169,7 +169,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         if (widget.errorText != null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.only(left: 8, right: 8, top: 2),
             child: Row(
               spacing: 8,
               children: [

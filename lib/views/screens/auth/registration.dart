@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/auth/email_verification.dart';
@@ -16,23 +17,51 @@ class Registration extends StatefulWidget {
 }
 
 class _RegistrationState extends State<Registration> {
+  bool isLoading = false;
+  final auth = Get.find<AuthController>();
+
   bool obscureText = true;
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController passController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
 
-  void registrationCallback() {
-    String name = nameController.text.trim();
-    // String email = emailController.text.trim();
-    // String phone = phoneController.text.trim();
-    // String pass = passController.text.trim();
+  String? nameError;
+  String? emailError;
+  String? phoneError;
+  String? passError;
+  String? conPassError;
 
-    if (name != "") {
-      showSnackBar("Hi $name");
+  void registrationCallback() async {
+    String name = nameController.text.trim();
+    String email = emailController.text.trim();
+    String phone = phoneController.text.trim();
+    String pass = passController.text.trim();
+    String conPass = passController.text.trim();
+
+    if (!isValid(name, email, phone, pass, conPass)) {
+      setState(() {});
+      return;
     }
-    Get.to(() => EmailVerification());
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final message = await auth.signup(name, email, phone, pass);
+
+    if (message == "success") {
+      showSnackBar("OTP Sent to $email", isError: false);
+      Get.to(() => EmailVerification());
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -53,12 +82,14 @@ class _RegistrationState extends State<Registration> {
                     hintText: "Name",
                     leading: AppIcons.user,
                     controller: nameController,
+                    errorText: nameError,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
                     hintText: "Email",
                     leading: AppIcons.mail,
                     controller: emailController,
+                    errorText: emailError,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
@@ -66,6 +97,7 @@ class _RegistrationState extends State<Registration> {
                     leading: AppIcons.phone,
                     textInputType: TextInputType.phone,
                     controller: phoneController,
+                    errorText: phoneError,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
@@ -73,6 +105,7 @@ class _RegistrationState extends State<Registration> {
                     leading: AppIcons.lock,
                     isPassword: true,
                     controller: passController,
+                    errorText: passError,
                   ),
                   const SizedBox(height: 16),
                   CustomTextField(
@@ -80,6 +113,7 @@ class _RegistrationState extends State<Registration> {
                     leading: AppIcons.lock,
                     isPassword: true,
                     controller: confirmPassController,
+                    errorText: conPassError,
                   ),
                   const SizedBox(height: 40),
                   CustomButton(text: "Register", onTap: registrationCallback),
@@ -116,5 +150,50 @@ class _RegistrationState extends State<Registration> {
         ),
       ),
     );
+  }
+
+  bool isValid(
+    String name,
+    String email,
+    String phone,
+    String pass,
+    String conPass,
+  ) {
+    if (name.isEmpty) {
+      nameError = "This field cannot be null";
+    } else {
+      nameError = null;
+    }
+    if (email.isEmpty) {
+      emailError = "This field cannot be null";
+    } else {
+      emailError = null;
+    }
+    if (phone.isEmpty) {
+      phoneError = "This field cannot be null";
+    } else {
+      phoneError = null;
+    }
+    if (pass.isEmpty) {
+      passError = "This field cannot be null";
+    } else {
+      passError = null;
+    }
+
+    if (pass != conPass) {
+      conPassError = "Password didn't match";
+    } else {
+      conPassError = null;
+    }
+
+    if (nameError == null &&
+        emailError == null &&
+        phoneError == null &&
+        passError == null &&
+        conPassError == null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

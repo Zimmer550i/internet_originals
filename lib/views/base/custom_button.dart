@@ -1,6 +1,7 @@
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 
 class CustomButton extends StatefulWidget {
   final String text;
@@ -56,12 +57,7 @@ class _CustomButtonState extends State<CustomButton> {
         ),
         child:
             widget.isLoading
-                ? Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.red[25],
-                    strokeWidth: 4,
-                  ),
-                )
+                ? Center(child: CustomLoading(size: 24, color: Colors.white))
                 : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
@@ -83,7 +79,10 @@ class _CustomButtonState extends State<CustomButton> {
                       widget.text,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
-                        fontSize: widget.width == null || widget.padding!= null ? 14 : widget.textSize,
+                        fontSize:
+                            widget.width == null || widget.padding != null
+                                ? 14
+                                : widget.textSize,
                         color:
                             widget.isSecondary
                                 ? AppColors.red[600]

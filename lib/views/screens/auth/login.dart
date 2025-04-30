@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
+import 'package:internet_originals/utils/app_constants.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/auth/forgot_password.dart';
@@ -17,37 +19,64 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool isLoading = false;
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  String? emailError;
+  String? passError;
+  final auth = Get.find<AuthController>();
 
   void loginCallback() async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Choose Role"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text("Talent"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Get.toNamed(AppRoutes.talentApp);
-                },
-              ),
-              ListTile(
-                title: Text("Sub Admin"),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Get.toNamed(AppRoutes.subAdminApp);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    final String email = emailController.text.trim();
+    final String pass = passController.text.trim();
+
+    if (!isValid(email, pass)) {
+      setState(() {});
+      return;
+    }
+    setState(() {
+      isLoading = true;
+    });
+
+    final message = await auth.login(email, pass);
+
+    if (message == "success") {
+      showSnackBar(message, isError: false);
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text("Choose Role"),
+    //       content: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: [
+    //           ListTile(
+    //             title: Text("Talent"),
+    //             onTap: () {
+    //               Navigator.of(context).pop();
+    //               Get.toNamed(AppRoutes.talentApp);
+    //             },
+    //           ),
+    //           ListTile(
+    //             title: Text("Sub Admin"),
+    //             onTap: () {
+    //               Navigator.of(context).pop();
+    //               Get.toNamed(AppRoutes.subAdminApp);
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 
   @override
@@ -67,12 +96,14 @@ class _LoginState extends State<Login> {
                   hintText: "Enter Email",
                   leading: AppIcons.mail,
                   controller: emailController,
+                  errorText: emailError,
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
                   hintText: "Enter Password",
                   leading: AppIcons.lock,
                   isPassword: true,
+                  errorText: passError,
                   controller: passController,
                 ),
                 const SizedBox(height: 8),
@@ -96,7 +127,11 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                CustomButton(text: "Login", onTap: loginCallback),
+                CustomButton(
+                  text: "Login",
+                  isLoading: isLoading,
+                  onTap: loginCallback,
+                ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -129,5 +164,25 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  bool isValid(String email, String pass) {
+    if (!email.contains(AppConstants.emailValidator)) {
+      emailError = "Invalid email address";
+    } else {
+      emailError = null;
+    }
+
+    if (pass.isEmpty) {
+      passError = "Enter password";
+    } else {
+      passError = null;
+    }
+
+    if (emailError == null && passError == null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
