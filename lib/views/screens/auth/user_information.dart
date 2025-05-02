@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/instance_manager.dart';
+import 'package:get/route_manager.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
@@ -17,18 +20,47 @@ class UserInformation extends StatefulWidget {
 
 class _UserInformationState extends State<UserInformation> {
   File? _profilePic;
+  bool isLoading = false;
+  final user = Get.find<UserController>();
   TextEditingController addressController = TextEditingController();
   TextEditingController socialController = TextEditingController();
   TextEditingController linkController = TextEditingController();
   TextEditingController followersController = TextEditingController();
 
-  void submitInformation() {
-    // final address = addressController.text.trim();
-    // final social = socialController.text.trim();
-    // final link = linkController.text.trim();
-    // final followers = followersController.text.trim();
+  void submitInformation() async {
+    final address = addressController.text.trim();
+    final social = socialController.text.trim();
+    final link = linkController.text.trim();
+    final followers = followersController.text.trim();
 
-    Get.to(() => AccountUnderReview());
+    setState(() {
+      isLoading = true;
+    });
+
+    final data = {};
+
+    data['address'] = address;
+    data['social'] = social;
+    data['link'] = link;
+    data['followers'] = followers;
+
+    Map<String, dynamic> payload = {"data": data};
+
+    if (_profilePic != null) {
+      payload['image'] = _profilePic;
+    }
+
+    final message = await user.updateInfo(payload);
+
+    if (message == "success") {
+      Get.to(() => AccountUnderReview());
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -79,7 +111,7 @@ class _UserInformationState extends State<UserInformation> {
                   controller: followersController,
                 ),
                 const SizedBox(height: 40),
-                CustomButton(text: "Submit", onTap: submitInformation),
+                CustomButton(text: "Submit", onTap: submitInformation, isLoading: isLoading,),
               ],
             ),
           ),

@@ -111,11 +111,36 @@ class ApiService {
     try {
       final headers = await _getHeaders(authReq);
       final uri = Uri.parse('$baseUrl$endpoint');
-      final response = await http.patch(
-        uri,
-        headers: headers,
-        body: jsonEncode(data),
-      );
+
+      http.Response response;
+
+      bool hasFile = data.values.any((value) => value is File);
+
+      if (hasFile) {
+        var request = http.MultipartRequest('PATCH', uri);
+        request.headers.addAll(headers);
+
+        for (final entry in data.entries) {
+          final key = entry.key;
+          final value = entry.value;
+          if (value is File) {
+            request.files.add(
+              await http.MultipartFile.fromPath(key, value.path),
+            );
+          } else {
+            request.fields[key] = value.toString();
+          }
+        }
+
+        var streamedResponse = await request.send();
+        response = await http.Response.fromStream(streamedResponse);
+      } else {
+        response = await http.patch(
+          uri,
+          headers: headers,
+          body: jsonEncode(data),
+        );
+      }
 
       if (showAPICalls) _logResponse(response, 'PATCH', uri);
 

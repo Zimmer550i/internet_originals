@@ -103,6 +103,13 @@ class AuthController extends GetxController {
       if (response.statusCode == 200) {
         if (isResetingPassword) {
           setToken(jsonDecode(response.body)['data']['accessToken']);
+        } else {
+          final data = jsonDecode(response.body)['data'];
+
+          if (data != null) {
+            Get.find<UserController>().setInfo(data['user']);
+            setToken(data['accessToken']);
+          }
         }
         return "success";
       } else {

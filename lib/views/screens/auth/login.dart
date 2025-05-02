@@ -5,13 +5,13 @@ import 'package:internet_originals/utils/app_constants.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
-import 'package:internet_originals/views/screens/auth/account_under_review.dart';
 import 'package:internet_originals/views/screens/auth/email_verification.dart';
 import 'package:internet_originals/views/screens/auth/forgot_password.dart';
 import 'package:internet_originals/views/screens/auth/registration.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/screens/auth/user_information.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -54,7 +54,8 @@ class _LoginState extends State<Login> {
         showSnackBar(message);
       }
     } else if (message == "Your account is pending, please contact admin") {
-      Get.to(() => AccountUnderReview());
+      Get.to(() => UserInformation());
+      // Get.to(() => AccountUnderReview());
     } else {
       showSnackBar(message);
     }
