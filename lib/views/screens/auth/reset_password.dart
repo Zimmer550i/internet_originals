@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
-import 'package:internet_originals/views/screens/auth/login.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 
@@ -15,12 +15,33 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
+  bool isLoading = false;
+  final auth = Get.find<AuthController>();
   TextEditingController passController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
 
-  void resetPassword() {
-    showSnackBar("Password has been reset");
-    Get.offAll(() => Login());
+  void resetPassword() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final message = await auth.resetPassword(
+      passController.text.trim(),
+      confirmPassController.text.trim(),
+    );
+
+    if (message == "success") {
+      showSnackBar("Your password has been changed", isError: false);
+      Get.back();
+      Get.back();
+      Get.back();
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -48,7 +69,11 @@ class _ResetPasswordState extends State<ResetPassword> {
                   controller: confirmPassController,
                 ),
                 const SizedBox(height: 24),
-                CustomButton(text: "Confirm", onTap: resetPassword),
+                CustomButton(
+                  text: "Confirm",
+                  onTap: resetPassword,
+                  isLoading: isLoading,
+                ),
                 const SizedBox(height: 140),
               ],
             ),

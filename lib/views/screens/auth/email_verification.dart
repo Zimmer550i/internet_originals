@@ -19,31 +19,30 @@ class EmailVerification extends StatefulWidget {
 }
 
 class _EmailVerificationState extends State<EmailVerification> {
+  bool isLoading = false;
   TextEditingController otpController = TextEditingController();
   final auth = Get.find<AuthController>();
 
   void otpVerification() async {
-    if (!widget.resetPass) {
-      final message = await auth.verifyEmail(
-        widget.email ?? "wasiul0491@gmail.com",
-        otpController.text.trim(),
-      );
-      if (message == "success") {
-        Get.to(() => UserInformation());
-      } else {
-        showSnackBar(message);
-      }
+    setState(() {
+      isLoading = true;
+    });
+
+    final message = await auth.verifyEmail(
+      widget.email ?? "wasiul0491@gmail.com",
+      otpController.text.trim(),
+      isResetingPassword: widget.resetPass,
+    );
+
+    if (message.contains("success")) {
+      Get.to(() => widget.resetPass ? ResetPassword() : UserInformation());
     } else {
-      final message = await auth.verifyEmail(
-        widget.email ?? "wasiul0491@gmail.com",
-        otpController.text.trim(),
-      );
-      if (message == "success") {
-        Get.to(() => ResetPassword());
-      } else {
-        showSnackBar(message);
-      }
+      showSnackBar(message);
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void resendOtp() async {
@@ -103,7 +102,11 @@ class _EmailVerificationState extends State<EmailVerification> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                CustomButton(text: "Send OTP", onTap: otpVerification),
+                CustomButton(
+                  text: "Verify",
+                  onTap: otpVerification,
+                  isLoading: isLoading,
+                ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

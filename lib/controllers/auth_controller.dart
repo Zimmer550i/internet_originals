@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -74,14 +75,6 @@ class AuthController extends GetxController {
     }
   }
 
-  // Future<String> resetPassword(
-  //   String first,
-  //   String second,
-  //   String data,
-  // ) async {}
-
-  // Future<String> signup(Map<String, String> data) async {}
-
   Future<String> sendOtp(String email) async {
     try {
       final response = await api.post("/auth/resend-otp", {"email": email});
@@ -106,6 +99,26 @@ class AuthController extends GetxController {
         "email": email,
         "oneTimeCode": int.parse(code),
       });
+
+      if (response.statusCode == 200) {
+        if (isResetingPassword) {
+          setToken(jsonDecode(response.body)['data']['accessToken']);
+        }
+        return "success";
+      } else {
+        return jsonDecode(response.body)['message'] ?? "Connection Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> resetPassword(String pass, String conPass) async {
+    try {
+      final response = await api.post("/auth/reset-password", {
+        "newPassword": pass,
+        "confirmPassword": conPass,
+      }, authReq: true);
 
       if (response.statusCode == 200) {
         return "success";
@@ -138,5 +151,6 @@ class AuthController extends GetxController {
 
   Future<void> setToken(String value) async {
     await SharedPrefsService.set('token', value);
+    debugPrint('💾 Token Saved: $value');
   }
 }

@@ -53,7 +53,9 @@ class ApiService {
           final key = entry.key;
           final value = entry.value;
           if (value is File) {
-            request.files.add(await http.MultipartFile.fromPath(key, value.path));
+            request.files.add(
+              await http.MultipartFile.fromPath(key, value.path),
+            );
           } else {
             request.fields[key] = value.toString();
           }
@@ -62,7 +64,11 @@ class ApiService {
         var streamedResponse = await request.send();
         response = await http.Response.fromStream(streamedResponse);
       } else {
-        response = await http.post(uri, headers: headers, body: jsonEncode(data));
+        response = await http.post(
+          uri,
+          headers: headers,
+          body: jsonEncode(data),
+        );
       }
 
       if (showAPICalls) _logResponse(response, 'POST', uri);
@@ -82,7 +88,9 @@ class ApiService {
   }) async {
     try {
       final headers = await _getHeaders(authReq);
-      final uri = Uri.parse('$baseUrl$endpoint').replace(queryParameters: queryParams);
+      final uri = Uri.parse(
+        '$baseUrl$endpoint',
+      ).replace(queryParameters: queryParams);
       final response = await http.get(uri, headers: headers);
 
       if (showAPICalls) _logResponse(response, 'GET', uri);
@@ -103,7 +111,11 @@ class ApiService {
     try {
       final headers = await _getHeaders(authReq);
       final uri = Uri.parse('$baseUrl$endpoint');
-      final response = await http.patch(uri, headers: headers, body: jsonEncode(data));
+      final response = await http.patch(
+        uri,
+        headers: headers,
+        body: jsonEncode(data),
+      );
 
       if (showAPICalls) _logResponse(response, 'PATCH', uri);
 
@@ -132,5 +144,6 @@ class ApiService {
 
   Future<void> setToken(String token) async {
     await SharedPrefsService.set('token', token);
+    debugPrint('💾 Token Saved: $token');
   }
 }
