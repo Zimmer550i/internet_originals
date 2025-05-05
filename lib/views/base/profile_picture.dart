@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:flutter/material.dart';
@@ -29,32 +30,37 @@ class ProfilePicture extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(100),
           child:
-              image != null
-                  ? Image.network(
-                    image!,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child;
-                      } else {
-                        return SizedBox(
-                          width: size,
-                          height: size,
-                          child: Center(
-                            child:
-                                showLoading
-                                    ? CircularProgressIndicator()
-                                    : Container(color: Colors.grey[200]),
-                          ),
-                        );
-                      }
-                    },
+              imageFile != null
+                  ? Image.file(
+                    imageFile!,
                     width: size,
                     height: size,
                     fit: BoxFit.cover,
                   )
-                  : imageFile != null
-                  ? Image.file(
-                    imageFile!,
+                  : image != null
+                  ? CachedNetworkImage(
+                    imageUrl: image!,
+                    progressIndicatorBuilder: (context, url, progress) {
+                      return SizedBox(
+                        width: size,
+                        height: size,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: progress.progress,
+                            strokeWidth: 2,
+                            color: AppColors.red[400],
+                          ),
+                        ),
+                      );
+                    },
+                    errorWidget: (context, url, error) {
+                      return Container(
+                        width: size,
+                        height: size,
+                        color: AppColors.red[100],
+                        child: Icon(Icons.error, color: Colors.red),
+                      );
+                    },
                     width: size,
                     height: size,
                     fit: BoxFit.cover,

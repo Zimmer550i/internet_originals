@@ -39,10 +39,18 @@ class _UserInformationState extends State<UserInformation> {
 
     final data = {};
 
-    data['address'] = address;
-    data['social'] = social;
-    data['link'] = link;
-    data['followers'] = followers;
+    if (address.isNotEmpty) {
+      data['address'] = address;
+    }
+    if(social.isNotEmpty) {
+      data['social'] = social;
+    }
+    if(link.isNotEmpty) {
+      data['link'] = link;
+    }
+    if(followers.isNotEmpty) {
+      data['followers'] = followers;
+    }
 
     Map<String, dynamic> payload = {"data": data};
 
@@ -89,6 +97,7 @@ class _UserInformationState extends State<UserInformation> {
                     }
                   },
                   child: ProfilePicture(
+                    image: user.getImageUrl(),
                     imageFile: _profilePic,
                     allowEdit: true,
                   ),
@@ -111,7 +120,11 @@ class _UserInformationState extends State<UserInformation> {
                   controller: followersController,
                 ),
                 const SizedBox(height: 40),
-                CustomButton(text: "Submit", onTap: submitInformation, isLoading: isLoading,),
+                CustomButton(
+                  text: "Submit",
+                  onTap: submitInformation,
+                  isLoading: isLoading,
+                ),
               ],
             ),
           ),

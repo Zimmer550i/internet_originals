@@ -35,6 +35,7 @@ class ApiService {
   Future<http.Response> post(
     String endpoint,
     Map<String, dynamic> data, {
+    bool isMultiPart = false,
     bool authReq = false,
   }) async {
     try {
@@ -43,21 +44,20 @@ class ApiService {
 
       http.Response response;
 
-      bool hasFile = data.values.any((value) => value is File);
-
-      if (hasFile) {
+      if (isMultiPart) {
         var request = http.MultipartRequest('POST', uri);
         request.headers.addAll(headers);
 
-        for (final entry in data.entries) {
-          final key = entry.key;
-          final value = entry.value;
-          if (value is File) {
+        for (var entry in data.entries) {
+          if (entry.value is File) {
             request.files.add(
-              await http.MultipartFile.fromPath(key, value.path),
+              await http.MultipartFile.fromPath(
+                entry.key,
+                (entry.value as File).path,
+              ),
             );
           } else {
-            request.fields[key] = value.toString();
+            request.fields[entry.key] = jsonEncode(entry.value);
           }
         }
 
