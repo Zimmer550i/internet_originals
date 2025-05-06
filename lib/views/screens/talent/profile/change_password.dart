@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
@@ -12,7 +15,32 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
-  _updatePassword() {
+  final currentPass = TextEditingController();
+  final newPass = TextEditingController();
+  final confirmPass = TextEditingController();
+  final user = Get.find<UserController>();
+  bool isLoading = false;
+
+  _updatePassword() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final message = await user.changePassword(
+      currentPass.text.trim(),
+      newPass.text.trim(),
+      confirmPass.text.trim(),
+    );
+
+    if (message == "success") {
+      showSnackBar("Password successfully changed", isError: false);
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -28,6 +56,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           children: [
             CustomTextField(
               hintText: 'Current Password',
+              controller: currentPass,
               leading: 'assets/icons/lock.svg',
               isPassword: true,
             ),
@@ -35,6 +64,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 hintText: 'New Password',
+                controller: newPass,
                 leading: 'assets/icons/lock.svg',
                 isPassword: true,
               ),
@@ -44,6 +74,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
               child: CustomTextField(
                 hintText: 'Confirm Password',
+                controller: confirmPass,
                 leading: 'assets/icons/lock.svg',
                 isPassword: true,
               ),

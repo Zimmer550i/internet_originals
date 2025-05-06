@@ -9,7 +9,8 @@ class AdminPersonalInformation extends StatefulWidget {
   const AdminPersonalInformation({super.key});
 
   @override
-  State<AdminPersonalInformation> createState() => _AdminPersonalInformationState();
+  State<AdminPersonalInformation> createState() =>
+      _AdminPersonalInformationState();
 }
 
 class _AdminPersonalInformationState extends State<AdminPersonalInformation> {
@@ -34,7 +35,7 @@ class _AdminPersonalInformationState extends State<AdminPersonalInformation> {
             SizedBox(height: MediaQuery.of(context).size.height * 0.06),
             ProfilePicture(
               image: "https://picsum.photos/200/300",
-              allowEdit: _isEditing,
+              imagePickerCallback: (p0) {},
               size: MediaQuery.of(context).size.width * 0.26,
             ),
             SizedBox(height: 36),

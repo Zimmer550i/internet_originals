@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/base/profile_picture.dart';
 import 'package:internet_originals/views/screens/common/notifications.dart';
 
-class HomeBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isHome;
   const HomeBar({super.key, this.isHome = false});
 
   @override
+  State<HomeBar> createState() => _HomeBarState();
+
+  @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class _HomeBarState extends State<HomeBar> {
+  final user = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,25 +31,20 @@ class HomeBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         children: [
           const SizedBox(width: 20),
-          if (isHome)
+          if (widget.isHome)
             Row(
               children: [
-                ClipOval(
-                  child: Image.asset(
-                    "assets/images/user.png",
-                    height: 44,
-                    width: 44,
-                  ),
-                ),
+                ProfilePicture(image: user.getImageUrl(), size: 44),
                 const SizedBox(width: 8),
                 Text("Hi, ", style: TextStyle(fontSize: 20)),
                 Text(
-                  "Susan",
+                  user.userInfo.value!.name,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
-          if (!isHome) CustomSvg(asset: AppIcons.logo, width: 76, height: 25),
+          if (!widget.isHome)
+            CustomSvg(asset: AppIcons.logo, width: 76, height: 25),
           Spacer(),
           GestureDetector(
             onTap: () {

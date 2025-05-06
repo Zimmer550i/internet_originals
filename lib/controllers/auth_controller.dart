@@ -25,6 +25,11 @@ class AuthController extends GetxController {
           setToken(data['accessToken']);
         }
 
+        if (data['message'] ==
+            "Your account is pending, please contact admin") {
+          return "pending";
+        }
+
         return "success";
       } else {
         return body['message'] ?? "Connection Error";

@@ -7,6 +7,21 @@ class UserController extends GetxController {
   final userInfo = Rxn<UserModel>();
   final api = ApiService();
 
+  Future<String> getInfo() async {
+    try {
+      final response = await api.get("/user/profile", authReq: true);
+
+      if (response.statusCode == 200) {
+        setInfo(jsonDecode(response.body)['data']);
+        return "success";
+      } else {
+        return jsonDecode(response.body)['message'] ?? "Connection Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   void setInfo(Map<String, dynamic>? json) {
     if (json != null) {
       userInfo.value = UserModel.fromJson(json);
@@ -24,6 +39,28 @@ class UserController extends GetxController {
 
       if (response.statusCode == 200) {
         setInfo(jsonDecode(response.body)['data']);
+        return "success";
+      } else {
+        return jsonDecode(response.body)['message'] ?? "Connection Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> changePassword(
+    String current,
+    String newPass,
+    String conPass,
+  ) async {
+    try {
+      final response = await api.post("/auth/change-password", {
+        "currentPassword": current,
+        "newPassword": newPass,
+        "confirmPassword": conPass,
+      }, authReq: true);
+
+      if (response.statusCode == 200) {
         return "success";
       } else {
         return jsonDecode(response.body)['message'] ?? "Connection Error";

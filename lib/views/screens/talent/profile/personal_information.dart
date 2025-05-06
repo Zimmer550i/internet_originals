@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
@@ -14,15 +18,52 @@ class PersonalInformation extends StatefulWidget {
 
 class _PersonalInformationState extends State<PersonalInformation> {
   bool _isEditing = false;
-  TextEditingController nameController = TextEditingController(text: 'Susan Marvin');
-  TextEditingController emailController = TextEditingController(text: 'susan@gmail.com');
-  TextEditingController phoneController = TextEditingController(text: '+88012 3456-7897');
-  TextEditingController locationController = TextEditingController(text: 'Susan Marvin');
+  bool isLoading = false;
+  File? _image;
+  final user = Get.find<UserController>();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
 
-  _updateProfile() {
+  _updateProfile() async {
     setState(() {
+      isLoading = true;
+    });
+    Map<String, dynamic> payload = {};
+    payload['data'] = {
+      "name": nameController.text.trim(),
+      "email": emailController.text.trim(),
+      "phone": phoneController.text.trim(),
+      "address": locationController.text.trim(),
+    };
+
+    if (_image != null) {
+      payload['image'] = _image;
+    }
+    final message = await user.updateInfo(payload);
+
+    if (message == "success") {
+      user.getInfo();
+      showSnackBar("Personal information updated!", isError: false);
+    } else {
+      showSnackBar(message);
+    }
+
+    setState(() {
+      isLoading = false;
       _isEditing = false;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    nameController.text = user.userInfo.value!.name;
+    emailController.text = user.userInfo.value!.email;
+    phoneController.text = user.userInfo.value!.phone;
+    locationController.text = user.userInfo.value!.address ?? "";
   }
 
   @override
@@ -37,8 +78,16 @@ class _PersonalInformationState extends State<PersonalInformation> {
           children: [
             SizedBox(height: MediaQuery.of(context).size.height * 0.06),
             ProfilePicture(
-              image: "https://picsum.photos/200/300",
-              allowEdit: _isEditing,
+              image: user.getImageUrl(),
+              imageFile: _image,
+              imagePickerCallback:
+                  !_isEditing
+                      ? null
+                      : (image) {
+                        setState(() {
+                          _image = image;
+                        });
+                      },
               size: MediaQuery.of(context).size.width * 0.26,
             ),
             SizedBox(height: 48),

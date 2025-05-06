@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
@@ -42,13 +41,13 @@ class _UserInformationState extends State<UserInformation> {
     if (address.isNotEmpty) {
       data['address'] = address;
     }
-    if(social.isNotEmpty) {
+    if (social.isNotEmpty) {
       data['social'] = social;
     }
-    if(link.isNotEmpty) {
+    if (link.isNotEmpty) {
       data['link'] = link;
     }
-    if(followers.isNotEmpty) {
+    if (followers.isNotEmpty) {
       data['followers'] = followers;
     }
 
@@ -83,24 +82,14 @@ class _UserInformationState extends State<UserInformation> {
             child: Column(
               children: [
                 const SizedBox(height: 24),
-                GestureDetector(
-                  onTap: () async {
-                    ImagePicker imagePicker = ImagePicker();
-                    final image = await imagePicker.pickImage(
-                      source: ImageSource.gallery,
-                    );
-
-                    if (image != null) {
-                      setState(() {
-                        _profilePic = File(image.path);
-                      });
-                    }
+                ProfilePicture(
+                  image: user.getImageUrl(),
+                  imageFile: _profilePic,
+                  imagePickerCallback: (p0) {
+                    setState(() {
+                      _profilePic = p0;
+                    });
                   },
-                  child: ProfilePicture(
-                    image: user.getImageUrl(),
-                    imageFile: _profilePic,
-                    allowEdit: true,
-                  ),
                 ),
                 const SizedBox(height: 24),
                 CustomTextField(
