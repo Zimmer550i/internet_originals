@@ -132,7 +132,9 @@ class _PaidPaymentItemState extends State<PaidPaymentItem> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomButton(
-                textSize: 15,
+                width: null,
+                textSize: 14,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 text: 'View Report',
                 onTap: () {
                   Navigator.of(context).push(
@@ -149,7 +151,6 @@ class _PaidPaymentItemState extends State<PaidPaymentItem> {
                     ),
                   );
                 },
-                width: null,
               ),
             ],
           ),

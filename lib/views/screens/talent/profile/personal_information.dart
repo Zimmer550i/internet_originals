@@ -76,7 +76,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           children: [
-            SizedBox(height: MediaQuery.of(context).size.height * 0.06),
+            SizedBox(height: 24),
             ProfilePicture(
               image: user.getImageUrl(),
               imageFile: _image,
@@ -88,9 +88,9 @@ class _PersonalInformationState extends State<PersonalInformation> {
                           _image = image;
                         });
                       },
-              size: MediaQuery.of(context).size.width * 0.26,
+              size: 116,
             ),
-            SizedBox(height: 48),
+            SizedBox(height: 24),
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(

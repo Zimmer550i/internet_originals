@@ -276,6 +276,18 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                         ),
                       ),
                     ),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Admin Notes",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    CustomTextField(hintText: "Add notes...", lines: 5,),
                     const SizedBox(height: 16),
                     CustomButton(
                       text: "Launch Campaign",

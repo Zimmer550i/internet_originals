@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -48,11 +47,9 @@ class _TalentCampaignAcceptanceState extends State<TalentCampaignAcceptance> {
                 text: "View in Active Campaigns",
                 width: null,
                 onTap: () {
-                  Get.until(
-                    (route) =>
-                        Get.currentRoute == AppRoutes.talentApp ||
-                        Get.currentRoute == AppRoutes.subAdminApp,
-                  );
+                  Get.back();
+                  Get.back();
+                  Get.back();
                   talentAppKey.currentState?.setState(() {
                     talentAppKey.currentState?.index = 1;
                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,11 +65,9 @@ class _TalentCampaignAcceptanceState extends State<TalentCampaignAcceptance> {
               GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () {
-                  Get.until(
-                    (route) =>
-                        Get.currentRoute == AppRoutes.talentApp ||
-                        Get.currentRoute == AppRoutes.subAdminApp,
-                  );
+                  Get.back();
+                  Get.back();
+                  Get.back();
                 },
                 child: Text(
                   "Back to Campaign",

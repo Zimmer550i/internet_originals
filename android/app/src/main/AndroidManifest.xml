@@ -6,6 +6,10 @@
         android:label="Internet Originals"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <activity android:name="com.yalantis.ucrop.UCropActivity"
+          android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|screenLayout|orientation"
+          android:label="Internet Originals"
+          android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

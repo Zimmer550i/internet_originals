@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -29,9 +30,9 @@ class _SplashState extends State<Splash> {
       final message = await user.getInfo();
       if (message == "success") {
         if (user.userInfo.value!.role == "INFLUENCER") {
-          nextRoute = TalentApp();
+          nextRoute = TalentApp(key: talentAppKey,);
         } else {
-          nextRoute = SubAdminApp();
+          nextRoute = SubAdminApp(key: subAdminAppKey,);
         }
       } else {
         nextRoute = Onboarding();

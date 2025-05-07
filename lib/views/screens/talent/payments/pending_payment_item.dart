@@ -175,27 +175,25 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
             ],
           ),
           const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomButton(
-                textSize: 15,
-                text:
-                    widget.status == PendingPaymentItemStatus.pending
-                        ? 'Send Payment Request'
-                        : 'Payment Request Sent',
-                onTap: () {
-                  if (widget.status == PendingPaymentItemStatus.pending) {
-                    Get.toNamed(AppRoutes.paymentSelection);
-                  }
-                },
-                width: null,
-                leading:
-                    widget.status == PendingPaymentItemStatus.sent
-                        ? 'assets/icons/payments/double_check.svg'
-                        : null,
-              ),
-            ],
+          Center(
+            child: CustomButton(
+              text:
+                  widget.status == PendingPaymentItemStatus.pending
+                      ? 'Send Payment Request'
+                      : 'Payment Request Sent',
+              onTap: () {
+                if (widget.status == PendingPaymentItemStatus.pending) {
+                  Get.toNamed(AppRoutes.paymentSelection);
+                }
+              },
+              width: null,
+              textSize: 14,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              leading:
+                  widget.status == PendingPaymentItemStatus.sent
+                      ? 'assets/icons/payments/double_check.svg'
+                      : null,
+            ),
           ),
         ],
       ),

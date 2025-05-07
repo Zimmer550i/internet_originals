@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:internet_originals/utils/custom_image_picker.dart';
 
 class ProfilePicture extends StatelessWidget {
   final double size;
@@ -31,11 +31,12 @@ class ProfilePicture extends StatelessWidget {
         if (imagePickerCallback == null) {
           return;
         }
-        final picker = ImagePicker();
 
-        final image = await picker.pickImage(source: ImageSource.gallery);
+        File? image = await customImagePicker();
 
-        if (image != null) imagePickerCallback!(File(image.path));
+        if (image != null) {
+          imagePickerCallback!(image);
+        }
       },
       child: Stack(
         clipBehavior: Clip.none,

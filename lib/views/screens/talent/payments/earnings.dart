@@ -83,7 +83,7 @@ class Earnings extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "Pending Payments",
+                    "Paid Earnings",
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 15,

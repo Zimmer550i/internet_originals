@@ -36,6 +36,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 24),
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -29,6 +29,7 @@ class _ProfileState extends State<Profile> {
       body: PullToRefresh(
         onRefresh: () async {
           await user.getInfo();
+          setState(() {});
         },
         // controller: controller,
         child: SingleChildScrollView(

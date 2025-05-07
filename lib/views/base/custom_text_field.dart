@@ -14,6 +14,7 @@ class CustomTextField extends StatefulWidget {
   final TextInputType? textInputType;
   final bool isDisabled;
   final bool autoFocus;
+  final int lines;
   final double radius;
   final TextEditingController? controller;
   final bool isPassword;
@@ -27,7 +28,8 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.isDisabled = false,
     this.autoFocus = false,
-    this.radius = 2,
+    this.lines = 1,
+    this.radius = 8,
     this.textInputType,
     this.controller,
     this.onTap,
@@ -77,18 +79,31 @@ class _CustomTextFieldState extends State<CustomTextField> {
             }
           },
           child: Container(
-            height: 52,
-            padding: EdgeInsets.symmetric(horizontal: 8),
+            height: widget.lines == 1 ? 52 : null,
+            padding: EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: widget.lines == 1 ? 0 : 8,
+            ),
             decoration: BoxDecoration(
               color: Colors.transparent,
               borderRadius:
-                  isFocused ? BorderRadius.circular(widget.radius) : null,
-              border: Border(
-                bottom: BorderSide(
-                  color:
-                      isFocused ? AppColors.red[400]! : AppColors.green[400]!,
-                ),
-              ),
+                  widget.lines == 1 ? null : BorderRadius.circular(widget.radius),
+              border:
+                  widget.lines == 1
+                      ? Border(
+                        bottom: BorderSide(
+                          color:
+                              isFocused
+                                  ? AppColors.red[400]!
+                                  : AppColors.green[400]!,
+                        ),
+                      )
+                      : Border.all(
+                        color:
+                            isFocused
+                                ? AppColors.red[400]!
+                                : AppColors.green[400]!,
+                      ),
             ),
             child: Row(
               spacing: 8,
@@ -108,6 +123,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     focusNode: focusNode,
                     autofocus: widget.autoFocus,
                     controller: widget.controller,
+                    maxLines: widget.lines,
                     keyboardType:
                         widget.leading == ""
                             ? TextInputType.phone
