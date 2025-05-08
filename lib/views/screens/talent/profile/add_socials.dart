@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
-import 'package:internet_originals/models/social_platform.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
-import 'package:get/get.dart';
 
 class AddSocials extends StatefulWidget {
-  final Function(SocialPlatFormModel)? onAddSocials;
-
-  const AddSocials({super.key, this.onAddSocials});
+  const AddSocials({super.key});
 
   @override
   State<AddSocials> createState() => _AddSocialsState();
 }
 
 class _AddSocialsState extends State<AddSocials> {
+  final talent = Get.find<TalentController>();
   final TextEditingController platformController = TextEditingController();
   final TextEditingController urlController = TextEditingController();
   final TextEditingController followersController = TextEditingController();
@@ -30,26 +30,19 @@ class _AddSocialsState extends State<AddSocials> {
     super.dispose();
   }
 
-  _addSocials() {
+  _addSocials() async {
+    final message = await talent.addSocialPlatform(
+      platformController.text,
+      urlController.text,
+      followersController.text,
+    );
 
-
-    // final reqBody = {
-    //   'platform': platformController.text.trim(),
-    //   'url': urlController.text.trim(),
-    //   'followers': followersController.text.trim(),
-    // };
-
-    // final SocialPlatFormModel model = SocialPlatFormModel(
-    //   id: '21',
-    //   title: platformController.text.trim(),
-    //   url: urlController.text.trim(),
-    //   followerCount: int.parse(followersController.text.trim()),
-    // );
-
-    // widget.onAddSocials?.call(model);
-
-                  Get.toNamed(AppRoutes.socialAdded);
-
+    if (message == "success") {
+      Get.until((route) => Get.currentRoute == AppRoutes.socialPlatforms);
+      showSnackBar("Social platform added successfully");
+    } else {
+      showSnackBar(message);
+    }
   }
 
   @override
@@ -65,21 +58,30 @@ class _AddSocialsState extends State<AddSocials> {
           children: [
             CustomTextField(
               hintText: 'Social Platform (e.g. Youtube, Instagram)',
+              controller: platformController,
             ),
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 hintText: 'Link',
+                controller: urlController,
               ),
             ),
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
                 hintText: 'Followers / Subscribers Count',
+                controller: followersController,
               ),
             ),
             SizedBox(height: 48),
-            CustomButton(text: 'Submit', onTap: _addSocials),
+            Obx(
+              () => CustomButton(
+                text: 'Submit',
+                onTap: _addSocials,
+                isLoading: talent.isLoading.value,
+              ),
+            ),
             SizedBox(height: 48),
           ],
         ),

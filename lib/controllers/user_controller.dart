@@ -7,17 +7,23 @@ class UserController extends GetxController {
   final userInfo = Rxn<UserModel>();
   final api = ApiService();
 
+  RxBool isLoading = RxBool(false);
+
   Future<String> getInfo() async {
+    isLoading.value = true;
     try {
       final response = await api.get("/user/profile", authReq: true);
 
       if (response.statusCode == 200) {
         setInfo(jsonDecode(response.body)['data']);
+        isLoading.value = false;
         return "success";
       } else {
+        isLoading.value = false;
         return jsonDecode(response.body)['message'] ?? "Connection Error";
       }
     } catch (e) {
+      isLoading.value = false;
       return e.toString();
     }
   }
@@ -29,6 +35,7 @@ class UserController extends GetxController {
   }
 
   Future<String> updateInfo(Map<String, dynamic> data) async {
+    isLoading.value = true;
     try {
       final response = await api.post(
         "/user/update-profile",
@@ -39,11 +46,14 @@ class UserController extends GetxController {
 
       if (response.statusCode == 200) {
         setInfo(jsonDecode(response.body)['data']);
+        isLoading.value = false;
         return "success";
       } else {
+        isLoading.value = false;
         return jsonDecode(response.body)['message'] ?? "Connection Error";
       }
     } catch (e) {
+      isLoading.value = false;
       return e.toString();
     }
   }
@@ -53,6 +63,7 @@ class UserController extends GetxController {
     String newPass,
     String conPass,
   ) async {
+    isLoading.value = true;
     try {
       final response = await api.post("/auth/change-password", {
         "currentPassword": current,
@@ -61,11 +72,14 @@ class UserController extends GetxController {
       }, authReq: true);
 
       if (response.statusCode == 200) {
+        isLoading.value = false;
         return "success";
       } else {
+        isLoading.value = false;
         return jsonDecode(response.body)['message'] ?? "Connection Error";
       }
     } catch (e) {
+      isLoading.value = false;
       return e.toString();
     }
   }

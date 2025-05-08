@@ -47,11 +47,7 @@ class _TalentPerformanceMetricsConfirmationState
                 text: "Send Payment Request",
                 width: null,
                 onTap: () {
-                  Get.until(
-                    (route) =>
-                        Get.currentRoute == AppRoutes.talentApp ||
-                        Get.currentRoute == AppRoutes.subAdminApp,
-                  );
+                  Get.toNamed(AppRoutes.paymentSelection);
                 },
               ),
               const SizedBox(height: 12),

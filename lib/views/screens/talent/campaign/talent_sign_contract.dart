@@ -16,7 +16,7 @@ class TalentSignContract extends StatefulWidget {
   State<TalentSignContract> createState() => _TalentSignContractState();
 }
 
-class _TalentSignContractState extends State<TalentSignContract> {
+class _TalentSignContractState extends State<TalentSignContract>  {
   bool agreedToTerms = false;
   File? _imageFile;
 

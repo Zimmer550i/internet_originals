@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 
-class TermsService extends StatelessWidget {
+class TermsService extends StatefulWidget {
   const TermsService({super.key});
 
-  final String termsService =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum \nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.';
+  @override
+  State<TermsService> createState() => _TermsServiceState();
+}
+
+class _TermsServiceState extends State<TermsService> {
+  String? terms;
+  final talent = Get.find<TalentController>();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  fetchData() async {
+    final text = await talent.getPolicies('terms');
+    setState(() {
+      terms = text;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +59,26 @@ class TermsService extends StatelessWidget {
                   color: AppColors.dark[600],
                   border: Border.all(color: AppColors.dark[400]!, width: 2),
                 ),
-                child: Text(
-                  termsService,
-                  style: TextStyle(
-                    color: AppColors.dark[100],
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    height: 1.4,
-                  ),
-                ),
+                child: Obx(() {
+                  if (talent.isLoading.value) {
+                    return CustomLoading();
+                  } else if (terms == null) {
+                    return Text(
+                      "Error loading data",
+                      style: TextStyle(color: AppColors.red),
+                    );
+                  } else {
+                    return Text(
+                      terms!,
+                      style: TextStyle(
+                        color: AppColors.dark[100],
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400,
+                        height: 1.4,
+                      ),
+                    );
+                  }
+                }),
               ),
               SizedBox(height: 72),
             ],

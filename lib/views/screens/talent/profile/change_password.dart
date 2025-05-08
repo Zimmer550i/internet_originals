@@ -21,7 +21,20 @@ class _ChangePasswordState extends State<ChangePassword> {
   final user = Get.find<UserController>();
   bool isLoading = false;
 
+  String? errorText;
+
   _updatePassword() async {
+    if (newPass.text.trim().length < 6) {
+      setState(() {
+        errorText = "Password must contain at least 6 characters";
+      });
+      return;
+    } else {
+      setState(() {
+        errorText = null;
+      });
+    }
+
     setState(() {
       isLoading = true;
     });
@@ -65,6 +78,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: CustomTextField(
                 hintText: 'New Password',
                 controller: newPass,
+                errorText: errorText,
                 leading: 'assets/icons/lock.svg',
                 isPassword: true,
               ),
