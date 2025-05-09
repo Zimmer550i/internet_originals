@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 
 class AdminPrivacyPolicy extends StatefulWidget {
   const AdminPrivacyPolicy({super.key});
@@ -11,6 +14,7 @@ class AdminPrivacyPolicy extends StatefulWidget {
 }
 
 class _AdminPrivacyPolicyState extends State<AdminPrivacyPolicy> {
+  final subAdmin = Get.find<SubAdminController>();
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -19,7 +23,7 @@ class _AdminPrivacyPolicyState extends State<AdminPrivacyPolicy> {
   @override
   void initState() {
     super.initState();
-    _controller.text = policy;
+    fetchData();
   }
 
   @override
@@ -28,8 +32,18 @@ class _AdminPrivacyPolicyState extends State<AdminPrivacyPolicy> {
     super.dispose();
   }
 
-  final String policy =
-      'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum \nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.';
+  void fetchData() async {
+    final text = await subAdmin.getPolicies("privacy");
+    if (text != null) {
+      setState(() {
+        _controller.text = text;
+      });
+    }
+  }
+
+  void updateData() async {
+    await subAdmin.updatePolicies("privacy", _controller.text.trim());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +53,7 @@ class _AdminPrivacyPolicyState extends State<AdminPrivacyPolicy> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 24),
+        padding: EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -54,55 +68,64 @@ class _AdminPrivacyPolicyState extends State<AdminPrivacyPolicy> {
             ),
             SizedBox(height: 18),
             Expanded(
-              child: TextField(
-                expands: true,
-                maxLines: null,
-                minLines: null,
-                controller: _controller,
-                enabled: _enabled,
-                focusNode: _focusNode,
-                decoration: InputDecoration(
-                  fillColor: AppColors.green[600],
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.dark[400]!,
-                      width: 1,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.dark[600],
+                      border: Border.all(color: AppColors.dark[400]!, width: 2),
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.dark[400]!,
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.dark[400]!,
-                      width: 1,
-                    ),
+                    child: Obx(() {
+                      if (subAdmin.isLoading.value) {
+                        return CustomLoading();
+                      } else {
+                        return TextField(
+                          controller: _controller,
+                          focusNode: _focusNode,
+                          maxLines: null,
+                          enabled: _enabled,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xffB8BDBF),
+                          ),
+                          cursorColor: AppColors.red,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            hintText: "Write here...",
+                          ),
+                        );
+                      }
+                    }),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 24),
-            CustomButton(
-              text: _enabled ? 'Update' : 'Edit',
-              onTap: () {
-                setState(() {
-                  _enabled = !_enabled;
-                });
-                if (_enabled) {
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    _focusNode.requestFocus();
-                  });
-                }
-              },
+            SafeArea(
+              child: Obx(() {
+                return CustomButton(
+                  text: _enabled ? 'Update' : 'Edit',
+                  isSecondary: !_enabled || subAdmin.isLoading.value,
+                  isLoading: subAdmin.isLoading.value,
+                  onTap: () {
+                    setState(() {
+                      _enabled = !_enabled;
+                    });
+                    if (_enabled) {
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        _focusNode.requestFocus();
+                      });
+                    } else {
+                      updateData();
+                    }
+                  },
+                );
+              }),
             ),
-            SizedBox(height: 36),
           ],
         ),
       ),

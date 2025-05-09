@@ -99,6 +99,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 leading: 'assets/icons/personal_information/user.svg',
               ),
             ),
+            if(!_isEditing)
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
@@ -115,6 +116,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 leading: 'assets/icons/personal_information/phone.svg',
               ),
             ),
+            if(user.userInfo.value?.role != "SUB_ADMIN")
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(

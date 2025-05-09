@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_modal.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
+import 'package:internet_originals/views/screens/auth/splash.dart';
 
 class SettingsHome extends StatefulWidget {
   const SettingsHome({super.key});
@@ -68,7 +70,10 @@ class _SettingsHomeState extends State<SettingsHome> {
                 title: 'Are you sure you want to',
                 highlight: 'Logout?',
                 leftButtonText: 'Logout',
-                onLeftButtonClick: () => Get.back(),
+                onLeftButtonClick: () {
+                  Get.find<AuthController>().logout();
+                  Get.off(() => Splash());
+                },
                 rightButtonText: 'Cancel',
               );
             },

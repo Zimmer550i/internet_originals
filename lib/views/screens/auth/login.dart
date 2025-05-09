@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/auth_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_constants.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
@@ -32,11 +34,6 @@ class _LoginState extends State<Login> {
     final String email = emailController.text.trim();
     final String pass = passController.text.trim();
 
-    // if (!isValid(email, pass)) {
-    //   setState(() {});
-    //   return;
-    // }
-    
     setState(() {
       isLoading = true;
     });
@@ -44,7 +41,12 @@ class _LoginState extends State<Login> {
     final message = await auth.login(email, pass);
 
     if (message == "success") {
-      showSnackBar(message, isError: false);
+      final role = Get.find<UserController>().userInfo.value!.role;
+      if (role == "SUB_ADMIN") {
+        Get.offNamed(AppRoutes.subAdminApp);
+      } else if (role == "INFLUENCER") {
+        Get.offNamed(AppRoutes.talentApp);
+      }
     } else if (message ==
         "Please verify your account, then try to login again") {
       final message = await auth.sendOtp(email);

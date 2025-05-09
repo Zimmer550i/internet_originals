@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/about_us.dart';
-import 'package:internet_originals/views/screens/sub_admin/settings/personal_information.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/privacy_policy.dart';
 import 'package:internet_originals/views/screens/sub_admin/settings/terms_service.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
@@ -70,7 +69,7 @@ class AppRoutes {
     paymentTerms: PaymentTerms(),
     invoiceSubmitted: InvoiceSubmitted(),
     cashPaymentSubmitted: CashPaymentSubmitted(),
-    adminPersonalInformation: AdminPersonalInformation(),
+    adminPersonalInformation: PersonalInformation(),
     adminPrivacyPolicy: AdminPrivacyPolicy(),
     adminTermsService: AdminTermsService(),
     adminAboutUs: AdminAboutUs(),

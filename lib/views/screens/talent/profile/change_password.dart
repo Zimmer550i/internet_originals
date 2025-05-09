@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
@@ -46,6 +47,11 @@ class _ChangePasswordState extends State<ChangePassword> {
     );
 
     if (message == "success") {
+      Get.until(
+        (route) =>
+            Get.currentRoute == AppRoutes.talentApp ||
+            Get.currentRoute == AppRoutes.subAdminApp,
+      );
       showSnackBar("Password successfully changed", isError: false);
     } else {
       showSnackBar(message);
@@ -94,7 +100,11 @@ class _ChangePasswordState extends State<ChangePassword> {
               ),
             ),
             SizedBox(height: 48),
-            CustomButton(text: 'Set Password', onTap: _updatePassword),
+            CustomButton(
+              text: 'Set Password',
+              onTap: _updatePassword,
+              isLoading: isLoading,
+            ),
             SizedBox(height: 48),
           ],
         ),
