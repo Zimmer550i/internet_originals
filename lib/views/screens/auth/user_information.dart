@@ -42,7 +42,7 @@ class _UserInformationState extends State<UserInformation> {
       data['address'] = address;
     }
     if (social.isNotEmpty) {
-      data['social'] = social;
+      data['platformName'] = social;
     }
     if (link.isNotEmpty) {
       data['link'] = link;
