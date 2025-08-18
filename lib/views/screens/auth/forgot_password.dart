@@ -19,6 +19,7 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   TextEditingController emailController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -27,13 +28,26 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   }
 
   void sendOtpCallback() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final message = await Get.find<AuthController>().forgotPassword(
       emailController.text.trim(),
     );
 
+    setState(() {
+      isLoading = false;
+    });
+
     if (message == "success") {
-      Get.to(() => EmailVerification(resetPass: true));
-      showSnackBar("Otp sent to ${emailController.text.trim()}");
+      Get.to(
+        () => EmailVerification(email: emailController.text, resetPass: true),
+      );
+      showSnackBar(
+        "Otp sent to ${emailController.text.trim()}",
+        isError: false,
+      );
     } else {
       showSnackBar(message);
     }
@@ -74,7 +88,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   controller: emailController,
                 ),
                 const SizedBox(height: 24),
-                CustomButton(text: "Send OTP", onTap: sendOtpCallback),
+                CustomButton(text: "Send OTP", onTap: sendOtpCallback, isLoading: isLoading,),
                 const SizedBox(height: 140),
               ],
             ),

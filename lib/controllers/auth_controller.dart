@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
@@ -22,12 +23,7 @@ class AuthController extends GetxController {
 
         if (data != null) {
           Get.find<UserController>().setInfo(data['user']);
-          setToken(data['accessToken']);
-        }
-
-        if (data['message'] ==
-            "Your account is pending, please contact admin") {
-          return "pending";
+          setToken(data['access_token']);
         }
 
         return "success";
@@ -46,13 +42,22 @@ class AuthController extends GetxController {
     String password,
   ) async {
     try {
-      final response = await api.post("/user/create-influencer", {
+      final response = await api.post("/auth/register", {
         "name": name,
         "email": email,
         "password": password,
         "phone": phone,
       });
-      if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = body["data"];
+
+        if (data != null) {
+          Get.find<UserController>().setInfo(data['user']);
+          setToken(data['access_token']);
+        }
+
         return "success";
       } else {
         return jsonDecode(response.body)['message'] ?? "Connection Error";
@@ -66,7 +71,7 @@ class AuthController extends GetxController {
 
   Future<String> forgotPassword(String email) async {
     try {
-      final response = await api.post("/auth/forgot-password", {
+      final response = await api.post("/auth/reset-password-otp-send", {
         "email": email,
       });
 
@@ -82,7 +87,10 @@ class AuthController extends GetxController {
 
   Future<String> sendOtp(String email) async {
     try {
-      final response = await api.post("/auth/resend-otp", {"email": email});
+      final response = await api.get(
+        "/auth/account-verify-otp-send",
+        authReq: true,
+      );
 
       if (response.statusCode == 200) {
         return "success";
@@ -100,20 +108,24 @@ class AuthController extends GetxController {
     bool isResetingPassword = false,
   }) async {
     try {
-      final response = await api.post("/auth/verify-email", {
-        "email": email,
-        "oneTimeCode": int.parse(code),
-      });
+      final response = await api.post(
+        isResetingPassword
+            ? "/auth/reset-password-otp-verify"
+            : "/auth/account-verify",
+        isResetingPassword ? {"email": email, "otp": code} : {"otp": code},
+        authReq: true,
+      );
 
       if (response.statusCode == 200) {
         if (isResetingPassword) {
-          setToken(jsonDecode(response.body)['data']['accessToken']);
+          final token = jsonDecode(response.body)['data']['reset_token'];
+
+          return "token $token";
         } else {
           final data = jsonDecode(response.body)['data'];
 
           if (data != null) {
             Get.find<UserController>().setInfo(data['user']);
-            setToken(data['accessToken']);
           }
         }
         return "success";
@@ -125,12 +137,56 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<String> resetPassword(String pass, String conPass) async {
+  Future<String> requestForInfluencer(
+    File? avatar,
+    String address,
+    String platform,
+    String link,
+    String followers,
+  ) async {
     try {
-      final response = await api.post("/auth/reset-password", {
-        "newPassword": pass,
-        "confirmPassword": conPass,
-      }, authReq: true);
+      Map<String, String> data = {
+        "address": address,
+        "platform": platform,
+        "link": link,
+        "followers": followers,
+      };
+
+      Map<String, dynamic> payload = {"data": data};
+
+      if (avatar != null) {
+        payload["avatar"] = avatar;
+      }
+
+      final response = await api.post(
+        "/profile/request-for-influencer",
+        payload,
+        isMultiPart: true,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+
+        Get.find<UserController>().setInfo(data);
+        return "success";
+      } else {
+        return body['message'] ?? "Connection Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> resetPassword(
+    String pass,
+    String token,
+  ) async {
+    try {
+      final response = await api.post("/auth/reset-password?reset_token=$token", {
+        "password": pass,
+      });
 
       if (response.statusCode == 200) {
         return "success";

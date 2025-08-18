@@ -85,12 +85,12 @@ class UserController extends GetxController {
   }
 
   String? getImageUrl() {
-    if (userInfo.value == null || userInfo.value!.image == null) {
+    if (userInfo.value == null || userInfo.value!.avatar == null) {
       return null;
     }
 
     String baseUrl = ApiService().baseUrl.replaceAll("/api/v1", "");
 
-    return baseUrl + userInfo.value!.image!;
+    return baseUrl + userInfo.value!.avatar!;
   }
 }

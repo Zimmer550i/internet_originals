@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -27,7 +28,7 @@ class _SplashState extends State<Splash> {
     if (token != null) {
       final message = await user.getInfo();
       if (message == "success") {
-        if (user.userInfo.value!.role == "INFLUENCER") {
+        if (user.userInfo.value!.role == EUserRole.INFLUENCER) {
           nextRoute = AppRoutes.talentApp;
         } else {
           nextRoute = AppRoutes.subAdminApp;

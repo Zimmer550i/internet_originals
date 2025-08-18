@@ -8,7 +8,8 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 
 class ResetPassword extends StatefulWidget {
-  const ResetPassword({super.key});
+  final String token;
+  const ResetPassword({super.key, required this.token});
 
   @override
   State<ResetPassword> createState() => _ResetPasswordState();
@@ -21,13 +22,18 @@ class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController confirmPassController = TextEditingController();
 
   void resetPassword() async {
+    if (passController.text.trim() != confirmPassController.text.trim()) {
+      showSnackBar("Password didn't match");
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
 
     final message = await auth.resetPassword(
       passController.text.trim(),
-      confirmPassController.text.trim(),
+      widget.token
     );
 
     if (message == "success") {

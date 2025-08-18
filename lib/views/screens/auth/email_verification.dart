@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/auth_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
@@ -12,7 +13,13 @@ import 'package:pinput/pinput.dart';
 class EmailVerification extends StatefulWidget {
   final bool resetPass;
   final String? email;
-  const EmailVerification({super.key, this.resetPass = false, this.email});
+  final String? token;
+  const EmailVerification({
+    super.key,
+    this.resetPass = false,
+    this.email,
+    this.token,
+  });
 
   @override
   State<EmailVerification> createState() => _EmailVerificationState();
@@ -29,13 +36,15 @@ class _EmailVerificationState extends State<EmailVerification> {
     });
 
     final message = await auth.verifyEmail(
-      widget.email ?? "wasiul0491@gmail.com",
+      widget.email ?? Get.find<UserController>().userInfo.value!.email,
       otpController.text.trim(),
       isResetingPassword: widget.resetPass,
     );
 
-    if (message.contains("success")) {
-      Get.to(() => widget.resetPass ? ResetPassword() : UserInformation());
+    if (message.contains("token")) {
+      Get.to(() => ResetPassword(token: message.split(" ").last));
+    } else if (message == "success") {
+      Get.to(() => UserInformation());
     } else {
       showSnackBar(message);
     }
@@ -46,10 +55,16 @@ class _EmailVerificationState extends State<EmailVerification> {
   }
 
   void resendOtp() async {
-    final message = await auth.sendOtp(widget.email ?? "wasiul0491@gmail.com");
+    final message =
+        widget.resetPass
+            ? await auth.forgotPassword(widget.email!)
+            : await auth.sendOtp(widget.email!);
 
     if (message == "success") {
-      showSnackBar("OTP sent to ${widget.email ?? "wasiul0491@gmail.com"}");
+      showSnackBar(
+        "OTP sent to ${widget.email ?? "wasiul0491@gmail.com"}",
+        isError: false,
+      );
     }
   }
 

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
-import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/controllers/auth_controller.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
@@ -20,7 +20,7 @@ class UserInformation extends StatefulWidget {
 class _UserInformationState extends State<UserInformation> {
   File? _profilePic;
   bool isLoading = false;
-  final user = Get.find<UserController>();
+  final auth = Get.find<AuthController>();
   TextEditingController addressController = TextEditingController();
   TextEditingController socialController = TextEditingController();
   TextEditingController linkController = TextEditingController();
@@ -36,28 +36,13 @@ class _UserInformationState extends State<UserInformation> {
       isLoading = true;
     });
 
-    final data = {};
-
-    if (address.isNotEmpty) {
-      data['address'] = address;
-    }
-    if (social.isNotEmpty) {
-      data['platformName'] = social;
-    }
-    if (link.isNotEmpty) {
-      data['link'] = link;
-    }
-    if (followers.isNotEmpty) {
-      data['followers'] = followers;
-    }
-
-    Map<String, dynamic> payload = {"data": data};
-
-    if (_profilePic != null) {
-      payload['image'] = _profilePic;
-    }
-
-    final message = await user.updateInfo(payload);
+    final message = await auth.requestForInfluencer(
+      _profilePic,
+      address,
+      social,
+      link,
+      followers,
+    );
 
     if (message == "success") {
       Get.to(() => AccountUnderReview());
@@ -83,7 +68,6 @@ class _UserInformationState extends State<UserInformation> {
               children: [
                 const SizedBox(height: 24),
                 ProfilePicture(
-                  image: user.getImageUrl(),
                   imageFile: _profilePic,
                   imagePickerCallback: (p0) {
                     setState(() {
@@ -107,6 +91,7 @@ class _UserInformationState extends State<UserInformation> {
                 CustomTextField(
                   hintText: "Subscriber/Follower Count",
                   controller: followersController,
+                  textInputType: TextInputType.numberWithOptions(),
                 ),
                 const SizedBox(height: 40),
                 CustomButton(

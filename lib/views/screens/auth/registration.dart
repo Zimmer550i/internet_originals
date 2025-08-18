@@ -116,7 +116,7 @@ class _RegistrationState extends State<Registration> {
                     errorText: conPassError,
                   ),
                   const SizedBox(height: 40),
-                  CustomButton(text: "Register", onTap: registrationCallback),
+                  CustomButton(text: "Register", isLoading: isLoading, onTap: registrationCallback),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -1,100 +1,106 @@
-import 'dart:convert';
+// ignore_for_file: constant_identifier_names
 
-UserModel userFromJson(String str) => UserModel.fromJson(json.decode(str));
+enum EUserRole {
+  GUEST,
+  USER,
+  INFLUENCER,
+  ADMIN,
+  SUB_ADMIN,
+}
 
-String userToJson(UserModel data) => json.encode(data.toJson());
+class TSocial {
+  final String platform;
+  final String link;
+  final int followers;
+
+  TSocial({
+    required this.platform,
+    required this.link,
+    required this.followers,
+  });
+
+  factory TSocial.fromJson(Map<String, dynamic> json) {
+    return TSocial(
+      platform: json['platform'] ?? '',
+      link: json['link'] ?? '',
+      followers: json['followers'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'platform': platform,
+      'link': link,
+      'followers': followers,
+    };
+  }
+}
 
 class UserModel {
-    String id;
-    String name;
-    String role;
-    String email;
-    String phone;
-    bool verified;
-    String status;
-    String loginStatus;
-    DateTime createdAt;
-    DateTime updatedAt;
-    String? address;
-    String? image;
-    String? fcmToken;
+  final String id;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String? fcmToken;
+  final EUserRole role;
+  final String name;
+  final String email;
+  final String phone;
+  final String? avatar;
+  final String? address;
+  final double rating;
+  final List<TSocial> socials;
 
-    UserModel({
-        required this.id,
-        required this.name,
-        required this.role,
-        required this.email,
-        required this.phone,
-        required this.verified,
-        required this.status,
-        required this.loginStatus,
-        required this.createdAt,
-        required this.updatedAt,
-        required this.address,
-        required this.image,
-        required this.fcmToken,
-    });
+  UserModel({
+    required this.id,
+    required this.createdAt,
+    required this.updatedAt,
+    this.fcmToken,
+    required this.role,
+    required this.name,
+    required this.email,
+    required this.phone,
+    this.avatar,
+    this.address,
+    required this.rating,
+    required this.socials,
+  });
 
-    UserModel copyWith({
-        String? id,
-        String? name,
-        String? role,
-        String? email,
-        String? phone,
-        bool? verified,
-        String? status,
-        String? loginStatus,
-        DateTime? createdAt,
-        DateTime? updatedAt,
-        String? address,
-        String? image,
-        String? fcmToken,
-    }) => 
-        UserModel(
-            id: id ?? this.id,
-            name: name ?? this.name,
-            role: role ?? this.role,
-            email: email ?? this.email,
-            phone: phone ?? this.phone,
-            verified: verified ?? this.verified,
-            status: status ?? this.status,
-            loginStatus: loginStatus ?? this.loginStatus,
-            createdAt: createdAt ?? this.createdAt,
-            updatedAt: updatedAt ?? this.updatedAt,
-            address: address ?? this.address,
-            image: image ?? this.image,
-            fcmToken: fcmToken ?? this.fcmToken,
-        );
-
-    factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        id: json["_id"],
-        name: json["name"],
-        role: json["role"],
-        email: json["email"],
-        phone: json["phone"],
-        verified: json["verified"],
-        status: json["status"],
-        loginStatus: json["loginStatus"],
-        createdAt: DateTime.parse(json["createdAt"]),
-        updatedAt: DateTime.parse(json["updatedAt"]),
-        address: json["address"],
-        image: json["image"],
-        fcmToken: json["fcmToken"],
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      fcmToken: json['fcmToken'],
+      role: EUserRole.values.firstWhere(
+        (e) => e.name == (json['role'] ?? 'GUEST'),
+        orElse: () => EUserRole.GUEST,
+      ),
+      name: json['name'],
+      email: json['email'],
+      phone: json['phone'],
+      avatar: json['avatar'],
+      address: json['address'],
+      rating: (json['rating'] ?? 0).toDouble(),
+      socials: (json['socials'] as List<dynamic>? ?? [])
+          .map((e) => TSocial.fromJson(e))
+          .toList(),
     );
+  }
 
-    Map<String, dynamic> toJson() => {
-        "_id": id,
-        "name": name,
-        "role": role,
-        "email": email,
-        "phone": phone,
-        "verified": verified,
-        "status": status,
-        "loginStatus": loginStatus,
-        "createdAt": createdAt.toIso8601String(),
-        "updatedAt": updatedAt.toIso8601String(),
-        "address": address,
-        "image": image,
-        "fcmToken": fcmToken,
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'fcmToken': fcmToken,
+      'role': role.name,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'avatar': avatar,
+      'address': address,
+      'rating': rating,
+      'socials': socials.map((e) => e.toJson()).toList(),
     };
+  }
 }

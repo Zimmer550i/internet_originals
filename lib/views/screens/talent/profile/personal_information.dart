@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
@@ -116,7 +117,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
                 leading: 'assets/icons/personal_information/phone.svg',
               ),
             ),
-            if(user.userInfo.value?.role != "SUB_ADMIN")
+            if(user.userInfo.value?.role != EUserRole.SUB_ADMIN)
             Padding(
               padding: EdgeInsets.only(top: 12),
               child: CustomTextField(
