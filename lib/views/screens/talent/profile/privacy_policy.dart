@@ -24,9 +24,11 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
 
   fetchData() async {
     final text = await talent.getPolicies('privacy');
-    setState(() {
-      policy = text;
-    });
+    if (mounted) {
+      setState(() {
+        policy = text;
+      });
+    }
   }
 
   @override

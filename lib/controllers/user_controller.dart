@@ -12,7 +12,7 @@ class UserController extends GetxController {
   Future<String> getInfo() async {
     isLoading.value = true;
     try {
-      final response = await api.get("/user/profile", authReq: true);
+      final response = await api.get("/profile", authReq: true);
 
       if (response.statusCode == 200) {
         setInfo(jsonDecode(response.body)['data']);
@@ -37,8 +37,8 @@ class UserController extends GetxController {
   Future<String> updateInfo(Map<String, dynamic> data) async {
     isLoading.value = true;
     try {
-      final response = await api.post(
-        "/user/update-profile",
+      final response = await api.patch(
+        "/profile/edit",
         data,
         authReq: true,
         isMultiPart: true,
@@ -59,16 +59,14 @@ class UserController extends GetxController {
   }
 
   Future<String> changePassword(
-    String current,
+    String oldPass,
     String newPass,
-    String conPass,
   ) async {
     isLoading.value = true;
     try {
-      final response = await api.post("/auth/change-password", {
-        "currentPassword": current,
+      final response = await api.post("/profile/change-password", {
+        "oldPassword": oldPass,
         "newPassword": newPass,
-        "confirmPassword": conPass,
       }, authReq: true);
 
       if (response.statusCode == 200) {

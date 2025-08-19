@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/social_platform.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_modal.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:get/get.dart';
@@ -17,22 +18,45 @@ class SocialPlatforms extends StatefulWidget {
 }
 
 class _SocialPlatformsState extends State<SocialPlatforms> {
-  final TalentController talent = TalentController();
+  final user = Get.find<UserController>();
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    talent.getSocialPlatforms();
   }
 
-  _removeTap(String targetId) {
+  removeSocial(int index) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    var prevList = user.userInfo.value!.socials;
+    prevList.removeAt(index);
+    final message = await user.updateInfo({
+      "data": {"socials": (prevList)},
+    });
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (message == "success") {
+      Get.until((route) => Get.currentRoute == AppRoutes.socialPlatforms);
+      showSnackBar("Social platform removed successfully", isError: false);
+    } else {
+      showSnackBar(message);
+    }
+  }
+
+  _removeTap(int index) {
     showCustomModal(
       context: context,
       title: 'Are you sure about removing this account?',
       leftButtonText: 'Remove',
       rightButtonText: 'Cancel',
       onLeftButtonClick: () async {
-        await talent.deleteSocialPlatform(targetId);
+        await removeSocial(index);
       },
     );
   }
@@ -52,15 +76,16 @@ class _SocialPlatformsState extends State<SocialPlatforms> {
               Obx(
                 () => Column(
                   children: [
-                    ...talent.socialPlatforms.map((item) {
-                      return SocialPlatformItem(
-                        model: item,
-                        onRemoveTap: (String id) {
-                          _removeTap(id);
-                        },
-                      );
-                    }),
-                    if (talent.socialPlatforms.isEmpty)
+                    for (
+                      int i = 0;
+                      i < user.userInfo.value!.socials.length;
+                      i++
+                    )
+                      SocialPlatformItem(
+                        model: user.userInfo.value!.socials[i],
+                        onRemoveTap: () => _removeTap(i),
+                      ),
+                    if (user.userInfo.value!.socials.isEmpty)
                       Text("No social platform has been added"),
                   ],
                 ),
@@ -83,7 +108,7 @@ class _SocialPlatformsState extends State<SocialPlatforms> {
 
 class SocialPlatformItem extends StatelessWidget {
   final SocialPlatformModel model;
-  final Function(String id) onRemoveTap;
+  final void Function() onRemoveTap;
 
   const SocialPlatformItem({
     super.key,
@@ -106,7 +131,7 @@ class SocialPlatformItem extends StatelessWidget {
           SizedBox(width: 10),
           Expanded(
             child: Text(
-              '${model.platformName}: ${model.url.split("/").last}',
+              '${model.platform}: ${model.link.split("/").last}',
               style: TextStyle(
                 color: AppColors.dark[50],
                 fontSize: 17,
@@ -117,9 +142,7 @@ class SocialPlatformItem extends StatelessWidget {
           ),
           SizedBox(width: 10),
           GestureDetector(
-            onTap: () {
-              onRemoveTap(model.id);
-            },
+            onTap: onRemoveTap,
             child: CustomSvg(
               asset: 'assets/icons/social_platforms/delete_circle.svg',
               width: 20,

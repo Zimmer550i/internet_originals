@@ -24,9 +24,11 @@ class _TermsServiceState extends State<TermsService> {
 
   fetchData() async {
     final text = await talent.getPolicies('terms');
-    setState(() {
-      terms = text;
-    });
+    if (mounted) {
+      setState(() {
+        terms = text;
+      });
+    }
   }
 
   @override

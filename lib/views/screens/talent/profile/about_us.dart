@@ -24,9 +24,11 @@ class _AboutUsState extends State<AboutUs> {
 
   fetchData() async {
     final text = await talent.getPolicies('about');
-    setState(() {
-      aboutUs = text;
-    });
+    if (mounted) {
+      setState(() {
+        aboutUs = text;
+      });
+    }
   }
 
   @override

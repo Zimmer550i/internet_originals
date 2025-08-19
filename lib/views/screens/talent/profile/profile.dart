@@ -37,18 +37,22 @@ class _ProfileState extends State<Profile> {
           child: Column(
             children: [
               SafeArea(child: SizedBox(height: 24)),
-              Center(
-                child: ProfilePicture(image: user.getImageUrl(), size: 116),
+              Obx(
+                () => Center(
+                  child: ProfilePicture(image: user.getImageUrl(), size: 116),
+                ),
               ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 20, bottom: 24),
-                  child: Text(
-                    user.userInfo.value!.name,
-                    style: TextStyle(
-                      color: AppColors.dark[50],
-                      fontSize: 22,
-                      fontWeight: FontWeight.w400,
+              Obx(
+                () => Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 20, bottom: 24),
+                    child: Text(
+                      user.userInfo.value!.name,
+                      style: TextStyle(
+                        color: AppColors.dark[50],
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ),

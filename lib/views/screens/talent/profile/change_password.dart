@@ -30,6 +30,11 @@ class _ChangePasswordState extends State<ChangePassword> {
         errorText = "Password must contain at least 6 characters";
       });
       return;
+    } else if (newPass.text.trim() != confirmPass.text.trim()) {
+      setState(() {
+        errorText = "New Passwords didn't match";
+      });
+      return;
     } else {
       setState(() {
         errorText = null;
@@ -43,7 +48,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     final message = await user.changePassword(
       currentPass.text.trim(),
       newPass.text.trim(),
-      confirmPass.text.trim(),
     );
 
     if (message == "success") {

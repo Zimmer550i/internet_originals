@@ -1,47 +1,47 @@
 class SocialPlatformModel {
-  String id;
-  String followerCount;
-  String url;
-  String platformName;
-  String userId;
-  String createdAt;
-  String updatedAt;
-  int v;
+  final String platform;
+  final String link;
+  final int followers;
 
   SocialPlatformModel({
-    required this.id,
-    required this.followerCount,
-    required this.url,
-    required this.platformName,
-    required this.userId,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.v,
+    required this.platform,
+    required this.link,
+    required this.followers,
   });
 
+  /// From JSON
   factory SocialPlatformModel.fromJson(Map<String, dynamic> json) {
     return SocialPlatformModel(
-      id: json['_id'],
-      followerCount: json['followers'],
-      url: json['link'],
-      platformName: json['platformName'],
-      userId: json['userId'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      v: json['__v'],
+      platform: json['platform'] ?? '',
+      link: json['link'] ?? '',
+      followers: json['followers'] ?? 0,
     );
   }
 
+  /// To JSON
   Map<String, dynamic> toJson() {
     return {
-      '_id': id,
-      'followers': followerCount,
-      'link': url,
-      'platformName': platformName,
-      'userId': userId,
-      'createdAt': createdAt,
-      'updatedAt': updatedAt,
-      '__v': v,
+      'platform': platform,
+      'link': link,
+      'followers': followers,
     };
+  }
+
+  /// Copy with method
+  SocialPlatformModel copyWith({
+    String? platform,
+    String? link,
+    int? followers,
+  }) {
+    return SocialPlatformModel(
+      platform: platform ?? this.platform,
+      link: link ?? this.link,
+      followers: followers ?? this.followers,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'SocialPlatformModel(platform: $platform, link: $link, followers: $followers)';
   }
 }

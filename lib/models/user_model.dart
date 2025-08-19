@@ -1,39 +1,13 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:internet_originals/models/social_platform.dart';
+
 enum EUserRole {
   GUEST,
   USER,
   INFLUENCER,
   ADMIN,
   SUB_ADMIN,
-}
-
-class TSocial {
-  final String platform;
-  final String link;
-  final int followers;
-
-  TSocial({
-    required this.platform,
-    required this.link,
-    required this.followers,
-  });
-
-  factory TSocial.fromJson(Map<String, dynamic> json) {
-    return TSocial(
-      platform: json['platform'] ?? '',
-      link: json['link'] ?? '',
-      followers: json['followers'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'platform': platform,
-      'link': link,
-      'followers': followers,
-    };
-  }
 }
 
 class UserModel {
@@ -48,7 +22,7 @@ class UserModel {
   final String? avatar;
   final String? address;
   final double rating;
-  final List<TSocial> socials;
+  final List<SocialPlatformModel> socials;
 
   UserModel({
     required this.id,
@@ -82,7 +56,7 @@ class UserModel {
       address: json['address'],
       rating: (json['rating'] ?? 0).toDouble(),
       socials: (json['socials'] as List<dynamic>? ?? [])
-          .map((e) => TSocial.fromJson(e))
+          .map((e) => SocialPlatformModel.fromJson(e))
           .toList(),
     );
   }

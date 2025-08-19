@@ -201,12 +201,12 @@ class AuthController extends GetxController {
   Future<bool> checkLoginStatus() async {
     String? token = await SharedPrefsService.get('token');
     if (token != null) {
-      // debugPrint('🔍 Token found. Fetching user info...');
-      // final message = await getUserInfo();
-      // if (message == "Success") {
-      //   isLoggedIn.value = true;
-      //   return true;
-      // }
+      debugPrint('🔍 Token found. Fetching user info...');
+      final message = await Get.find<UserController>().getInfo();
+      if (message == "success") {
+        isLoggedIn.value = true;
+        return true;
+      }
     }
     isLoggedIn.value = false;
     return false;

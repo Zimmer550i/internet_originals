@@ -40,7 +40,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
     };
 
     if (_image != null) {
-      payload['image'] = _image;
+      payload['avatar'] = _image;
     }
     final message = await user.updateInfo(payload);
 

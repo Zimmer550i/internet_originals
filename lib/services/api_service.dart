@@ -106,6 +106,7 @@ class ApiService {
   Future<http.Response> patch(
     String endpoint,
     Map<String, dynamic> data, {
+    bool isMultiPart = false,
     bool authReq = false,
   }) async {
     try {
@@ -114,21 +115,20 @@ class ApiService {
 
       http.Response response;
 
-      bool hasFile = data.values.any((value) => value is File);
-
-      if (hasFile) {
+      if (isMultiPart) {
         var request = http.MultipartRequest('PATCH', uri);
         request.headers.addAll(headers);
 
-        for (final entry in data.entries) {
-          final key = entry.key;
-          final value = entry.value;
-          if (value is File) {
+        for (var entry in data.entries) {
+          if (entry.value is File) {
             request.files.add(
-              await http.MultipartFile.fromPath(key, value.path),
+              await http.MultipartFile.fromPath(
+                entry.key,
+                (entry.value as File).path,
+              ),
             );
           } else {
-            request.fields[key] = value.toString();
+            request.fields[entry.key] = jsonEncode(entry.value);
           }
         }
 
@@ -142,7 +142,7 @@ class ApiService {
         );
       }
 
-      if (showAPICalls) _logResponse(response, 'PATCH', uri);
+      if (showAPICalls) _logResponse(response, 'POST', uri);
 
       return response;
     } catch (e) {
