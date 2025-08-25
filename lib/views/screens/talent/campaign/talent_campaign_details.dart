@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 
 class TalentCampaignDetails extends StatelessWidget {
-  final String? status;
-  final Widget? actions;
-  const TalentCampaignDetails({super.key, required this.status, this.actions});
+  final CampaignModel campaign;
+  const TalentCampaignDetails({super.key, required this.campaign});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class TalentCampaignDetails extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 16),
-                CampaignCard(isDetailed: true, status: status, action: actions),
+                CampaignCard(isDetailed: true, campaign: campaign),
               ],
             ),
           ),

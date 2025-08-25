@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:internet_originals/models/task_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_pending_task.dart';
 
 class TaskCard extends StatelessWidget {
-  final String title;
-  final String brandName;
-  final String imageLink;
-  final DateTime deadline;
-  final String details;
-  final Map<String, String> requiredMatrics;
-  const TaskCard({
-    super.key,
-    required this.title,
-    required this.brandName,
-    required this.imageLink,
-    required this.deadline,
-    required this.details,
-    required this.requiredMatrics,
-  });
+  final TaskModel task;
+  const TaskCard({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -36,31 +25,43 @@ class TaskCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: Image.network(
-                  imageLink,
-                  height: 44,
-                  width: 44,
-                  fit: BoxFit.cover,
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: Image.network(
+                    ApiService().baseUrl + task.campaign.banner,
+                    height: 44,
+                    width: 44,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
-                  ),
-                  Text(brandName, style: TextStyle(fontSize: 14)),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.campaign.title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 18,
+                      ),
+                    ),
+                    Text(
+                      task.campaign.brand,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
           Text(
-            details,
+            task.duration.toString(),
             style: TextStyle(fontSize: 14),
             textAlign: TextAlign.left,
           ),
@@ -79,7 +80,7 @@ class TaskCard extends StatelessWidget {
                     CustomSvg(asset: AppIcons.clock),
                     const SizedBox(width: 4),
                     Text(
-                      "${deadline.difference(DateTime.now()).inDays.toString()} Days Left",
+                      "${task.duration.difference(DateTime.now()).inDays.toString()} Days Left",
                       style: TextStyle(color: AppColors.red[900], fontSize: 14),
                     ),
                   ],
@@ -87,7 +88,7 @@ class TaskCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => TalentPendingTask());
+                  Get.to(() => TalentPendingTask(task: task,));
                 },
                 child: CustomSvg(asset: AppIcons.redArrowRight, size: 35),
               ),

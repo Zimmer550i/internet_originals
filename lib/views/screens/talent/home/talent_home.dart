@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/base/task_card.dart';
@@ -16,8 +21,24 @@ class TalentHome extends StatefulWidget {
 }
 
 class _TalentHomeState extends State<TalentHome> {
+  final talent = Get.find<TalentController>();
   int selectedTab = 0;
   List<String> status = ["pending", "active", "completed"];
+
+  @override
+  void initState() {
+    super.initState();
+    talent.getTasks().then((val) {
+      if (val != "success") {
+        showSnackBar(val);
+      }
+    });
+    talent.getCampaigns(status: status[selectedTab].toUpperCase()).then((val) {
+      if (val != "success") {
+        showSnackBar(val);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,23 +82,21 @@ class _TalentHomeState extends State<TalentHome> {
                     ],
                   ),
                 ),
-                ListView.builder(
-                  itemCount: 2,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (val, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: TaskCard(
-                        title: "Nike Air Max Campaign",
-                        brandName: "Nike",
-                        imageLink: "https://picsum.photos/200/200",
-                        deadline: DateTime.now().add(Duration(days: 3)),
-                        details: "Upload your Instagram reel & post",
-                        requiredMatrics: {"Likes": "40K", "Comments": "5K"},
-                      ),
-                    );
-                  },
+                Obx(
+                  () =>
+                      talent.taskLoading.value
+                          ? CustomLoading()
+                          : ListView.builder(
+                            itemCount: min(2, talent.tasks.length),
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (val, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: TaskCard(task: talent.tasks[index]),
+                              );
+                            },
+                          ),
                 ),
                 const SizedBox(height: 24),
                 InkWell(
@@ -117,20 +136,38 @@ class _TalentHomeState extends State<TalentHome> {
                     setState(() {
                       selectedTab = val;
                     });
+                    talent
+                        .getCampaigns(status: status[selectedTab].toUpperCase())
+                        .then((val) {
+                          if (val != "success") {
+                            showSnackBar(val);
+                          }
+                        });
                   },
                 ),
 
-                ListView.builder(
-                  itemCount: 2,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (val, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: CampaignCard(status: status[selectedTab],),
-                    );
-                  },
+                Obx(
+                  () =>
+                      talent.campaignLoading.value
+                          ? Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: CustomLoading(),
+                          )
+                          : ListView.builder(
+                            itemCount: min(2, talent.campaigns.length),
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (val, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: CampaignCard(
+                                  campaign: talent.campaigns.elementAt(index),
+                                ),
+                              );
+                            },
+                          ),
                 ),
+                const SizedBox(height: 16),
               ],
             ),
           ),

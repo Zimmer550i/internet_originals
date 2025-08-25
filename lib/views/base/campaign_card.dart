@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -13,15 +14,11 @@ import 'package:internet_originals/views/screens/talent/campaign/talent_sign_con
 
 class CampaignCard extends StatelessWidget {
   final bool isDetailed;
-  final Widget? action;
-  final String? status;
-  final Function()? onTap;
+  final CampaignModel campaign;
   const CampaignCard({
     super.key,
     this.isDetailed = false,
-    this.action,
-    this.status,
-    this.onTap,
+    required this.campaign,
   });
 
   @override
@@ -39,12 +36,7 @@ class CampaignCard extends StatelessWidget {
           header(),
           const SizedBox(height: 12),
           isDetailed ? detailedInfo(context) : shortInfo(),
-          if (action != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 16),
-              child: Center(child: action!),
-            ),
-          if (action == null && isDetailed == false)
+          if (campaign.status == CampaignStatus.PENDING && !isDetailed)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(
@@ -52,11 +44,9 @@ class CampaignCard extends StatelessWidget {
                   text: "View Details",
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                   textSize: 14,
-                  onTap:
-                      onTap ??
-                      () {
-                        Get.to(() => TalentCampaignDetails(status: status));
-                      },
+                  onTap: () {
+                    Get.to(() => TalentCampaignDetails(campaign: campaign));
+                  },
                 ),
               ),
             ),
@@ -191,7 +181,7 @@ class CampaignCard extends StatelessWidget {
           ),
         ),
 
-        if (status == "pending")
+        if (campaign.status == CampaignStatus.PENDING)
           Row(
             children: [
               Expanded(
@@ -217,7 +207,7 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
 
-        if (status == "active")
+        if (campaign.status == CampaignStatus.ACTIVE)
           Align(
             child: CustomButton(
               text: "Upload Matrix",
@@ -229,7 +219,7 @@ class CampaignCard extends StatelessWidget {
             ),
           ),
 
-        if (status == "completed")
+        if (campaign.status == CampaignStatus.COMPLETED)
           Align(
             child: CustomButton(
               text: "Give Feedback",
@@ -380,7 +370,7 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
         ),
-        if (status != "pending" && status != null)
+        if (campaign.status != CampaignStatus.PENDING)
           Row(
             children: [
               Container(
@@ -393,7 +383,7 @@ class CampaignCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                "Status: $status",
+                "Status: ${campaign.status}",
                 style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
               ),
             ],

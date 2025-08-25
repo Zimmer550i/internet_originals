@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
 
 class TalentCampaign extends StatefulWidget {
   const TalentCampaign({super.key});
@@ -14,7 +16,22 @@ class TalentCampaign extends StatefulWidget {
 
 class _TalentCampaignState extends State<TalentCampaign> {
   int selectedTab = 0;
+  final talent = Get.find<TalentController>();
   List<String> status = ["pending", "active", "completed"];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    talent.getCampaigns(status: status[selectedTab].toUpperCase()).then((val) {
+      if (val != "success") {
+        showSnackBar(val);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +50,26 @@ class _TalentCampaignState extends State<TalentCampaign> {
                   setState(() {
                     selectedTab = val;
                   });
+                  getData();
                 },
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: CampaignCard(
-                      status: status[selectedTab],
-                      onTap: () {
-                        Get.to(() => TalentCampaignDetails(status: status[selectedTab],));
-                      },
-                    ),
-                  );
-                },
+              child: Obx(
+                () =>
+                    talent.campaignLoading.value
+                        ? Center(child: CustomLoading())
+                        : ListView.builder(
+                          itemCount: talent.campaigns.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 16.0),
+                              child: CampaignCard(
+                                campaign: talent.campaigns.elementAt(index),
+                              ),
+                            );
+                          },
+                        ),
               ),
             ),
           ],

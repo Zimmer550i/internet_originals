@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
-import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/create_new_campaign.dart';
-import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
 
 class CampaignsHome extends StatefulWidget {
   const CampaignsHome({super.key});
@@ -75,46 +71,46 @@ class _CampaignsHomeState extends State<CampaignsHome> {
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
-                      child: CampaignCard(
-                        onTap: () {
-                          Get.to(
-                            () => TalentCampaignDetails(
-                              status: "",
-                              actions: Row(
-                                children: [
-                                  Expanded(
-                                    child: CustomButton(
-                                      text: "Add Influencers",
-                                      width: null,
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                      ),
-                                      isSecondary: true,
-                                      onTap:
-                                          () => Get.to(() => AddInfluencers()),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 20),
-                                  Expanded(
-                                    child: CustomButton(
-                                      text: "See Influencers",
-                                      width: null,
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 10,
-                                      ),
-                                      isSecondary: true,
-                                      onTap:
-                                          () => Get.to(
-                                            () => AssignedInfluencers(),
-                                          ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      // child: CampaignCard(
+                      //   onTap: () {
+                      //     Get.to(
+                      //       () => TalentCampaignDetails(
+                      //         status: "",
+                      //         actions: Row(
+                      //           children: [
+                      //             Expanded(
+                      //               child: CustomButton(
+                      //                 text: "Add Influencers",
+                      //                 width: null,
+                      //                 padding: EdgeInsets.symmetric(
+                      //                   vertical: 10,
+                      //                 ),
+                      //                 isSecondary: true,
+                      //                 onTap:
+                      //                     () => Get.to(() => AddInfluencers()),
+                      //               ),
+                      //             ),
+                      //             const SizedBox(width: 20),
+                      //             Expanded(
+                      //               child: CustomButton(
+                      //                 text: "See Influencers",
+                      //                 width: null,
+                      //                 padding: EdgeInsets.symmetric(
+                      //                   vertical: 10,
+                      //                 ),
+                      //                 isSecondary: true,
+                      //                 onTap:
+                      //                     () => Get.to(
+                      //                       () => AssignedInfluencers(),
+                      //                     ),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                     );
                   },
                 ),
