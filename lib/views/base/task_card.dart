@@ -61,7 +61,7 @@ class TaskCard extends StatelessWidget {
             ],
           ),
           Text(
-            task.duration.toString(),
+            task.campaign.contentType,
             style: TextStyle(fontSize: 14),
             textAlign: TextAlign.left,
           ),

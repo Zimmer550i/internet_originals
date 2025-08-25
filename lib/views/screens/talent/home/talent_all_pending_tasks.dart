@@ -16,12 +16,21 @@ class TalentAllPendingTasks extends StatefulWidget {
 
 class _TalentAllPendingTasksState extends State<TalentAllPendingTasks> {
   final talent = Get.find<TalentController>();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       fetchTasks();
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent * 0.8) {
+        if (!talent.notificationLoading.value) {
+          talent.getTasks(getMore: true);
+        }
+      }
     });
   }
 
@@ -50,6 +59,7 @@ class _TalentAllPendingTasksState extends State<TalentAllPendingTasks> {
               return;
             },
             child: SingleChildScrollView(
+              controller: scrollController,
               child: Obx(
                 () => SafeArea(
                   child: Column(

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
@@ -35,17 +36,9 @@ class TalentController extends GetxController {
     try {
       taskLoading(true);
 
-      if (getMore) {
-        if (!taskLoading.value && currentPage.value < totalPages.value) {
-          currentPage++;
-        }
-      } else {
-        currentPage.value = 1;
-      }
-
       final response = await api.get(
         "/influencer/tasks",
-        queryParams: {"page": currentPage.toString()},
+        queryParams: {"page": currentPage.toString(), "limit": "2"},
         authReq: true,
       );
       final body = jsonDecode(response.body);
@@ -102,14 +95,6 @@ class TalentController extends GetxController {
     try {
       campaignLoading(true);
 
-      if (getMore) {
-        if (!taskLoading.value && currentPage.value < totalPages.value) {
-          currentPage++;
-        }
-      } else {
-        currentPage.value = 1;
-      }
-
       var queryParams = {"page": currentPage.toString()};
       if (status != null) {
         queryParams['status'] = status;
@@ -147,6 +132,51 @@ class TalentController extends GetxController {
     }
   }
 
+  Future<String> cancelCampaign(String id) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/influencer/tasks/$id/cancel",
+        {},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> acceptCampaign(String id, File image) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/influencer/tasks/$id/accept",
+        {"influencerAgreementProof": image},
+        isMultiPart: true,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
   // Payments
 
   // Profile
@@ -170,14 +200,6 @@ class TalentController extends GetxController {
   Future<String> getNotifications({bool getMore = false}) async {
     try {
       notificationLoading(true);
-
-      if (getMore) {
-        if (!taskLoading.value && currentPage.value < totalPages.value) {
-          currentPage++;
-        }
-      } else {
-        currentPage.value = 1;
-      }
 
       final response = await api.get(
         "/influencer/notifications",

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
@@ -61,7 +64,7 @@ class CampaignCard extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(2),
           child: Image.network(
-            "https://picsum.photos/200/200",
+            ApiService().baseUrl + campaign.banner,
             height: 44,
             width: 44,
             fit: BoxFit.cover,
@@ -72,7 +75,7 @@ class CampaignCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Samsung Galaxy Unpacked",
+              campaign.title,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 18,
@@ -81,7 +84,7 @@ class CampaignCard extends StatelessWidget {
               ),
             ),
             Text(
-              "Samsung",
+              campaign.brand,
               style: TextStyle(
                 fontSize: 14,
                 fontFamily: "Open-Sans",
@@ -108,38 +111,39 @@ class CampaignCard extends StatelessWidget {
             ),
             children: [
               TextSpan(text: 'Description: '),
-              TextSpan(text: 'campaign.campaignType\n'),
+              TextSpan(text: '${campaign.campaignType}\n'),
 
-              TextSpan(text: 'Content Format: '),
-              TextSpan(text: 'campaign.contentType\n'),
+              TextSpan(text: 'Content Type: '),
+              TextSpan(text: '${campaign.contentType}\n'),
 
               TextSpan(text: 'Metrics Needed: '),
-              TextSpan(text: 'campaign.getMatricsText()\n'),
 
-              for (var i
-                  in {
-                    "reach": "100K",
-                    "engagementRate": "5%",
-                    "conversion": "2K",
-                    "view": "10K",
-                  }.entries)
-                TextSpan(
-                  text: "${i.key}: ",
-                  children: [TextSpan(text: "${i.value}\n")],
-                ),
+              // TextSpan(text: 'campaign.getMatricsText()\n'),
+              if (campaign.expectedMetrics != null)
+                for (var i in campaign.expectedMetrics!.entries)
+                  TextSpan(
+                    text: "${i.value} ",
+                    children: [
+                      TextSpan(
+                        text:
+                            "${i.key.substring(0, 1).toUpperCase() + i.key.substring(1)}${campaign.expectedMetrics!.entries.last.key == i.key ? "" : ", "}",
+                      ),
+                    ],
+                  ),
             ],
           ),
         ),
+        const SizedBox(height: 4),
         Row(
           children: [
             CustomSvg(asset: AppIcons.price, color: AppColors.red, size: 18),
             const SizedBox(width: 8),
             Text(
-              "\$500 ",
+              "\$${campaign.budget} ",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
             Text(
-              "(campaign.payoutDeadline)",
+              "(${campaign.payoutDeadline})",
               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
             ),
           ],
@@ -150,10 +154,7 @@ class CampaignCard extends StatelessWidget {
             CustomSvg(asset: AppIcons.calendar, color: AppColors.red, size: 18),
             const SizedBox(width: 8),
             Text(
-              formatDateRange(
-                DateTime.now().add(Duration(days: 1)),
-                DateTime.now().add(Duration(days: 3)),
-              ),
+              formatDateRange(campaign.createdAt, campaign.duration),
               style: TextStyle(fontSize: 16),
             ),
           ],
@@ -200,7 +201,7 @@ class CampaignCard extends StatelessWidget {
                   text: "Accept",
                   textSize: 14,
                   onTap: () {
-                    Get.to(() => TalentSignContract());
+                    Get.to(() => TalentSignContract(id: campaign.id));
                   },
                 ),
               ),
@@ -331,6 +332,13 @@ class CampaignCard extends StatelessWidget {
                           isSecondary: true,
                           padding: EdgeInsets.all(10),
                           onTap: () {
+                            Get.find<TalentController>()
+                                .cancelCampaign(campaign.id)
+                                .then((message) {
+                                  if (message != "success") {
+                                    showSnackBar(message);
+                                  }
+                                });
                             Get.until(
                               (route) =>
                                   Get.currentRoute == AppRoutes.talentApp ||
@@ -355,7 +363,7 @@ class CampaignCard extends StatelessWidget {
       spacing: 4,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Campaign Description", style: TextStyle(fontSize: 14)),
+        Text(campaign.description, style: TextStyle(fontSize: 14)),
         RichText(
           text: TextSpan(
             text: "Metrics Needed: ",
@@ -366,7 +374,17 @@ class CampaignCard extends StatelessWidget {
               color: AppColors.green[25],
             ),
             children: [
-              TextSpan(text: " 10k+ Views, 1,500+ Likes & 300+ Shares"),
+              if (campaign.expectedMetrics != null)
+                for (var i in campaign.expectedMetrics!.entries)
+                  TextSpan(
+                    text: "${i.value} ",
+                    children: [
+                      TextSpan(
+                        text:
+                            "${i.key.substring(0, 1).toUpperCase() + i.key.substring(1)}${campaign.expectedMetrics!.entries.last.key == i.key ? "" : ", "}",
+                      ),
+                    ],
+                  ),
             ],
           ),
         ),
@@ -393,11 +411,11 @@ class CampaignCard extends StatelessWidget {
             CustomSvg(asset: AppIcons.price, color: AppColors.red, size: 18),
             const SizedBox(width: 8),
             Text(
-              "\$500 ",
+              "\$${campaign.budget} ",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
             ),
             Text(
-              "(within 6 months of completion)",
+              "(${campaign.payoutDeadline})",
               style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
             ),
           ],

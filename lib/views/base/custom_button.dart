@@ -39,7 +39,7 @@ class _CustomButtonState extends State<CustomButton> {
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(widget.radius),
-      onTap: widget.isLoading ? null : widget.onTap,
+      onTap: widget.isLoading ? null : widget.isDisabled ? null : widget.onTap,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 100),
         height: widget.padding != null ? null : widget.height,

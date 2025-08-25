@@ -24,7 +24,7 @@ class CampaignModel {
   final int budget;
   final DateTime duration;
   final String contentType;
-  final DateTime payoutDeadline;
+  final String payoutDeadline; 
   final Map<String, dynamic>? expectedMetrics;
   final Map<String, dynamic>? otherFields;
   final int rating;
@@ -43,7 +43,7 @@ class CampaignModel {
     required this.budget,
     required this.duration,
     required this.contentType,
-    required this.payoutDeadline,
+    required this.payoutDeadline, // <-- String
     this.expectedMetrics,
     this.otherFields,
     required this.rating,
@@ -64,7 +64,7 @@ class CampaignModel {
       budget: json['budget'] as int,
       duration: DateTime.parse(json['duration'] as String),
       contentType: json['content_type'] as String,
-      payoutDeadline: DateTime.parse(json['payout_deadline'] as String),
+      payoutDeadline: json['payout_deadline'] as String,
       expectedMetrics: json['expected_metrics'] != null
           ? Map<String, dynamic>.from(json['expected_metrics'])
           : null,
@@ -96,7 +96,7 @@ class CampaignModel {
       'budget': budget,
       'duration': duration.toIso8601String(),
       'content_type': contentType,
-      'payout_deadline': payoutDeadline.toIso8601String(),
+      'payout_deadline': payoutDeadline, 
       'expected_metrics': expectedMetrics,
       'other_fields': otherFields,
       'rating': rating,
