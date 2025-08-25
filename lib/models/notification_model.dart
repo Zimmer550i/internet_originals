@@ -5,7 +5,7 @@ class NotificationModel {
   final String title;
   final String body;
   final String type;
-  final String status;
+  String status;
   final DateTime? scheduledAt;
 
   NotificationModel({

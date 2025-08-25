@@ -38,6 +38,7 @@ class _TalentHomeState extends State<TalentHome> {
         showSnackBar(val);
       }
     });
+    talent.refreshNotifications();
   }
 
   @override

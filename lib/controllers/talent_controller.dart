@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/models/social_platform.dart';
 import 'package:internet_originals/models/task_model.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -13,22 +15,37 @@ class TalentController extends GetxController {
 
   RxList<TaskModel> tasks = RxList.empty();
   RxList<CampaignModel> campaigns = RxList.empty();
+  RxList<NotificationModel> notifications = RxList.empty();
+  RxList<SocialPlatformModel> socialPlatforms = RxList();
 
   RxBool isLoading = RxBool(false);
   RxBool taskLoading = RxBool(false);
   RxBool campaignLoading = RxBool(false);
   RxBool paymentLoading = RxBool(false);
-  RxnInt totalPages = RxnInt();
+  RxBool notificationLoading = RxBool(false);
 
-  RxList<SocialPlatformModel> socialPlatforms = RxList();
+  RxInt totalPages = RxInt(1);
+  RxInt currentPage = RxInt(1);
+
+  Timer? _notificationTimer;
+  Duration notificationRefreshTime = Duration(minutes: 2);
 
   // Tasks
-  Future<String> getTasks({int page = 1}) async {
+  Future<String> getTasks({bool getMore = false}) async {
     try {
       taskLoading(true);
+
+      if (getMore) {
+        if (!taskLoading.value && currentPage.value < totalPages.value) {
+          currentPage++;
+        }
+      } else {
+        currentPage.value = 1;
+      }
+
       final response = await api.get(
         "/influencer/tasks",
-        queryParams: {"page": page.toString()},
+        queryParams: {"page": currentPage.toString()},
         authReq: true,
       );
       final body = jsonDecode(response.body);
@@ -41,7 +58,7 @@ class TalentController extends GetxController {
         for (var i in data) {
           temp.add(TaskModel.fromJson(i));
         }
-        if (page == 1) {
+        if (currentPage.value == 1) {
           tasks.assignAll(temp);
         } else {
           tasks.addAll(temp);
@@ -81,11 +98,19 @@ class TalentController extends GetxController {
   }
 
   // Campaigns
-  Future<String> getCampaigns({int page = 1, String? status}) async {
+  Future<String> getCampaigns({String? status, bool getMore = false}) async {
     try {
       campaignLoading(true);
 
-      var queryParams = {"page": page.toString()};
+      if (getMore) {
+        if (!taskLoading.value && currentPage.value < totalPages.value) {
+          currentPage++;
+        }
+      } else {
+        currentPage.value = 1;
+      }
+
+      var queryParams = {"page": currentPage.toString()};
       if (status != null) {
         queryParams['status'] = status;
       }
@@ -105,7 +130,7 @@ class TalentController extends GetxController {
         for (var i in data) {
           temp.add(CampaignModel.fromJson(i));
         }
-        if (page == 1) {
+        if (currentPage.value == 1) {
           campaigns.assignAll(temp);
         } else {
           campaigns.addAll(temp);
@@ -139,5 +164,96 @@ class TalentController extends GetxController {
     }
 
     return null;
+  }
+
+  // Notifications
+  Future<String> getNotifications({bool getMore = false}) async {
+    try {
+      notificationLoading(true);
+
+      if (getMore) {
+        if (!taskLoading.value && currentPage.value < totalPages.value) {
+          currentPage++;
+        }
+      } else {
+        currentPage.value = 1;
+      }
+
+      final response = await api.get(
+        "/influencer/notifications",
+        queryParams: {"page": currentPage.toString()},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
+
+        List<NotificationModel> temp = [];
+        for (var i in data) {
+          temp.add(NotificationModel.fromJson(i));
+        }
+        if (currentPage.value == 1) {
+          notifications.assignAll(temp);
+        } else {
+          notifications.addAll(temp);
+        }
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
+  void readAllNotifications() async {
+    try {
+      final response = await api.post(
+        "/influencer/notifications/read-all",
+        {},
+        authReq: true,
+      );
+
+      if (response.statusCode == 200) {
+        for (var i in notifications) {
+          i.status = "READ";
+        }
+      } else {
+        debugPrint("Error reading notifications");
+      }
+    } catch (e) {
+      debugPrint("Error reading notifications: ${e.toString()}");
+    }
+  }
+
+  void _startNotificationTimer() {
+    _notificationTimer?.cancel();
+
+    _notificationTimer = Timer.periodic(notificationRefreshTime, (timer) {
+      getNotifications();
+    });
+  }
+
+  void _stopNotificationTimer() {
+    _notificationTimer?.cancel();
+    _notificationTimer = null;
+  }
+
+  Future<String> refreshNotifications() async {
+    _stopNotificationTimer();
+    final result = await getNotifications();
+    _startNotificationTimer();
+    return result;
+  }
+
+  @override
+  void onClose() {
+    _stopNotificationTimer();
+    super.onClose();
   }
 }

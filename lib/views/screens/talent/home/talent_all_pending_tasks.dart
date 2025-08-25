@@ -16,7 +16,6 @@ class TalentAllPendingTasks extends StatefulWidget {
 
 class _TalentAllPendingTasksState extends State<TalentAllPendingTasks> {
   final talent = Get.find<TalentController>();
-  int page = 1;
 
   @override
   void initState() {
@@ -27,7 +26,7 @@ class _TalentAllPendingTasksState extends State<TalentAllPendingTasks> {
   }
 
   Future<void> fetchTasks() async {
-    final message = await talent.getTasks(page: page);
+    final message = await talent.getTasks();
 
     if (message == "success") {
     } else {

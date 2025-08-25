@@ -1,3 +1,4 @@
+import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -15,7 +16,7 @@ class NotificationWidget extends StatefulWidget {
     required this.showBoarder,
   });
 
-  final Map<String, dynamic> item;
+  final NotificationModel item;
   final bool showBoarder;
 
   @override
@@ -30,7 +31,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.item["type"] == "hard") {
+    if (widget.item.type == "HARD") {
       status = NotificationType.hard;
     }
   }
@@ -42,8 +43,10 @@ class _NotificationWidgetState extends State<NotificationWidget> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: widget.item['read'] ? null : AppColors.red[400],
-          borderRadius: BorderRadius.circular(widget.item['read'] ? 0 : 8),
+          color: widget.item.status == "READ" ? null : AppColors.red[400],
+          borderRadius: BorderRadius.circular(
+            widget.item.status == "READ" ? 0 : 8,
+          ),
           border: Border(
             bottom:
                 widget.showBoarder
@@ -62,7 +65,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color:
-                      widget.item['read']
+                      widget.item.status == "READ"
                           ? AppColors.green[500]
                           : AppColors.red[300],
                 ),
@@ -70,7 +73,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   child: SvgPicture.asset(
                     AppIcons.bell,
                     colorFilter: ColorFilter.mode(
-                      widget.item['read']
+                      widget.item.status == "READ"
                           ? AppColors.red[300]!
                           : AppColors.red[25]!,
                       BlendMode.srcIn,
@@ -86,22 +89,22 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.item['title'] ?? "Title not found",
+                    widget.item.title,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color:
-                          widget.item['read']
+                          widget.item.status == "READ"
                               ? AppColors.green[50]
                               : Colors.white,
                     ),
                   ),
                   Text(
-                    widget.item['text'],
+                    widget.item.body,
                     style: TextStyle(
                       fontSize: 12,
                       color:
-                          widget.item['read']
+                          widget.item.status == "READ"
                               ? AppColors.green[100]
                               : Colors.white,
                     ),
@@ -151,7 +154,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color:
-                              widget.item['read']
+                              widget.item.status == "READ"
                                   ? AppColors.green[50]
                                   : Colors.white,
                         ),
@@ -300,7 +303,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                           fontWeight: FontWeight.w600,
                           fontSize: 14,
                           color:
-                              widget.item['read']
+                              widget.item.status == "READ"
                                   ? AppColors.green[50]
                                   : Colors.white,
                         ),

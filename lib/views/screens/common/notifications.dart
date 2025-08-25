@@ -1,6 +1,10 @@
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/notification_widget.dart';
 
 class Notifications extends StatefulWidget {
@@ -11,59 +15,48 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
+  final talent = Get.find<TalentController>();
   final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    populateData();
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
-          scrollController.position.maxScrollExtent * 1) {}
+          scrollController.position.maxScrollExtent * 0.8) {
+        if (!talent.notificationLoading.value) {
+          talent.getNotifications(getMore: true);
+        }
+      }
     });
   }
 
-  Map<DateTime, List<Map<String, dynamic>>> data = {
-    DateTime.now(): [
-      {
-        "title": "Deadline Reminder",
-        "text":
-            "Your campaign “Adidas Running” requires you to upload performance metrics",
-        "read": false,
-        "type": "soft",
-      },
-    ],
-    DateTime.now().subtract(Duration(days: 1)): [
-      {
-        "title": "Quick Check-in",
-        "text": "Have you recorded your content for “Coca-Cola Summer Ad” ?",
-        "read": true,
-        "type": "hard",
-      },
-      {
-        "title": "Your Payment is in Process!",
-        "text":
-            "Your payment for “Nike Air Max” (\$500) is being processed. Expected payment: February 20, 2025.",
-        "read": true,
-        "type": "soft",
-      },
-    ],
-    DateTime.now().subtract(Duration(days: 2)): [
-      {
-        "title": "Campaign Submission Declined",
-        "text":
-            "Your submission for “Coca-Cola Summer Ad” was declined due to missing details",
-        "read": true,
-        "type": "soft",
-      },
-      {
-        "title": "Payment Reminder: Invoice Due Soon",
-        "text":
-            "Your payment for the “Nike Air Max” campaign is scheduled for March 5, 2025. Ensure your invoice is correctly uploaded",
-        "read": true,
-        "type": "soft",
-      },
-    ],
-  };
+  @override
+  void dispose() {
+    super.dispose();
+    talent.readAllNotifications();
+  }
+
+  Map<DateTime, List<NotificationModel>> data = {};
+
+  void populateData() {
+    final l = talent.notifications;
+
+    for (var i in l) {
+      final key = DateTime(
+        i.createdAt.year,
+        i.createdAt.month,
+        i.createdAt.day,
+      );
+
+      if (data.containsKey(key)) {
+        data[key]!.add(i);
+      } else {
+        data[key] = [i];
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +72,12 @@ class _NotificationsState extends State<Notifications> {
               child: Column(
                 children: [
                   ...getNotifications(data),
-                  // if (socketController.loadingNotifications)
-                  //   Padding(
-                  //     padding: const EdgeInsets.all(80.0),
-                  //     child: CircularProgressIndicator(),
-                  //   ),
+                  Obx(
+                    () =>
+                        talent.notificationLoading.value
+                            ? CustomLoading()
+                            : Container(),
+                  ),
                 ],
               ),
             ),
@@ -93,9 +87,7 @@ class _NotificationsState extends State<Notifications> {
     );
   }
 
-  List<Widget> getNotifications(
-    Map<DateTime, List<Map<String, dynamic>>> data,
-  ) {
+  List<Widget> getNotifications(Map<DateTime, List<NotificationModel>> data) {
     List<Widget> rtn = [];
 
     final sortedKeys = data.keys.toList()..sort((a, b) => b.compareTo(a));
