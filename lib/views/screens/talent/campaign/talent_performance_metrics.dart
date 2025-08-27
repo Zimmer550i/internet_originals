@@ -1,17 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_image_picker.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_performance_metrics_confirmation.dart';
 
 class TalentPerformanceMetrics extends StatefulWidget {
-  const TalentPerformanceMetrics({super.key});
+  final CampaignModel campaign;
+  const TalentPerformanceMetrics({super.key, required this.campaign});
 
   @override
   State<TalentPerformanceMetrics> createState() =>
@@ -19,15 +24,41 @@ class TalentPerformanceMetrics extends StatefulWidget {
 }
 
 class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
+  final talent = Get.find<TalentController>();
   List<TextEditingController> controllers = [];
-  List<String> titles = ["Views", "Likes", "Comments"];
+  List<String> titles = [];
   File? _imageFile;
 
   @override
   void initState() {
     super.initState();
+
+    titles = widget.campaign.expectedMetrics?.keys.toList() ?? [];
     for (var _ in titles) {
       controllers.add(TextEditingController());
+    }
+  }
+
+  void uploadData() async {
+    Map<String, dynamic> data = {};
+
+    if (_imageFile != null) {
+      data["screenshot"] = _imageFile;
+    }
+
+    for (int i = 0; i < titles.length; i++) {
+      data[titles[i]] = int.parse(controllers[i].text);
+    }
+
+    final message = await talent.uploadMatrix(widget.campaign.id, data);
+
+    if (message == "success") {
+      Get.to(
+        () =>
+            TalentPerformanceMetricsConfirmation(title: widget.campaign.title),
+      );
+    } else {
+      showSnackBar(message);
     }
   }
 
@@ -44,7 +75,7 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
               child: Column(
                 children: [
                   const SizedBox(height: 16),
-              
+
                   Text(
                     "Enter your post engagement metrics manually",
                     textAlign: TextAlign.left,
@@ -67,6 +98,7 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
                           CustomTextField(
                             hintText: titles[i],
                             controller: controllers[i],
+                            textInputType: TextInputType.number,
                           ),
                         GestureDetector(
                           onTap: () async {
@@ -115,12 +147,15 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        CustomButton(
-                          text: "Submit",
-                          width: null,
-                          onTap: () {
-                            Get.to(() => TalentPerformanceMetricsConfirmation());
-                          },
+                        Obx(
+                          () => CustomButton(
+                            text: "Submit",
+                            isLoading: talent.campaignLoading.value,
+                            width: null,
+                            onTap: () {
+                              uploadData();
+                            },
+                          ),
                         ),
                       ],
                     ),
@@ -140,34 +175,36 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
         ClipRRect(
           borderRadius: BorderRadius.circular(2),
           child: Image.network(
-            "https://picsum.photos/200/200",
+            ApiService().baseUrl + widget.campaign.banner,
             height: 44,
             width: 44,
             fit: BoxFit.cover,
           ),
         ),
         const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Samsung Galaxy Unpacked",
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                fontFamily: "Open-Sans",
-                color: AppColors.green[25],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.campaign.title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontFamily: "Open-Sans",
+                  color: AppColors.green[25],
+                ),
               ),
-            ),
-            Text(
-              "Samsung",
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: "Open-Sans",
-                color: AppColors.green[25],
+              Text(
+                widget.campaign.brand,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: "Open-Sans",
+                  color: AppColors.green[25],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

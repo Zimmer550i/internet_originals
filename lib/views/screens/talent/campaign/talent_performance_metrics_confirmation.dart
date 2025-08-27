@@ -6,16 +6,10 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
-class TalentPerformanceMetricsConfirmation extends StatefulWidget {
-  const TalentPerformanceMetricsConfirmation({super.key});
+class TalentPerformanceMetricsConfirmation extends StatelessWidget {
+  final String title;
+  const TalentPerformanceMetricsConfirmation({super.key, required this.title});
 
-  @override
-  State<TalentPerformanceMetricsConfirmation> createState() =>
-      _TalentPerformanceMetricsConfirmationState();
-}
-
-class _TalentPerformanceMetricsConfirmationState
-    extends State<TalentPerformanceMetricsConfirmation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +32,7 @@ class _TalentPerformanceMetricsConfirmationState
               ),
               const SizedBox(height: 8),
               Text(
-                "Your performance metrics for the Nike Air Max campaign have been successfully uploaded. Next, upload your invoice to receive payment.",
+                "Your performance metrics for the $title campaign have been successfully uploaded. Next, upload your invoice to receive payment.",
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),

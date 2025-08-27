@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -6,7 +7,8 @@ import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
 class TalentFeedback extends StatefulWidget {
-  const TalentFeedback({super.key});
+  final CampaignModel campaign;
+  const TalentFeedback({super.key, required this.campaign});
 
   @override
   State<TalentFeedback> createState() => _TalentFeedbackState();
@@ -26,7 +28,7 @@ class _TalentFeedbackState extends State<TalentFeedback> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: [
-                const SizedBox(height: 16,),
+                const SizedBox(height: 16),
                 Container(
                   padding: EdgeInsets.all(16),
                   decoration: BoxDecoration(

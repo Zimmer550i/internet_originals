@@ -43,7 +43,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: widget.item.status == "READ" ? null : AppColors.red[400],
+          color: widget.item.status == "READ" ? null : AppColors.red[800],
           borderRadius: BorderRadius.circular(
             widget.item.status == "READ" ? 0 : 8,
           ),

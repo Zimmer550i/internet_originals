@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
@@ -59,6 +60,14 @@ class _TalentCampaignState extends State<TalentCampaign> {
                 () =>
                     talent.campaignLoading.value
                         ? Center(child: CustomLoading())
+                          : talent.campaigns.isEmpty
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "No campaigns available",
+                              style: TextStyle(color: AppColors.green.shade100),
+                            ),
+                          )
                         : ListView.builder(
                           itemCount: talent.campaigns.length,
                           itemBuilder: (context, index) {

@@ -87,12 +87,19 @@ class _TalentHomeState extends State<TalentHome> {
                   () =>
                       talent.taskLoading.value
                           ? CustomLoading()
+                          : talent.tasks.isEmpty
+                          ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "No tasks pending",
+                              style: TextStyle(color: AppColors.green.shade100),
+                            ),
+                          )
                           : ListView.builder(
                             itemCount: min(2, talent.tasks.length),
                             physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (val, index) {
-                              
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: TaskCard(task: talent.tasks[index]),
@@ -154,6 +161,14 @@ class _TalentHomeState extends State<TalentHome> {
                           ? Padding(
                             padding: const EdgeInsets.all(20.0),
                             child: CustomLoading(),
+                          )
+                          : talent.campaigns.isEmpty
+                          ? Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              "No campaigns available",
+                              style: TextStyle(color: AppColors.green.shade100),
+                            ),
                           )
                           : ListView.builder(
                             itemCount: min(2, talent.campaigns.length),

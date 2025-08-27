@@ -37,7 +37,7 @@ class TalentController extends GetxController {
 
       final response = await api.get(
         "/influencer/tasks/pending",
-        queryParams: {"page": currentPage.toString(),},
+        queryParams: {"page": currentPage.toString()},
         authReq: true,
       );
       final body = jsonDecode(response.body);
@@ -159,6 +159,76 @@ class TalentController extends GetxController {
       final response = await api.post(
         "/influencer/campaigns/$id/accept",
         {"influencerAgreementProof": image},
+        isMultiPart: true,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> reportAnIssue(String id, String complain) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/influencer/campaigns/$id/report-issue",
+        {"content": complain},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && response.statusCode == 201) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> giveCampaignFeedback(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/influencer/campaigns/$id/review",
+        data,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> uploadMatrix(String id, Map<String, dynamic> data) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/influencer/campaigns/$id/upload-matrix",
+        data,
         isMultiPart: true,
         authReq: true,
       );

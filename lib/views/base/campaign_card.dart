@@ -39,7 +39,7 @@ class CampaignCard extends StatelessWidget {
           header(),
           const SizedBox(height: 12),
           isDetailed ? detailedInfo(context) : shortInfo(),
-          if (campaign.status == "PENDING" && !isDetailed)
+          if (!isDetailed)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(
@@ -120,7 +120,6 @@ class CampaignCard extends StatelessWidget {
 
               TextSpan(text: 'Metrics Needed: '),
 
-              // TextSpan(text: 'campaign.getMatricsText()\n'),
               if (campaign.expectedMetrics != null)
                 for (var i in campaign.expectedMetrics!.entries)
                   TextSpan(
@@ -217,7 +216,7 @@ class CampaignCard extends StatelessWidget {
               width: null,
               textSize: 14,
               onTap: () {
-                Get.to(() => TalentPerformanceMetrics());
+                Get.to(() => TalentPerformanceMetrics(campaign: campaign,));
               },
             ),
           ),
@@ -229,7 +228,7 @@ class CampaignCard extends StatelessWidget {
               width: null,
               textSize: 14,
               onTap: () {
-                Get.to(() => TalentFeedback());
+                Get.to(() => TalentFeedback(campaign: campaign));
               },
             ),
           ),
@@ -238,6 +237,8 @@ class CampaignCard extends StatelessWidget {
   }
 
   Future<dynamic> reportIssue(BuildContext context) {
+    final controller = TextEditingController();
+
     return showDialog(
       context: context,
       builder: (context) {
@@ -264,9 +265,35 @@ class CampaignCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  CustomTextField(hintText: "Describe the issue"),
+                  CustomTextField(
+                    controller: controller,
+                    hintText: "Describe the issue",
+                  ),
                   const SizedBox(height: 40),
-                  CustomButton(text: "Send Report", width: null, textSize: 14),
+                  Obx(() {
+                    final talent = Get.find<TalentController>();
+
+                    return CustomButton(
+                      text: "Send Report",
+                      isLoading: talent.campaignLoading.value,
+                      width: null,
+                      textSize: 14,
+                      onTap: () {
+                        talent
+                            .reportAnIssue(campaign.id, controller.text.trim())
+                            .then((message) {
+                              if (message == "success") {
+                                showSnackBar(
+                                  "Report successfully submitted",
+                                  isError: false,
+                                );
+                              } else {
+                                showSnackBar(message);
+                              }
+                            });
+                      },
+                    );
+                  }),
                 ],
               ),
             ),
