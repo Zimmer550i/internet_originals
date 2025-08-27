@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/screens/talent/talent_app.dart';
@@ -55,6 +57,13 @@ class _TalentCampaignAcceptanceState extends State<TalentCampaignAcceptance> {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       talentCampaignTabBarKey.currentState?.setState(() {
                         talentCampaignTabBarKey.currentState?.index = 1;
+                        Get.find<TalentController>()
+                            .getCampaigns(status: "ACTIVE")
+                            .then((val) {
+                              if (val != "success") {
+                                showSnackBar(val);
+                              }
+                            });
                       });
                     });
                   });

@@ -39,7 +39,7 @@ class CampaignCard extends StatelessWidget {
           header(),
           const SizedBox(height: 12),
           isDetailed ? detailedInfo(context) : shortInfo(),
-          if (campaign.status == CampaignStatus.PENDING && !isDetailed)
+          if (campaign.status == "PENDING" && !isDetailed)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(
@@ -71,27 +71,29 @@ class CampaignCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              campaign.title,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                fontFamily: "Open-Sans",
-                color: AppColors.green[25],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                campaign.title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 18,
+                  fontFamily: "Open-Sans",
+                  color: AppColors.green[25],
+                ),
               ),
-            ),
-            Text(
-              campaign.brand,
-              style: TextStyle(
-                fontSize: 14,
-                fontFamily: "Open-Sans",
-                color: AppColors.green[25],
+              Text(
+                campaign.brand,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: "Open-Sans",
+                  color: AppColors.green[25],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -182,7 +184,7 @@ class CampaignCard extends StatelessWidget {
           ),
         ),
 
-        if (campaign.status == CampaignStatus.PENDING)
+        if (campaign.status == "PENDING")
           Row(
             children: [
               Expanded(
@@ -208,7 +210,7 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
 
-        if (campaign.status == CampaignStatus.ACTIVE)
+        if (campaign.status == "ACTIVE")
           Align(
             child: CustomButton(
               text: "Upload Matrix",
@@ -220,7 +222,7 @@ class CampaignCard extends StatelessWidget {
             ),
           ),
 
-        if (campaign.status == CampaignStatus.COMPLETED)
+        if (campaign.status == "COMPLETED")
           Align(
             child: CustomButton(
               text: "Give Feedback",
@@ -344,6 +346,14 @@ class CampaignCard extends StatelessWidget {
                                   Get.currentRoute == AppRoutes.talentApp ||
                                   Get.currentRoute == AppRoutes.subAdminApp,
                             );
+
+                            Get.find<TalentController>()
+                                .getCampaigns(status: "PENDING")
+                                .then((val) {
+                                  if (val != "success") {
+                                    showSnackBar(val);
+                                  }
+                                });
                           },
                         ),
                       ),
@@ -388,7 +398,7 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
         ),
-        if (campaign.status != CampaignStatus.PENDING)
+        if (campaign.status != "PENDING")
           Row(
             children: [
               Container(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
-import 'package:internet_originals/models/task_model.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
@@ -13,7 +13,7 @@ import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_pending_task_completion.dart';
 
 class TalentPendingTask extends StatefulWidget {
-  final TaskModel task;
+  final CampaignModel task;
   const TalentPendingTask({super.key, required this.task});
 
   @override
@@ -30,10 +30,10 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
   List<String> formatMatrics() {
     List<String> matrics = [];
 
-    for (int i = 0; i < widget.task.campaign.expectedMetrics!.length; i++) {
-      matrics.add(widget.task.campaign.expectedMetrics!.values.elementAt(i));
-      matrics.add(widget.task.campaign.expectedMetrics!.keys.elementAt(i));
-      if (i != widget.task.campaign.expectedMetrics!.entries.length - 1) {
+    for (int i = 0; i < widget.task.expectedMetrics!.length; i++) {
+      matrics.add(widget.task.expectedMetrics!.values.elementAt(i));
+      matrics.add(widget.task.expectedMetrics!.keys.elementAt(i));
+      if (i != widget.task.expectedMetrics!.entries.length - 1) {
         matrics.add("|");
       }
     }
@@ -73,7 +73,7 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                               borderRadius: BorderRadius.circular(2),
                               child: Image.network(
                                 ApiService().baseUrl +
-                                    widget.task.campaign.banner,
+                                    widget.task.banner,
                                 height: 44,
                                 width: 44,
                                 fit: BoxFit.cover,
@@ -86,14 +86,14 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.task.campaign.title,
+                                  widget.task.title,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 18,
                                   ),
                                 ),
                                 Text(
-                                  widget.task.campaign.brand,
+                                  widget.task.brand,
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ],
@@ -102,7 +102,7 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                         ],
                       ),
                       Text(
-                        widget.task.campaign.description,
+                        widget.task.description,
                         style: TextStyle(fontSize: 16),
                         textAlign: TextAlign.left,
                       ),
@@ -122,7 +122,7 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                             CustomSvg(asset: AppIcons.clock),
                             const SizedBox(width: 4),
                             Text(
-                              "${widget.task.campaign.duration.difference(DateTime.now()).inDays.toString()} Days Left",
+                              "${widget.task.duration.difference(DateTime.now()).inDays.toString()} Days Left",
                               style: TextStyle(
                                 color: AppColors.red[900],
                                 fontSize: 14,

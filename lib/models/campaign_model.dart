@@ -1,85 +1,88 @@
-// ignore_for_file: constant_identifier_names
-
-enum CampaignStatus {
-  PENDING,
-  ACTIVE,
-  COMPLETED,
-}
-
-enum PaymentStatus {
-  PENDING,
-  PAID,
-  FAILED,
-}
-
 class CampaignModel {
   final String id;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String status;
+  final String campaignId;
+  final String influencerId;
+  final String? influencerAgreementProof;
+  final String? postLink;
+  final String? screenshot;
+  final dynamic matrix;
+  final num budget;
+  final bool isPaymentDone;
+  final bool isTimeout;
+  final bool isRevision;
+  final String paymentStatus;
   final String title;
   final String description;
   final String brand;
   final String banner;
   final String campaignType;
-  final int budget;
   final DateTime duration;
   final String contentType;
-  final String payoutDeadline; 
+  final String payoutDeadline;
   final Map<String, dynamic>? expectedMetrics;
   final Map<String, dynamic>? otherFields;
-  final int rating;
-  final CampaignStatus status;
-  final PaymentStatus paymentStatus;
+  final num rating;
 
   CampaignModel({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
+    required this.status,
+    required this.campaignId,
+    required this.influencerId,
+    this.influencerAgreementProof,
+    this.postLink,
+    this.screenshot,
+    this.matrix,
+    required this.budget,
+    required this.isPaymentDone,
+    required this.isTimeout,
+    required this.isRevision,
+    required this.paymentStatus,
     required this.title,
     required this.description,
     required this.brand,
     required this.banner,
     required this.campaignType,
-    required this.budget,
     required this.duration,
     required this.contentType,
-    required this.payoutDeadline, // <-- String
+    required this.payoutDeadline,
     this.expectedMetrics,
     this.otherFields,
     required this.rating,
-    required this.status,
-    required this.paymentStatus,
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
     return CampaignModel(
-      id: json['id'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      title: json['title'] as String,
-      description: json['description'] as String,
-      brand: json['brand'] as String,
-      banner: json['banner'] as String,
-      campaignType: json['campaign_type'] as String,
-      budget: json['budget'] as int,
-      duration: DateTime.parse(json['duration'] as String),
-      contentType: json['content_type'] as String,
-      payoutDeadline: json['payout_deadline'] as String,
-      expectedMetrics: json['expected_metrics'] != null
-          ? Map<String, dynamic>.from(json['expected_metrics'])
-          : null,
-      otherFields: json['other_fields'] != null
-          ? Map<String, dynamic>.from(json['other_fields'])
-          : null,
-      rating: json['rating'] as int,
-      status: CampaignStatus.values.firstWhere(
-        (e) => e.name == json['status'],
-        orElse: () => CampaignStatus.PENDING,
-      ),
-      paymentStatus: PaymentStatus.values.firstWhere(
-        (e) => e.name == json['paymentStatus'],
-        orElse: () => PaymentStatus.PENDING,
-      ),
+      id: json['id'] ?? '',
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt: DateTime.parse(json['updatedAt']),
+      status: json['status'] ?? '',
+      campaignId: json['campaignId'] ?? '',
+      influencerId: json['influencerId'] ?? '',
+      influencerAgreementProof: json['influencerAgreementProof'],
+      postLink: json['postLink'],
+      screenshot: json['screenshot'],
+      matrix: json['matrix'],
+      budget: json['budget'] ?? 0,
+      isPaymentDone: json['isPaymentDone'] ?? false,
+      isTimeout: json['isTimeout'] ?? false,
+      isRevision: json['isRevision'] ?? false,
+      paymentStatus: json['paymentStatus'] ?? '',
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      brand: json['brand'] ?? '',
+      banner: json['banner'] ?? '',
+      campaignType: json['campaign_type'] ?? '',
+      duration: DateTime.parse(json['duration']),
+      contentType: json['content_type'] ?? '',
+      payoutDeadline: json['payout_deadline'] ?? '',
+      expectedMetrics: json['expected_metrics'],
+      otherFields: json['other_fields'],
+      rating: json['rating'] ?? 0,
     );
   }
 
@@ -88,20 +91,29 @@ class CampaignModel {
       'id': id,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'status': status,
+      'campaignId': campaignId,
+      'influencerId': influencerId,
+      'influencerAgreementProof': influencerAgreementProof,
+      'postLink': postLink,
+      'screenshot': screenshot,
+      'matrix': matrix,
+      'budget': budget,
+      'isPaymentDone': isPaymentDone,
+      'isTimeout': isTimeout,
+      'isRevision': isRevision,
+      'paymentStatus': paymentStatus,
       'title': title,
       'description': description,
       'brand': brand,
       'banner': banner,
       'campaign_type': campaignType,
-      'budget': budget,
       'duration': duration.toIso8601String(),
       'content_type': contentType,
-      'payout_deadline': payoutDeadline, 
+      'payout_deadline': payoutDeadline,
       'expected_metrics': expectedMetrics,
       'other_fields': otherFields,
       'rating': rating,
-      'status': status.name,
-      'paymentStatus': paymentStatus.name,
     };
   }
 }

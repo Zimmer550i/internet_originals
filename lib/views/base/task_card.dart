@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
-import 'package:internet_originals/models/task_model.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
@@ -8,7 +8,7 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_pending_task.dart';
 
 class TaskCard extends StatelessWidget {
-  final TaskModel task;
+  final CampaignModel task;
   const TaskCard({super.key, required this.task});
 
   @override
@@ -32,7 +32,7 @@ class TaskCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(2),
                   child: Image.network(
-                    ApiService().baseUrl + task.campaign.banner,
+                    ApiService().baseUrl + task.banner,
                     height: 44,
                     width: 44,
                     fit: BoxFit.cover,
@@ -45,14 +45,14 @@ class TaskCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      task.campaign.title,
+                      task.title,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 18,
                       ),
                     ),
                     Text(
-                      task.campaign.brand,
+                      task.brand,
                       style: TextStyle(fontSize: 14),
                     ),
                   ],
@@ -61,7 +61,7 @@ class TaskCard extends StatelessWidget {
             ],
           ),
           Text(
-            task.campaign.contentType,
+            task.contentType,
             style: TextStyle(fontSize: 14),
             textAlign: TextAlign.left,
           ),

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/models/social_platform.dart';
-import 'package:internet_originals/models/task_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 
@@ -14,7 +13,7 @@ class TalentController extends GetxController {
   // Fields
   final api = ApiService();
 
-  RxList<TaskModel> tasks = RxList.empty();
+  RxList<CampaignModel> tasks = RxList.empty();
   RxList<CampaignModel> campaigns = RxList.empty();
   RxList<NotificationModel> notifications = RxList.empty();
   RxList<SocialPlatformModel> socialPlatforms = RxList();
@@ -37,8 +36,8 @@ class TalentController extends GetxController {
       taskLoading(true);
 
       final response = await api.get(
-        "/influencer/tasks",
-        queryParams: {"page": currentPage.toString(), "limit": "2"},
+        "/influencer/tasks/pending",
+        queryParams: {"page": currentPage.toString(),},
         authReq: true,
       );
       final body = jsonDecode(response.body);
@@ -47,9 +46,9 @@ class TalentController extends GetxController {
         final data = body['data'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
-        List<TaskModel> temp = [];
+        List<CampaignModel> temp = [];
         for (var i in data) {
-          temp.add(TaskModel.fromJson(i));
+          temp.add(CampaignModel.fromJson(i));
         }
         if (currentPage.value == 1) {
           tasks.assignAll(temp);
@@ -72,7 +71,7 @@ class TalentController extends GetxController {
     try {
       taskLoading(true);
       final response = await api.post(
-        "/influencer/tasks/$taskid/submit-post-link",
+        "/influencer/campaigns/$taskid/submit-post-link",
         {"postLink": link},
         authReq: true,
       );
@@ -136,7 +135,7 @@ class TalentController extends GetxController {
     try {
       campaignLoading(true);
       final response = await api.post(
-        "/influencer/tasks/$id/cancel",
+        "/influencer/campaigns/$id/cancel",
         {},
         authReq: true,
       );
@@ -158,7 +157,7 @@ class TalentController extends GetxController {
     try {
       campaignLoading(true);
       final response = await api.post(
-        "/influencer/tasks/$id/accept",
+        "/influencer/campaigns/$id/accept",
         {"influencerAgreementProof": image},
         isMultiPart: true,
         authReq: true,

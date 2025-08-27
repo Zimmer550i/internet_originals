@@ -92,6 +92,7 @@ class _TalentHomeState extends State<TalentHome> {
                             physics: NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (val, index) {
+                              
                               return Padding(
                                 padding: const EdgeInsets.only(top: 16.0),
                                 child: TaskCard(task: talent.tasks[index]),
