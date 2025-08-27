@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
@@ -15,7 +19,29 @@ class TalentFeedback extends StatefulWidget {
 }
 
 class _TalentFeedbackState extends State<TalentFeedback> {
+  final talent = Get.find<TalentController>();
   List<int> ratings = [0, 0, 0];
+
+  void uploadData() async {
+    Map<String, dynamic> data = {
+      "Campaign Clarity": ratings[0],
+      "Budget & Payment": ratings[1],
+      "Overall Experience": ratings[2],
+    };
+
+    final message = await talent.giveCampaignFeedback(widget.campaign.id, data);
+
+    if (message == "success") {
+      showSnackBar("Rating submitted successfully", isError: false);
+      Get.until(
+        (route) =>
+            Get.currentRoute == AppRoutes.talentApp ||
+            Get.currentRoute == AppRoutes.subAdminApp,
+      );
+    } else {
+      showSnackBar(message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +87,14 @@ class _TalentFeedbackState extends State<TalentFeedback> {
                       const SizedBox(height: 36),
                       ratingWidget("Overall Experience", 2),
                       const SizedBox(height: 40),
-                      CustomButton(text: "Submit", width: null, onTap: () {}),
+                      Obx(
+                        () => CustomButton(
+                          text: "Submit",
+                          isLoading: talent.campaignLoading.value,
+                          width: null,
+                          onTap: () => uploadData(),
+                        ),
+                      ),
                     ],
                   ),
                 ),
