@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
@@ -9,22 +11,9 @@ import 'package:internet_originals/views/base/custom_button.dart';
 enum PendingPaymentItemStatus { pending, sent }
 
 class PendingPaymentItem extends StatefulWidget {
-  final String imageUrl;
-  final String title;
-  final String company;
-  final int amount;
-  final int dueDate;
-  final PendingPaymentItemStatus status;
+  final CampaignModel campaign;
 
-  const PendingPaymentItem({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-    required this.company,
-    required this.amount,
-    required this.dueDate,
-    required this.status,
-  });
+  const PendingPaymentItem({super.key, required this.campaign});
 
   @override
   State<PendingPaymentItem> createState() => _PendingPaymentItemState();
@@ -48,34 +37,34 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
           Row(
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(2),
                 child: Image.network(
-                  widget.imageUrl,
-                  width: 50,
-                  height: 50,
+                  ApiService().baseUrl + widget.campaign.banner,
+                  height: 44,
+                  width: 44,
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.title,
+                      widget.campaign.title,
                       style: TextStyle(
-                        color: AppColors.dark[50],
+                        fontWeight: FontWeight.w600,
                         fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                        fontFamily: "Open-Sans",
+                        color: AppColors.green[25],
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                     Text(
-                      widget.company,
+                      widget.campaign.brand,
                       style: TextStyle(
-                        color: AppColors.dark[50],
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontFamily: "Open-Sans",
+                        color: AppColors.green[25],
                       ),
                     ),
                   ],
@@ -85,7 +74,7 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
           ),
           const SizedBox(height: 10),
           Text(
-            'Promote event on instagram',
+            widget.campaign.description,
             style: TextStyle(
               color: AppColors.dark[50],
               fontSize: 13,
@@ -103,7 +92,7 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
               ),
               SizedBox(width: 8),
               Text(
-                '\$${widget.amount}',
+                '\$${widget.campaign.budget}',
                 style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontSize: 15,
@@ -123,7 +112,7 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
               ),
               SizedBox(width: 8),
               Text(
-                'Due Date: ${Formatter.prettyDate(widget.dueDate)}',
+                'Due Date: ${Formatter.prettyDate(widget.campaign.duration.millisecondsSinceEpoch)}',
                 style: TextStyle(
                   color: Color(0xFFFFFFFF),
                   fontSize: 13,
@@ -146,7 +135,7 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Expected Payout: Within ',
+                      text: 'Expected Payout: ',
                       style: TextStyle(
                         color: Color(0xFFFFFFFF),
                         fontSize: 13,
@@ -154,19 +143,11 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
                       ),
                     ),
                     TextSpan(
-                      text: '30',
+                      text: widget.campaign.payoutDeadline,
                       style: TextStyle(
                         color: Color(0xFFFFFFFF),
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    TextSpan(
-                      text: ' days',
-                      style: TextStyle(
-                        color: Color(0xFFFFFFFF),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -175,26 +156,41 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
             ],
           ),
           const SizedBox(height: 24),
-          Center(
-            child: CustomButton(
-              text:
-                  widget.status == PendingPaymentItemStatus.pending
-                      ? 'Send Payment Request'
-                      : 'Payment Request Sent',
-              onTap: () {
-                if (widget.status == PendingPaymentItemStatus.pending) {
+           
+            Center(
+              child: (widget.campaign.paymentStatus == "PENDING") ? CustomButton(
+                text: 'Send Payment Request',
+                onTap: () {
                   Get.toNamed(AppRoutes.paymentSelection);
-                }
-              },
-              width: null,
-              textSize: 14,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              leading:
-                  widget.status == PendingPaymentItemStatus.sent
-                      ? 'assets/icons/payments/double_check.svg'
-                      : null,
-            ),
-          ),
+                },
+                width: null,
+                textSize: 14,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ) : 
+              
+              CustomButton(
+                width: null,
+                textSize: 14,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                text: 'View Report',
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return Container();
+                        // return PaidCampaignDetails(
+                        //   imageUrl: widget.imageUrl,
+                        //   title: widget.title,
+                        //   company: widget.company,
+                        //   amount: widget.amount,
+                        //   paidOn: widget.paidOn,
+                        // );
+                      },
+                    ),
+                  );
+                },
+              ),
+            )
         ],
       ),
     );

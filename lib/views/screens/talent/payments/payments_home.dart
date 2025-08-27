@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/talent/payments/earnings.dart';
-import 'package:internet_originals/views/screens/talent/payments/paid_payment_item.dart';
 import 'package:internet_originals/views/screens/talent/payments/pending_payment_item.dart';
 
 class PaymentsHome extends StatefulWidget {
@@ -13,44 +17,37 @@ class PaymentsHome extends StatefulWidget {
 }
 
 class _PaymentsHomeState extends State<PaymentsHome> {
+  final talent = Get.find<TalentController>();
   final List<String> _pageOptions = ["Pending", "Paid", "Earnings"];
   int selectedOption = 0;
 
-  final List<Map<String, dynamic>> _pendingPayments = [
-    {
-      "imageUrl": 'https://picsum.photos/200/200',
-      "title": 'Nike Air Max Campaign',
-      "company": 'Nike',
-      "dueDate": DateTime.now().millisecondsSinceEpoch,
-      "amount": 1000,
-      "status": PendingPaymentItemStatus.pending,
-    },
-    {
-      "imageUrl": 'https://picsum.photos/200/200',
-      "title": 'Coca-Cola Refreshing Moments',
-      "company": 'Coca-Cola',
-      "dueDate": DateTime.now().millisecondsSinceEpoch,
-      "amount": 500,
-      "status": PendingPaymentItemStatus.sent,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
-  final List<Map<String, dynamic>> _paidPayments = [
-    {
-      "imageUrl": 'https://picsum.photos/200/200',
-      "title": 'Nike Air Max Campaign',
-      "company": 'Nike',
-      "paidOn": DateTime.now().millisecondsSinceEpoch,
-      "amount": 1000,
-    },
-    {
-      "imageUrl": 'https://picsum.photos/200/200',
-      "title": 'Coca-Cola Refreshing Moments',
-      "company": 'Coca-Cola',
-      "paidOn": DateTime.now().millisecondsSinceEpoch,
-      "amount": 1000,
-    },
-  ];
+  void getData() {
+    if (selectedOption == 0) {
+      talent.getPendingPayment().then((message) {
+        if (message != "success") {
+          showSnackBar(message);
+        }
+      });
+    } else if (selectedOption == 1) {
+      talent.getPaidPayment().then((message) {
+        if (message != "success") {
+          showSnackBar(message);
+        }
+      });
+    } else {
+      // talent.().then((message) {
+      //   if (message != "success") {
+      //     showSnackBar(message);
+      //   }
+      // });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,37 +65,42 @@ class _PaymentsHomeState extends State<PaymentsHome> {
                   setState(() {
                     selectedOption = index;
                   });
+                  getData();
                 },
               ),
             ),
-            if (selectedOption == 0)
-              ..._pendingPayments.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: PendingPaymentItem(
-                    imageUrl: item['imageUrl'],
-                    title: item['title'],
-                    company: item['company'],
-                    dueDate: item['dueDate'],
-                    amount: item['amount'],
-                    status: item['status'],
-                  ),
-                );
+            Expanded(
+              child: Obx(() {
+                if (talent.paymentLoading.value) {
+                  return CustomLoading();
+                }
+
+                if (selectedOption != 2) {
+                  if (talent.payments.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "No payment info available",
+                        style: TextStyle(color: AppColors.green.shade100),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: talent.payments.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: PendingPaymentItem(
+                          campaign: talent.payments.elementAt(index),
+                        ),
+                      );
+                    },
+                  );
+                }
+
+                return Earnings();
               }),
-            if (selectedOption == 1)
-              ..._paidPayments.map((item) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: PaidPaymentItem(
-                    imageUrl: item['imageUrl'],
-                    title: item['title'],
-                    company: item['company'],
-                    paidOn: item['paidOn'],
-                    amount: item['amount'],
-                  ),
-                );
-              }),
-            if (selectedOption == 2) Earnings(),
+            ),
           ],
         ),
       ),

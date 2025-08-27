@@ -15,6 +15,7 @@ class TalentController extends GetxController {
 
   RxList<CampaignModel> tasks = RxList.empty();
   RxList<CampaignModel> campaigns = RxList.empty();
+  RxList<CampaignModel> payments = RxList.empty();
   RxList<NotificationModel> notifications = RxList.empty();
   RxList<SocialPlatformModel> socialPlatforms = RxList();
 
@@ -247,6 +248,77 @@ class TalentController extends GetxController {
   }
 
   // Payments
+  Future<String> getPendingPayment() async {
+    try {
+      paymentLoading(true);
+      final response = await api.get(
+        "/influencer/payments/pending-payment",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
+
+        List<CampaignModel> temp = [];
+
+        for (var i in data) {
+          temp.add(CampaignModel.fromJson(i));
+        }
+
+        if (currentPage.value == 1) {
+          payments.assignAll(temp);
+        } else {
+          payments.addAll(temp);
+        }
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      paymentLoading(false);
+    }
+  }
+  
+  Future<String> getPaidPayment() async {
+    try {
+      paymentLoading(true);
+      final response = await api.get(
+        "/influencer/payments/paid-payment",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
+
+        List<CampaignModel> temp = [];
+
+        for (var i in data) {
+          temp.add(CampaignModel.fromJson(i));
+        }
+
+        if (currentPage.value == 1) {
+          payments.assignAll(temp);
+        } else {
+          payments.addAll(temp);
+        }
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      paymentLoading(false);
+    }
+  }
 
   // Profile
   Future<String?> getPolicies(String specific) async {
