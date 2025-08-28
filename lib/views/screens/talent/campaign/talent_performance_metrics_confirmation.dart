@@ -1,14 +1,19 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/screens/talent/payments/payment_selection.dart';
 
 class TalentPerformanceMetricsConfirmation extends StatelessWidget {
-  final String title;
-  const TalentPerformanceMetricsConfirmation({super.key, required this.title});
+  final CampaignModel campaign;
+  const TalentPerformanceMetricsConfirmation({
+    super.key,
+    required this.campaign,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +37,7 @@ class TalentPerformanceMetricsConfirmation extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                "Your performance metrics for the $title campaign have been successfully uploaded. Next, upload your invoice to receive payment.",
+                "Your performance metrics for the ${campaign.title} campaign have been successfully uploaded. Next, upload your invoice to receive payment.",
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
@@ -41,7 +46,7 @@ class TalentPerformanceMetricsConfirmation extends StatelessWidget {
                 text: "Send Payment Request",
                 width: null,
                 onTap: () {
-                  Get.toNamed(AppRoutes.paymentSelection);
+                  Get.to(() => PaymentSelection(campaign: campaign));
                 },
               ),
               const SizedBox(height: 12),

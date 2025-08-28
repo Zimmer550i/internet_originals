@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/screens/talent/payments/payment_selection.dart';
 
 enum PendingPaymentItemStatus { pending, sent }
 
@@ -156,41 +156,26 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
             ],
           ),
           const SizedBox(height: 24),
-           
-            Center(
-              child: (widget.campaign.paymentStatus == "PENDING") ? CustomButton(
-                text: 'Send Payment Request',
-                onTap: () {
-                  Get.toNamed(AppRoutes.paymentSelection);
-                },
-                width: null,
-                textSize: 14,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ) : 
-              
-              CustomButton(
-                width: null,
-                textSize: 14,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                text: 'View Report',
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return Container();
-                        // return PaidCampaignDetails(
-                        //   imageUrl: widget.imageUrl,
-                        //   title: widget.title,
-                        //   company: widget.company,
-                        //   amount: widget.amount,
-                        //   paidOn: widget.paidOn,
-                        // );
-                      },
-                    ),
-                  );
-                },
-              ),
-            )
+
+          Center(
+            child: CustomButton(
+              text:
+                  widget.campaign.isPaymentRequested == true
+                      ? "Payment Request Sent"
+                      : 'Send Payment Request',
+              isDisabled: widget.campaign.isPaymentRequested == true,
+              leading:
+                  widget.campaign.isPaymentRequested == true
+                      ? "assets/icons/payments/double_check.svg"
+                      : null,
+              onTap: () {
+                Get.to(() => PaymentSelection(campaign: widget.campaign));
+              },
+              width: null,
+              textSize: 14,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+          ),
         ],
       ),
     );

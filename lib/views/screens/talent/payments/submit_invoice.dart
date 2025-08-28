@@ -1,19 +1,27 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_attachment.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:get/get.dart';
 
 class SubmitInvoice extends StatefulWidget {
-  const SubmitInvoice({super.key});
+  final CampaignModel campaign;
+  const SubmitInvoice({super.key, required this.campaign});
 
   @override
   State<SubmitInvoice> createState() => _SubmitInvoiceState();
 }
 
 class _SubmitInvoiceState extends State<SubmitInvoice> {
+  List<File?> files = [null, null];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,19 +53,50 @@ class _SubmitInvoiceState extends State<SubmitInvoice> {
               ),
               child: Column(
                 children: [
-                  CustomAttachment(text: 'Attach file', onSelect: (file) {}),
+                  CustomAttachment(
+                    text: 'Attach file',
+                    onSelect: (file) {
+                      setState(() {
+                        files[0] = file;
+                      });
+                    },
+                  ),
                   CustomAttachment(
                     text: 'Attach file (optional)',
-                    onSelect: (file) {},
+                    onSelect: (file) {
+                      setState(() {
+                        files[1] = file;
+                      });
+                    },
                   ),
                   SizedBox(height: 36),
-                  CustomButton(
-                    text: 'Submit',
-                    width: null,
-                    height: 40,
-                    onTap: () {
-                      Get.toNamed(AppRoutes.invoiceSubmitted);
-                    },
+                  Obx(
+                    () => CustomButton(
+                      text: 'Submit',
+                      width: null,
+                      height: 40,
+                      isLoading:
+                          Get.find<TalentController>().paymentLoading.value,
+                      onTap: () {
+                        final List<File> data = [];
+                        if (files[0] != null) {
+                          data.add(files[0]!);
+                        }
+                        if (files[1] != null) {
+                          data.add(files[1]!);
+                        }
+
+                        Get.find<TalentController>()
+                            .requestForPayment(widget.campaign.id, data)
+                            .then((message) {
+                              if (message == "success") {
+                                Get.toNamed(AppRoutes.invoiceSubmitted);
+                              } else {
+                                showSnackBar(message);
+                              }
+                            });
+                      },
+                    ),
                   ),
                 ],
               ),

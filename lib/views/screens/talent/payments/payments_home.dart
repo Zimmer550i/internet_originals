@@ -70,36 +70,41 @@ class _PaymentsHomeState extends State<PaymentsHome> {
               ),
             ),
             Expanded(
-              child: Obx(() {
-                if (talent.paymentLoading.value) {
-                  return CustomLoading();
-                }
+              child:
+                  selectedOption == 2
+                      ? Earnings()
+                      : Obx(() {
+                        if (talent.paymentLoading.value) {
+                          return CustomLoading();
+                        }
 
-                if (selectedOption != 2) {
-                  if (talent.payments.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        "No payment info available",
-                        style: TextStyle(color: AppColors.green.shade100),
-                      ),
-                    );
-                  }
-                  return ListView.builder(
-                    itemCount: talent.payments.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: PendingPaymentItem(
-                          campaign: talent.payments.elementAt(index),
-                        ),
-                      );
-                    },
-                  );
-                }
+                        if (selectedOption != 2) {
+                          if (talent.payments.isEmpty) {
+                            return Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                "No payment info available",
+                                style: TextStyle(
+                                  color: AppColors.green.shade100,
+                                ),
+                              ),
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: talent.payments.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 20),
+                                child: PendingPaymentItem(
+                                  campaign: talent.payments.elementAt(index),
+                                ),
+                              );
+                            },
+                          );
+                        }
 
-                return Earnings();
-              }),
+                        return CustomLoading();
+                      }),
             ),
           ],
         ),

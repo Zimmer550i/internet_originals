@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
 class PaymentTerms extends StatefulWidget {
-  const PaymentTerms({super.key});
+  final CampaignModel campaign;
+  const PaymentTerms({super.key, required this.campaign});
 
   @override
   State<PaymentTerms> createState() => _PaymentTermsState();
@@ -85,16 +89,29 @@ class _PaymentTermsState extends State<PaymentTerms> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CustomButton(
-                    text: 'Accept & Send Copy',
-                    width: null,
-                    height: 40,
-                    onTap: () {
-                      if (_agreed) {
-                        Get.toNamed(AppRoutes.cashPaymentSubmitted);
-                      }
-                    },
-                    textSize: 15,
+                  Obx(
+                    () => CustomButton(
+                      text: 'Accept & Send Copy',
+                      width: null,
+                      isDisabled: !_agreed,
+                      isLoading:
+                          Get.find<TalentController>().paymentLoading.value,
+                      height: 40,
+                      onTap: () {
+                        if (_agreed) {
+                          Get.find<TalentController>()
+                              .requestForPayment(widget.campaign.id, null)
+                              .then((message) {
+                                if (message == "success") {
+                                  Get.toNamed(AppRoutes.cashPaymentSubmitted);
+                                } else {
+                                  showSnackBar(message);
+                                }
+                              });
+                        }
+                      },
+                      textSize: 15,
+                    ),
                   ),
                 ],
               ),

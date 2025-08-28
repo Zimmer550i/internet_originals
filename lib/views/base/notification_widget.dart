@@ -1,3 +1,5 @@
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
@@ -31,7 +33,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.item.type == "HARD") {
+    if (widget.item.type == "HARD" && widget.item.status != "READ") {
       status = NotificationType.hard;
     }
   }
@@ -117,11 +119,8 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             onTap: () async {
                               setState(() {
                                 status = NotificationType.completed;
-                                Future.delayed(
-                                  Duration(seconds: 3),
-                                  () => setState(() {
-                                    status = NotificationType.hard;
-                                  }),
+                                Get.find<TalentController>().readNotifications(
+                                  widget.item.id,
                                 );
                               });
                             },
@@ -284,12 +283,13 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                                   time!.minute,
                                 );
                               });
-                              Future.delayed(
-                                Duration(seconds: 3),
-                                () => setState(() {
-                                  status = NotificationType.hard;
-                                }),
-                              );
+                              Get.find<TalentController>()
+                                  .compromiseNotification(widget.item.id, date!)
+                                  .then((message) {
+                                    setState(() {
+                                      widget.item.status = "READ";
+                                    });
+                                  });
                             }
                           },
                         ),

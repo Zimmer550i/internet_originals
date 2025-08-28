@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_radio_options.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/views/screens/talent/payments/payment_terms.dart';
+import 'package:internet_originals/views/screens/talent/payments/submit_invoice.dart';
 
 class PaymentSelection extends StatefulWidget {
-  const PaymentSelection({super.key});
+  final CampaignModel campaign;
+  const PaymentSelection({super.key, required this.campaign});
 
   @override
   State<PaymentSelection> createState() => _PaymentSelectionState();
@@ -57,9 +60,9 @@ class _PaymentSelectionState extends State<PaymentSelection> {
               width: MediaQuery.of(context).size.width * 0.5,
               onTap: () {
                 if (_selectedPaymentOption == 'Submit Invoice') {
-                  Get.toNamed(AppRoutes.submitInvoice);
+                  Get.to(() => SubmitInvoice(campaign: widget.campaign));
                 } else {
-                  Get.toNamed(AppRoutes.paymentTerms);
+                  Get.to(() => PaymentTerms(campaign: widget.campaign));
                 }
               },
             ),

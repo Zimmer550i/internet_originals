@@ -54,8 +54,9 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
 
     if (message == "success") {
       Get.to(
-        () =>
-            TalentPerformanceMetricsConfirmation(title: widget.campaign.title),
+        () => TalentPerformanceMetricsConfirmation(
+          campaign: widget.campaign,
+        ),
       );
     } else {
       showSnackBar(message);

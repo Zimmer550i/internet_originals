@@ -6,9 +6,6 @@ import 'package:internet_originals/views/screens/sub_admin/settings/terms_servic
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/payments/cach_payment_submitted.dart';
 import 'package:internet_originals/views/screens/talent/payments/invoice_submitted.dart';
-import 'package:internet_originals/views/screens/talent/payments/payment_selection.dart';
-import 'package:internet_originals/views/screens/talent/payments/payment_terms.dart';
-import 'package:internet_originals/views/screens/talent/payments/submit_invoice.dart';
 import 'package:internet_originals/views/screens/talent/profile/about_us.dart';
 import 'package:internet_originals/views/screens/talent/profile/add_socials.dart';
 import 'package:internet_originals/views/screens/talent/profile/change_password.dart';
@@ -36,9 +33,6 @@ class AppRoutes {
   static String addSocials = "/add_socials";
   static String socialAdded = "/social_added";
   
-  static String paymentSelection = "/payment_selection";
-  static String submitInvoice = "/submit_invoice";
-  static String paymentTerms = "/payment_terms";
   static String invoiceSubmitted = "/invoice_submitted";
   static String cashPaymentSubmitted = "/cash_payment_submitted";
 
@@ -64,9 +58,6 @@ class AppRoutes {
     aboutUs: AboutUs(),
     addSocials: AddSocials(),
     socialAdded: SocialAdded(),
-    paymentSelection: PaymentSelection(),
-    submitInvoice: SubmitInvoice(),
-    paymentTerms: PaymentTerms(),
     invoiceSubmitted: InvoiceSubmitted(),
     cashPaymentSubmitted: CashPaymentSubmitted(),
     adminPersonalInformation: PersonalInformation(),

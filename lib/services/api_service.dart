@@ -35,12 +35,15 @@ class ApiService {
   Future<http.Response> post(
     String endpoint,
     Map<String, dynamic> data, {
+    Map<String, dynamic>? queryParams,
     bool isMultiPart = false,
     bool authReq = false,
   }) async {
     try {
       final headers = await _getHeaders(authReq);
-      final uri = Uri.parse('$baseUrl$endpoint');
+      final uri = Uri.parse(
+        '$baseUrl$endpoint',
+      ).replace(queryParameters: queryParams);
 
       http.Response response;
 
@@ -56,6 +59,13 @@ class ApiService {
                 (entry.value as File).path,
               ),
             );
+          } else if (entry.value is List<File>) {
+            // List of Files
+            for (var file in (entry.value as List<File>)) {
+              request.files.add(
+                await http.MultipartFile.fromPath(entry.key, file.path),
+              );
+            }
           } else {
             request.fields[entry.key] = jsonEncode(entry.value);
           }

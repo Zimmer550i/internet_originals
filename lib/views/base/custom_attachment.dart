@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -5,7 +7,7 @@ import 'package:internet_originals/utils/custom_svg.dart';
 
 class CustomAttachment extends StatefulWidget {
   final String text;
-  final Function(XFile)? onSelect;
+  final Function(File)? onSelect;
   const CustomAttachment({super.key, required this.text, this.onSelect});
 
   @override
@@ -13,12 +15,17 @@ class CustomAttachment extends StatefulWidget {
 }
 
 class _CustomAttachmentState extends State<CustomAttachment> {
+  File? file;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final file = await ImagePicker().pickMedia();
-        if (file != null) widget.onSelect?.call(file);
+        final temp = await ImagePicker().pickMedia();
+        if (temp != null) {
+          file = File(temp.path);
+        }
+        if (file != null && widget.onSelect != null) widget.onSelect!(file!);
       },
       child: Container(
         width: double.infinity,
@@ -31,7 +38,7 @@ class _CustomAttachmentState extends State<CustomAttachment> {
         child: Row(
           children: [
             Text(
-              widget.text,
+              file?.path.split("/").last ?? widget.text,
               style: TextStyle(
                 color: AppColors.dark[50],
                 fontSize: 16,

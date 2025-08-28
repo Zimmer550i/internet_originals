@@ -27,6 +27,9 @@ class TalentController extends GetxController {
 
   RxInt totalPages = RxInt(1);
   RxInt currentPage = RxInt(1);
+  RxnNum totalEarning = RxnNum();
+  RxnNum pendingPayments = RxnNum();
+  RxnNum paidEarning = RxnNum();
 
   Timer? _notificationTimer;
   Duration notificationRefreshTime = Duration(minutes: 2);
@@ -283,7 +286,7 @@ class TalentController extends GetxController {
       paymentLoading(false);
     }
   }
-  
+
   Future<String> getPaidPayment() async {
     try {
       paymentLoading(true);
@@ -320,6 +323,56 @@ class TalentController extends GetxController {
     }
   }
 
+  Future<String> getEarnings() async {
+    try {
+      paymentLoading(true);
+      final resposne = await api.get(
+        "/influencer/payments/get-earnings",
+        authReq: true,
+      );
+      final body = jsonDecode(resposne.body);
+
+      if (resposne.statusCode == 200) {
+        final data = body['data'];
+        pendingPayments.value = data['pending'];
+        paidEarning.value = data['paid'];
+        totalEarning.value = data['total'];
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      paymentLoading(false);
+    }
+  }
+
+  Future<String> requestForPayment(String id, List<File>? files) async {
+    try {
+      paymentLoading(true);
+      final resposne = await api.post(
+        "/influencer/campaigns/$id/request-for-payment",
+        files == null ? {} : {"invoices": files},
+        queryParams: {"method": files == null ? "cash" : "invoice"},
+        authReq: true,
+        isMultiPart: files != null
+      );
+      final body = jsonDecode(resposne.body);
+
+      if (resposne.statusCode == 200 || resposne.statusCode == 201) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      paymentLoading(false);
+    }
+  }
+
   // Profile
   Future<String?> getPolicies(String specific) async {
     try {
@@ -338,6 +391,25 @@ class TalentController extends GetxController {
   }
 
   // Notifications
+  Future<String> compromiseNotification(String id, DateTime dateTime) async {
+    try {
+      final response = await api.post(
+        "/influencer/notifications/$id/compromise",
+        {"date": dateTime.toIso8601String()},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String> getNotifications({bool getMore = false}) async {
     try {
       notificationLoading(true);
@@ -386,6 +458,24 @@ class TalentController extends GetxController {
         for (var i in notifications) {
           i.status = "READ";
         }
+      } else {
+        debugPrint("Error reading notifications");
+      }
+    } catch (e) {
+      debugPrint("Error reading notifications: ${e.toString()}");
+    }
+  }
+
+  void readNotifications(String id) async {
+    try {
+      final response = await api.post(
+        "/influencer/notifications/$id/read",
+        {},
+        authReq: true,
+      );
+
+      if (response.statusCode == 200) {
+        notifications.firstWhere((val) => val.id == id).status = "READ";
       } else {
         debugPrint("Error reading notifications");
       }

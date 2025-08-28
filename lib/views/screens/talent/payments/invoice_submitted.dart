@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
@@ -59,6 +61,13 @@ class InvoiceSubmitted extends StatelessWidget {
                 text: 'Back to Payments',
                 width: MediaQuery.of(context).size.width * 0.6,
                 textSize: 16,
+                onTap: () {
+                  Get.until(
+                    (route) =>
+                        (Get.currentRoute == AppRoutes.talentApp) ||
+                        (Get.currentRoute == AppRoutes.subAdminApp),
+                  );
+                },
               ),
             ],
           ),
