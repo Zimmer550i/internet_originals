@@ -1,45 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
+import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/payment_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
-import 'package:internet_originals/views/screens/sub_admin/payments/payment_item.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdminPaymentDetails extends StatefulWidget {
-  final String name;
-  final String avatar;
-  final double rating;
-  final String campaign;
-  final int amount;
-  final AdminPaymentStatus status;
+  final PaymentModel payment;
 
-  const AdminPaymentDetails({
-    super.key,
-    required this.name,
-    required this.avatar,
-    required this.rating,
-    required this.campaign,
-    required this.amount,
-    required this.status,
-  });
+  const AdminPaymentDetails({super.key, required this.payment});
 
   @override
   State<AdminPaymentDetails> createState() => _AdminPaymentDetailsState();
 }
 
 class _AdminPaymentDetailsState extends State<AdminPaymentDetails> {
-  late int starCount = widget.rating.toInt();
+  final sub = Get.find<SubAdminController>();
+  late int starCount = widget.payment.influencerRating.toInt();
+
+  @override
+  void initState() {
+    super.initState();
+    sub.singlePayment.value = null;
+    WidgetsBinding.instance.addPostFrameCallback((val) {
+      sub.getSinglePayments(widget.payment.id).then((message) {
+        if (message != "success") {
+          showSnackBar(message);
+        }
+      });
+    });
+  }
 
   Widget _stars() {
     return Row(
       children: List.generate(5, (index) {
         return GestureDetector(
-          onTap: () {
-            setState(() {
-              starCount = index + 1;
-            });
-          },
+          // onTap: () {
+          //   setState(() {
+          //     starCount = index + 1;
+          //   });
+          // },
           child: Icon(
             index < starCount ? Icons.star : Icons.star_border,
             color: index < starCount ? AppColors.red[400] : Colors.grey,
@@ -53,133 +61,293 @@ class _AdminPaymentDetailsState extends State<AdminPaymentDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'About Us'),
+      appBar: CustomAppBar(title: 'Details'),
       backgroundColor: AppColors.green[700],
       body: Container(
         width: double.infinity,
         height: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 18),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(6),
-                  color: AppColors.dark[600],
-                  border: Border.all(color: AppColors.dark[400]!, width: 1),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.network(
-                            widget.avatar,
-                            width: 56,
-                            height: 56,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: SafeArea(
+              child: Obx(
+                () =>
+                    sub.singlePayment.value == null
+                        ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomLoading(),
+                        )
+                        : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.name,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                            SizedBox(height: 18),
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                color: AppColors.dark[600],
+                                border: Border.all(
+                                  color: AppColors.dark[400]!,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: Image.network(
+                                          ApiService().baseUrl +
+                                              sub
+                                                  .singlePayment
+                                                  .value!
+                                                  .influencerAvatar,
+                                          width: 56,
+                                          height: 56,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            sub
+                                                .singlePayment
+                                                .value!
+                                                .influencerName,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          _stars(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Campaign: @${sub.singlePayment.value!.campaignName}',
+                                    style: TextStyle(
+                                      color: AppColors.green[50],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Amount: \$${Formatter.formatNumberMagnitude(sub.singlePayment.value!.amount.toDouble())}',
+                                    style: TextStyle(
+                                      color: AppColors.green[50],
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 36),
+                                  Text(
+                                    'Performance Metrics',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 21,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  for (var i
+                                      in sub
+                                          .singlePayment
+                                          .value!
+                                          .matrix!
+                                          .entries)
+                                    DetailsItem(
+                                      primaryText:
+                                          "${i.key.substring(0, 1).toUpperCase() + i.key.substring(1)}: ${Formatter.formatNumberMagnitude(i.value.value.toDouble())}",
+                                      secondaryText: "(Goal: ${i.value.goal})",
+                                    ),
+                                  if (sub.singlePayment.value!.postLink != null)
+                                    InkWell(
+                                      onTap: () {
+                                        launchMyUrl(
+                                          ApiService().baseUrl +
+                                              sub
+                                                  .singlePayment
+                                                  .value!
+                                                  .postLink!,
+                                        );
+                                      },
+                                      child: DetailsItem(
+                                        primaryText: 'View Link',
+                                        primaryTextColor: AppColors.red[300],
+                                        tailingIcon:
+                                            'assets/icons/payments/arrow_tr.svg',
+                                      ),
+                                    ),
+                                  if (sub.singlePayment.value!.screenshot !=
+                                      null)
+                                    DetailsItem(
+                                      onTap: () {
+                                        launchMyUrl(
+                                          ApiService().baseUrl +
+                                              sub
+                                                  .singlePayment
+                                                  .value!
+                                                  .screenshot!,
+                                        );
+                                      },
+                                      primaryText:
+                                          'Download Insight Screenshot',
+                                      primaryTextColor: AppColors.red[300],
+                                      tailingIcon:
+                                          'assets/icons/payments/arrow_down.svg',
+                                    ),
+                                  if (sub
+                                      .singlePayment
+                                      .value!
+                                      .invoices
+                                      .isNotEmpty)
+                                    DetailsItem(
+                                      onTap: () {
+                                        for (var i
+                                            in sub
+                                                .singlePayment
+                                                .value!
+                                                .invoices) {
+                                          launchMyUrl(ApiService().baseUrl + i);
+                                        }
+                                        for (var i
+                                            in sub
+                                                .singlePayment
+                                                .value!
+                                                .invoices) {
+                                          launchMyUrl(ApiService().baseUrl + i);
+                                        }
+                                      },
+                                      primaryText: 'Download Invoice',
+                                      primaryTextColor: AppColors.red[300],
+                                      tailingIcon:
+                                          'assets/icons/payments/arrow_down.svg',
+                                    ),
+                                  const SizedBox(height: 36),
+                                  if (sub.singlePayment.value!.status !=
+                                      "PENDING")
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 24,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Approved!",
+                                          style: TextStyle(
+                                            color: AppColors.green.shade100,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+
+                                  if (!sub.paymentLoading.value)
+                                    Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CustomLoading(),
+                                      ),
+                                    ),
+
+                                  if (sub.singlePayment.value!.status ==
+                                      "PENDING")
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: CustomButton(
+                                            text: 'Cancel',
+                                            isSecondary: true,
+                                            onTap: () {
+                                              sub
+                                                  .cancelPayment(
+                                                    widget.payment.id,
+                                                  )
+                                                  .then((message) {
+                                                    if (message == "success") {
+                                                      Get.until((route) {
+                                                        return Get
+                                                                .currentRoute ==
+                                                            AppRoutes
+                                                                .subAdminApp;
+                                                      });
+                                                      showSnackBar(
+                                                        "Payment has been canceled!",
+                                                        isError: false,
+                                                      );
+                                                      sub.getPayments(
+                                                        "PENDING",
+                                                      );
+                                                    } else {
+                                                      showSnackBar(message);
+                                                    }
+                                                  });
+                                            },
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: CustomButton(
+                                            text: 'Approve',
+                                            onTap: () {
+                                              sub
+                                                  .approvePayment(
+                                                    widget.payment.id,
+                                                  )
+                                                  .then((message) {
+                                                    if (message == "success") {
+                                                      Get.until((route) {
+                                                        return Get
+                                                                .currentRoute ==
+                                                            AppRoutes
+                                                                .subAdminApp;
+                                                      });
+                                                      showSnackBar(
+                                                        "Payment has Approved!",
+                                                        isError: false,
+                                                      );
+                                                      sub.getPayments(
+                                                        "PENDING",
+                                                      );
+                                                    } else {
+                                                      showSnackBar(message);
+                                                    }
+                                                  });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            _stars(),
                           ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Campaign: @${widget.campaign}',
-                      style: TextStyle(
-                        color: AppColors.green[50],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Amount: \$${Formatter.formatNumberMagnitude(widget.amount.toDouble())}',
-                      style: TextStyle(
-                        color: AppColors.green[50],
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 36),
-                    Text(
-                      'Performance Metrics',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 21,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    DetailsItem(
-                      primaryText: 'Views: 12,500',
-                      secondaryText: '(Goal: 10,000)',
-                    ),
-                    DetailsItem(
-                      primaryText: 'Likes: 1,800',
-                      secondaryText: '(Goal: 1,500)',
-                    ),
-                    DetailsItem(
-                      primaryText: 'Shares: 280',
-                      secondaryText: '(Goal: 300)',
-                    ),
-                    DetailsItem(
-                      primaryText: 'View Link',
-                      primaryTextColor: AppColors.red[300],
-                      tailingIcon: 'assets/icons/payments/arrow_tr.svg',
-                    ),
-                    DetailsItem(
-                      primaryText: 'Download Insight Screenshot',
-                      primaryTextColor: AppColors.red[300],
-                      tailingIcon: 'assets/icons/payments/arrow_down.svg',
-                    ),
-                    DetailsItem(
-                      primaryText: 'Download Invoice',
-                      primaryTextColor: AppColors.red[300],
-                      tailingIcon: 'assets/icons/payments/arrow_down.svg',
-                    ),
-                    const SizedBox(height: 36),
-                    if (widget.status == AdminPaymentStatus.pending)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomButton(
-                              text: 'Cancel',
-                              isSecondary: true,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(child: CustomButton(text: 'Approve')),
-                        ],
-                      ),
-                  ],
-                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
+  }
+}
+
+Future<void> launchMyUrl(String url) async {
+  final Uri uri = Uri.parse(url);
+
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    throw Exception('Could not launch $url');
   }
 }
 
@@ -202,6 +370,7 @@ class DetailsItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onTap: onTap,
       child: Container(
         width: double.infinity,

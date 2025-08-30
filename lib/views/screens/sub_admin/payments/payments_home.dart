@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/sub_admin/payments/payment_item.dart';
@@ -12,107 +16,67 @@ class AdminPaymentsHome extends StatefulWidget {
 }
 
 class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
+  final sub = Get.find<SubAdminController>();
   int selectedOption = 0;
 
-  List<Map<String, dynamic>> pending = [
-    {
-      'name': 'Sophia Carter',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 4.5,
-      'campaign': 'Samsung Galaxy Unpacked',
-      'amount': 111912,
-    },
-    {
-      'name': 'Liam Thompson',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 3.2,
-      'campaign': 'McDonalds, New York, USA',
-      'amount': 912,
-    },
-    {
-      'name': 'Ella Rodriguez',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 5.0,
-      'campaign': 'Starbucks, New York, USA',
-      'amount': 58111912,
-    },
-  ];
-
-  List<Map<String, dynamic>> processed = [
-    {
-      'name': 'Sophia Carter',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 4.5,
-      'campaign': 'Samsung Galaxy Unpacked',
-      'amount': 111912,
-    },
-    {
-      'name': 'Liam Thompson',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 3.2,
-      'campaign': 'McDonalds, New York, USA',
-      'amount': 912,
-    },
-    {
-      'name': 'Ella Rodriguez',
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 5.0,
-      'campaign': 'Starbucks, New York, USA',
-      'amount': 58111912,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    sub.getPayments("pending").then((message) {
+      if (message != "success") {
+        showSnackBar(message);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeBar(isHome: false),
       backgroundColor: AppColors.green[700],
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              SizedBox(height: 12),
-              CustomTabBar(
-                options: ['Pending', 'Processed'],
-                onChange: (value) {
-                  setState(() {
-                    selectedOption = value;
-                  });
-                },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          children: [
+            SizedBox(height: 12),
+            CustomTabBar(
+              options: ['Pending', 'Processed'],
+              onChange: (value) {
+                setState(() {
+                  selectedOption = value;
+                });
+
+                sub.getPayments(selectedOption == 0 ? "pending" : "paid").then((
+                  message,
+                ) {
+                  if (message != "success") {
+                    showSnackBar(message);
+                  }
+                });
+              },
+            ),
+            SizedBox(height: 12),
+            Obx(
+              () => SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (sub.paymentLoading.value)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomLoading(),
+                      ),
+                    if (!sub.paymentLoading.value)
+                      for (var i in sub.payments)
+                        Padding(
+                          padding: EdgeInsets.only(top: 12),
+                          child: AdminPaymentItem(payment: i),
+                        ),
+                  ],
+                ),
               ),
-              SizedBox(height: 12),
-              if (selectedOption == 0)
-                ...pending.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: AdminPaymentItem(
-                      name: item['name'],
-                      avatar: item['avatar'],
-                      rating: item['rating'],
-                      campaign: item['campaign'],
-                      amount: item['amount'],
-                      status: AdminPaymentStatus.pending,
-                    ),
-                  );
-                }),
-              if (selectedOption == 1)
-                ...processed.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: AdminPaymentItem(
-                      name: item['name'],
-                      avatar: item['avatar'],
-                      rating: item['rating'],
-                      campaign: item['campaign'],
-                      amount: item['amount'],
-                      status: AdminPaymentStatus.processed,
-                    ),
-                  );
-                }),
-              SizedBox(height: 72),
-            ],
-          ),
+            ),
+            SizedBox(height: 72),
+          ],
         ),
       ),
     );

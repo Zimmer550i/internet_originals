@@ -1,45 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/models/payment_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/formatter.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/screens/sub_admin/payments/payment_details.dart';
 
-enum AdminPaymentStatus { pending, processed }
-
 class AdminPaymentItem extends StatefulWidget {
-  final String name;
-  final String avatar;
-  final double rating;
-  final String campaign;
-  final int amount;
-  final AdminPaymentStatus status;
+  final PaymentModel payment;
 
-  const AdminPaymentItem({
-    super.key,
-    required this.name,
-    required this.avatar,
-    required this.rating,
-    required this.campaign,
-    required this.amount,
-    required this.status,
-  });
+  const AdminPaymentItem({super.key, required this.payment});
 
   @override
   State<AdminPaymentItem> createState() => _AdminPaymentItemState();
 }
 
 class _AdminPaymentItemState extends State<AdminPaymentItem> {
-  late int starCount = widget.rating.toInt();
+  late int starCount = widget.payment.influencerRating.round();
 
   Widget _stars() {
     return Row(
       children: List.generate(5, (index) {
         return GestureDetector(
-          onTap: () {
-            setState(() {
-              starCount = index + 1;
-            });
-          },
+          // onTap: () {
+          //   setState(() {
+          //     starCount = index + 1;
+          //   });
+          // },
           child: Icon(
             index < starCount ? Icons.star : Icons.star_border,
             color: index < starCount ? AppColors.red[400] : Colors.grey,
@@ -67,7 +54,7 @@ class _AdminPaymentItemState extends State<AdminPaymentItem> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: Image.network(
-                  widget.avatar,
+                  ApiService().baseUrl + widget.payment.influencerAvatar,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
@@ -78,7 +65,7 @@ class _AdminPaymentItemState extends State<AdminPaymentItem> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.name,
+                    widget.payment.influencerName,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -93,7 +80,7 @@ class _AdminPaymentItemState extends State<AdminPaymentItem> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Campaign: @${widget.campaign}',
+            'Campaign: @${widget.payment.campaignName}',
             style: TextStyle(
               color: AppColors.green[50],
               fontSize: 14,
@@ -102,7 +89,7 @@ class _AdminPaymentItemState extends State<AdminPaymentItem> {
           ),
           const SizedBox(height: 4),
           Text(
-            'Amount: \$${Formatter.formatNumberMagnitude(widget.amount.toDouble())}',
+            'Amount: \$${Formatter.formatNumberMagnitude(widget.payment.amount.toDouble())}',
             style: TextStyle(
               color: AppColors.green[50],
               fontSize: 14,
@@ -119,14 +106,7 @@ class _AdminPaymentItemState extends State<AdminPaymentItem> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return AdminPaymentDetails(
-                          avatar: widget.avatar,
-                          amount: widget.amount,
-                          campaign: widget.campaign,
-                          name: widget.name,
-                          rating: widget.rating,
-                          status: widget.status,
-                        );
+                        return AdminPaymentDetails(payment: widget.payment);
                       },
                     ),
                   );

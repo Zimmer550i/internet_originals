@@ -164,7 +164,7 @@ class Formatter {
   }
 
   static String formatNumberMagnitude(double value) {
-    List<String> suffixes = ["", "K", "M", "B", "T"];
+    List<String> suffixes = ["", "K", "M", "B", "T", "QT"];
     int magnitude = 0;
 
     while (value >= 1000) {
