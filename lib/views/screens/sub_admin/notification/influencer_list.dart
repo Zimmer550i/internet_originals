@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
-import 'package:internet_originals/views/base/influencer_card.dart';
 
 class InfluencerList extends StatelessWidget {
   const InfluencerList({super.key});
@@ -15,7 +14,7 @@ class InfluencerList extends StatelessWidget {
           itemBuilder: (context, index) {
             return Padding(
               padding: EdgeInsets.only(bottom: 16),
-              child: InfluencerCard(),
+              // child: InfluencerCard(),
             );
           },
         ),

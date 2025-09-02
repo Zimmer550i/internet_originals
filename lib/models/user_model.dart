@@ -18,7 +18,7 @@ class UserModel {
   final EUserRole role;
   final String name;
   final String email;
-  final String phone;
+  final String? phone; 
   final String? avatar;
   final String? address;
   final double rating;
@@ -32,7 +32,7 @@ class UserModel {
     required this.role,
     required this.name,
     required this.email,
-    required this.phone,
+    this.phone, 
     this.avatar,
     this.address,
     required this.rating,

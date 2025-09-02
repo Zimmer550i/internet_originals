@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
@@ -10,6 +12,7 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/sub_admin/influencer/campaign_assigned.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_feedback.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_performance_metrics.dart';
@@ -18,8 +21,10 @@ import 'package:internet_originals/views/screens/talent/campaign/talent_sign_con
 class CampaignCard extends StatelessWidget {
   final bool isDetailed;
   final CampaignModel campaign;
+  final UserModel? influencer;
   const CampaignCard({
     super.key,
+    this.influencer,
     this.isDetailed = false,
     required this.campaign,
   });
@@ -39,7 +44,7 @@ class CampaignCard extends StatelessWidget {
           header(),
           const SizedBox(height: 12),
           isDetailed ? detailedInfo(context) : shortInfo(),
-          if (!isDetailed)
+          if (!isDetailed && influencer == null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Center(
@@ -49,6 +54,24 @@ class CampaignCard extends StatelessWidget {
                   textSize: 14,
                   onTap: () {
                     Get.to(() => TalentCampaignDetails(campaign: campaign));
+                  },
+                ),
+              ),
+            ),
+          if (influencer != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Center(
+                child: CustomButton(
+                  text: "Assign",
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                  textSize: 14,
+                  onTap: () {
+                    showCampaignAssignModal(
+                      context: context,
+                      campaign: campaign,
+                      influencer: influencer,
+                    );
                   },
                 ),
               ),
@@ -216,7 +239,7 @@ class CampaignCard extends StatelessWidget {
               width: null,
               textSize: 14,
               onTap: () {
-                Get.to(() => TalentPerformanceMetrics(campaign: campaign,));
+                Get.to(() => TalentPerformanceMetrics(campaign: campaign));
               },
             ),
           ),
@@ -475,4 +498,162 @@ class CampaignCard extends StatelessWidget {
       return '$startFormatted - $endFormatted, ${startDate.year} - ${endDate.year}';
     }
   }
+}
+
+showCampaignAssignModal({
+  required BuildContext context,
+  required UserModel? influencer,
+  required CampaignModel campaign,
+}) {
+  showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    isScrollControlled: true,
+    elevation: 0,
+    builder: (context) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.transparent,
+          child: Center(
+            child: GestureDetector(
+              onTap: () {
+                // Do nothing here, this prevents the gesture detector of the whole container
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width - 36,
+                padding: EdgeInsets.symmetric(vertical: 32, horizontal: 18),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: AppColors.dark[600],
+                  border: Border.all(color: AppColors.dark[400]!, width: 2),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 12),
+                    Text(
+                      'Are you sure you want to assign',
+                      style: TextStyle(
+                        color: AppColors.dark[50],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: Image.network(
+                            ApiService().baseUrl + influencer!.avatar!,
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          influencer.name,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'to',
+                          style: TextStyle(
+                            color: AppColors.dark[50],
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(2),
+                          child: Image.network(
+                            ApiService().baseUrl + campaign.banner,
+                            width: 24,
+                            height: 24,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          campaign.title,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 36),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: 'Cancel',
+                            isSecondary: true,
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Obx(
+                            () => CustomButton(
+                              text: 'Confirm',
+                              isLoading:
+                                  Get.find<SubAdminController>()
+                                      .campaignLoading
+                                      .value,
+                              onTap: () {
+                                Get.find<SubAdminController>()
+                                    .assignCampaign(influencer.id, campaign.id)
+                                    .then((message) {
+                                      if (message == "success") {
+                                        Get.to(
+                                          () => CampaignAssigned(
+                                            influncer: influencer,
+                                            campaign: campaign,
+                                          ),
+                                        );
+                                      } else {
+                                        showSnackBar(message);
+                                      }
+                                    });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
 }

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/payment_model.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 
@@ -9,17 +11,157 @@ class SubAdminController extends GetxController {
   // Fields
   final api = ApiService();
 
+  RxList<UserModel> influencers = RxList.empty();
+  RxList<CampaignModel> campaigns = RxList.empty();
   RxList<PaymentModel> payments = RxList.empty();
   Rxn<PaymentModel> singlePayment = Rxn(null);
 
   RxBool isLoading = RxBool(false);
   RxBool paymentLoading = RxBool(false);
   RxBool campaignLoading = RxBool(false);
-  RxBool taskLoading = RxBool(false);
-
-  // Tasks
+  RxBool influencerLoading = RxBool(false);
 
   // Campaigns
+  Future<String> getCampaigns({String? searchText}) async {
+    try {
+      campaignLoading(true);
+
+      Map<String, dynamic> queryParams = {};
+      if (searchText != null) {
+        queryParams['search'] = searchText;
+      }
+
+      final response = await api.get(
+        "/sub-admin/campaigns/active",
+        queryParams: queryParams,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+        // totalPages.value = body['meta']['pagination']['totalPages'];
+
+        List<CampaignModel> temp = [];
+        for (var i in data) {
+          temp.add(CampaignModel.fromJson(i));
+        }
+
+        campaigns.value = temp;
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> assignCampaign(String influencerId, String campaignId) async {
+    try {
+      campaignLoading(true);
+      final response = await api.post(
+        "/sub-admin/campaigns/$campaignId/create-task",
+        {"influencerId": influencerId},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  // Influencers
+  Future<String> getInfluencers({
+    bool getPending = false,
+    String? searchText,
+  }) async {
+    try {
+      influencerLoading(true);
+      final response = await api.get(
+        "/sub-admin/influencers${getPending ? "/pending-influencers" : ""}",
+        authReq: true,
+        queryParams: searchText != null ? {"search": searchText} : null,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+
+        final List<UserModel> temp = [];
+        for (var i in data) {
+          temp.add(UserModel.fromJson(i));
+        }
+
+        if (temp.isNotEmpty) {
+          influencers.value = temp;
+        } else {
+          influencers.clear();
+        }
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      influencerLoading(false);
+    }
+  }
+
+  Future<String> approveInfluencer(String id) async {
+    try {
+      influencerLoading(true);
+      final response = await api.get(
+        "/sub-admin/influencers/$id/approve",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      influencerLoading(false);
+    }
+  }
+
+  Future<String> declineInfluencer(String id) async {
+    try {
+      influencerLoading(true);
+      final response = await api.get(
+        "/sub-admin/influencers/$id/decline",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      influencerLoading(false);
+    }
+  }
 
   // Payments
   Future<String> getPayments(String status) async {

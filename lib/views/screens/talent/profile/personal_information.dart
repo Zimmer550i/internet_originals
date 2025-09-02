@@ -63,7 +63,7 @@ class _PersonalInformationState extends State<PersonalInformation> {
 
     nameController.text = user.userInfo.value!.name;
     emailController.text = user.userInfo.value!.email;
-    phoneController.text = user.userInfo.value!.phone;
+    phoneController.text = user.userInfo.value!.phone ?? "";
     locationController.text = user.userInfo.value!.address ?? "";
   }
 

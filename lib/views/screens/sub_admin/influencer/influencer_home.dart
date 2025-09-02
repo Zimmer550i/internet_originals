@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/sub_admin/influencer/approved_influencer_item.dart';
-import 'package:internet_originals/views/screens/sub_admin/influencer/pending_influencer_item.dart';
+import 'package:internet_originals/views/base/influencer_card.dart';
 
 class InfluencerHome extends StatefulWidget {
   const InfluencerHome({super.key});
@@ -15,60 +18,17 @@ class InfluencerHome extends StatefulWidget {
 
 class _InfluencerHomeState extends State<InfluencerHome> {
   int selectedOption = 0;
+  final sub = Get.find<SubAdminController>();
 
-  List<Map<String, dynamic>> pending = [
-    {
-      'name': 'Sophia Carter',
-      'username': 'SophiaVibes',
-      'followers': 1200,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 4.5,
-      'location': 'New York, USA',
-      'created_at': 1745158111912,
-    },
-    {
-      'name': 'Liam Thompson',
-      'username': 'LiamEats',
-      'followers': 503000,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 3.2,
-      'location': 'New York, USA',
-      'created_at': 1745158111912,
-    },
-    {
-      'name': 'Ella Rodriguez',
-      'username': 'EllaBeautyX',
-      'followers': 10500000,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 5.0,
-      'location': 'New York, USA',
-      'created_at': 1745158111912,
-    },
-  ];
-
-  List<Map<String, dynamic>> approved = [
-    {
-      'name': 'Sophia Carter',
-      'username': 'SophiaVibes',
-      'followers': 1200,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 4.5,
-    },
-    {
-      'name': 'Liam Thompson',
-      'username': 'LiamEats',
-      'followers': 503000,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 3.2,
-    },
-    {
-      'name': 'Ella Rodriguez',
-      'username': 'EllaBeautyX',
-      'followers': 10500000,
-      'avatar': 'https://picsum.photos/200/300',
-      'rating': 5.0,
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    sub.getInfluencers(getPending: true).then((message) {
+      if (message != "success") {
+        showSnackBar(message);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,41 +47,60 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                   setState(() {
                     selectedOption = value;
                   });
+                  sub.getInfluencers(getPending: selectedOption == 0).then((
+                    message,
+                  ) {
+                    if (message != "success") {
+                      showSnackBar(message);
+                    }
+                  });
                 },
               ),
               SizedBox(height: 12),
-              if (selectedOption == 0)
-                ...pending.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: PendingInfluencerItem(
-                      name: item['name'],
-                      avatar: item['avatar'],
-                      followers: item['followers'],
-                      rating: item['rating'],
-                      username: item['username'],
-                      location: item['location'],
-                      createdAt: item['created_at'],
-                    ),
-                  );
-                }),
               if (selectedOption == 1)
                 CustomSearchBar(
                   hintText: 'Search by name or social handle',
+                  onChanged: (val) {
+                    sub.getInfluencers(getPending: selectedOption == 0, searchText: val).then((
+                      message,
+                    ) {
+                      if (message != "success") {
+                        showSnackBar(message);
+                      }
+                    });
+                  },
                 ),
-              if (selectedOption == 1)
-                ...approved.map((item) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: ApprovedInfluencerItem(
-                      name: item['name'],
-                      avatar: item['avatar'],
-                      followers: item['followers'],
-                      rating: item['rating'],
-                      username: item['username'],
-                    ),
-                  );
-                }),
+
+              Obx(
+                () =>
+                    sub.influencerLoading.value
+                        ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomLoading(),
+                        )
+                        : Column(
+                          children: [
+                            for (var i in sub.influencers)
+                              Padding(
+                                padding: EdgeInsets.only(top: 12),
+                                child: InfluencerCard(influencer: i),
+                              ),
+                          ],
+                        ),
+              ),
+              // if (selectedOption == 1)
+              //   ...approved.map((item) {
+              //     return Padding(
+              //       padding: const EdgeInsets.only(top: 12),
+              //       child: ApprovedInfluencerItem(
+              //         name: item['name'],
+              //         avatar: item['avatar'],
+              //         followers: item['followers'],
+              //         rating: item['rating'],
+              //         username: item['username'],
+              //       ),
+              //     );
+              //   }),
               SizedBox(height: 72),
             ],
           ),
