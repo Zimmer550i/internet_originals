@@ -61,13 +61,16 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                 CustomSearchBar(
                   hintText: 'Search by name or social handle',
                   onChanged: (val) {
-                    sub.getInfluencers(getPending: selectedOption == 0, searchText: val).then((
-                      message,
-                    ) {
-                      if (message != "success") {
-                        showSnackBar(message);
-                      }
-                    });
+                    sub
+                        .getInfluencers(
+                          getPending: selectedOption == 0,
+                          searchText: val,
+                        )
+                        .then((message) {
+                          if (message != "success") {
+                            showSnackBar(message);
+                          }
+                        });
                   },
                 ),
 
@@ -77,6 +80,14 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                         ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: CustomLoading(),
+                        )
+                        : sub.influencers.isEmpty
+                        ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "No influencers available",
+                            style: TextStyle(color: AppColors.green.shade100),
+                          ),
                         )
                         : Column(
                           children: [

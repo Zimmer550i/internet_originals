@@ -65,6 +65,14 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
                         padding: const EdgeInsets.all(8.0),
                         child: CustomLoading(),
                       ),
+                    if (sub.payments.isEmpty && !sub.paymentLoading.value)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "No payments available",
+                          style: TextStyle(color: AppColors.green.shade100),
+                        ),
+                      ),
                     if (!sub.paymentLoading.value)
                       for (var i in sub.payments)
                         Padding(

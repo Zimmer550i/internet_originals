@@ -26,6 +26,8 @@ class CampaignModel {
   final Map<String, dynamic>? otherFields;
   final num rating;
   final bool? isPaymentRequested; // ✅ new field
+  final int? unreadIssueCount; // ✅ new field
+  final int? readIssueCount; // ✅ new field
 
   CampaignModel({
     required this.id,
@@ -55,6 +57,8 @@ class CampaignModel {
     this.otherFields,
     required this.rating,
     this.isPaymentRequested, // ✅ added to constructor
+    this.unreadIssueCount, // ✅ added to constructor
+    this.readIssueCount, // ✅ added to constructor
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
@@ -86,6 +90,8 @@ class CampaignModel {
       otherFields: json['other_fields'],
       rating: json['rating'] ?? 0,
       isPaymentRequested: json['isPaymentRequested'], // ✅ added here
+      unreadIssueCount: json['unreadIssueCount'], // ✅ added here
+      readIssueCount: json['readIssueCount'], // ✅ added here
     );
   }
 
@@ -118,6 +124,8 @@ class CampaignModel {
       'other_fields': otherFields,
       'rating': rating,
       'isPaymentRequested': isPaymentRequested, // ✅ added to toJson
+      'unreadIssueCount': unreadIssueCount, // ✅ added to toJson
+      'readIssueCount': readIssueCount, // ✅ added to toJson
     };
   }
 }

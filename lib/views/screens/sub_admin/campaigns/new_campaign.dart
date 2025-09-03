@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 
 class NewCampaign extends StatelessWidget {
-  const NewCampaign({super.key});
+  final CampaignModel campaign;
+  const NewCampaign({super.key, required this.campaign});
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +30,7 @@ class NewCampaign extends StatelessWidget {
                     ),
                   ),
                 ),
-                // CampaignCard(
-                //   action: CustomButton(
-                //     text: "Add Influencers",
-                //     width: null,
-                //     height: 40,
-                //     onTap: () {
-                //       Get.to(() => AddInfluencers());
-                //     },
-                //   ),
-                // ),
+                CampaignCard(campaign: campaign, isDetailed: true,),
               ],
             ),
           ),

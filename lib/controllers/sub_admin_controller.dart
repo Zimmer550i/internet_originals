@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/models/issue_model.dart';
 import 'package:internet_originals/models/payment_model.dart';
 import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -13,16 +15,22 @@ class SubAdminController extends GetxController {
 
   RxList<UserModel> influencers = RxList.empty();
   RxList<CampaignModel> campaigns = RxList.empty();
+  Rxn<CampaignModel> singleCampaign = Rxn(null);
+  RxList<IssueModel> issues = RxList.empty();
   RxList<PaymentModel> payments = RxList.empty();
   Rxn<PaymentModel> singlePayment = Rxn(null);
 
   RxBool isLoading = RxBool(false);
+  RxBool issueLoading = RxBool(false);
   RxBool paymentLoading = RxBool(false);
   RxBool campaignLoading = RxBool(false);
   RxBool influencerLoading = RxBool(false);
 
   // Campaigns
-  Future<String> getCampaigns({String? searchText}) async {
+  Future<String> getCampaigns({
+    String? searchText,
+    bool showCompleted = false,
+  }) async {
     try {
       campaignLoading(true);
 
@@ -32,7 +40,7 @@ class SubAdminController extends GetxController {
       }
 
       final response = await api.get(
-        "/sub-admin/campaigns/active",
+        "/sub-admin/campaigns/${showCompleted ? "completed" : "active"}",
         queryParams: queryParams,
         authReq: true,
       );
@@ -81,6 +89,168 @@ class SubAdminController extends GetxController {
       campaignLoading(false);
     }
   }
+
+  Future<String> createCampaign(
+    String title,
+    String description,
+    String brand,
+    File image,
+    String campaignType,
+    double budget,
+    DateTime duration,
+    String contentType,
+    String payoutDeadline,
+    Map<String, dynamic> expectedMetrics,
+    Map<String, String> otherFields,
+  ) async {
+    try {
+      campaignLoading(true);
+      final data = {
+        "title": title,
+        "description": description,
+        "brand": brand,
+        "campaign_type": campaignType,
+        "budget": budget,
+        "duration": duration.toIso8601String(),
+        "content_type": contentType,
+        "payout_deadline": payoutDeadline,
+        "expected_metrics": expectedMetrics,
+        "other_fields": otherFields,
+      };
+      final response = await api.post(
+        "/sub-admin/campaigns/create",
+        {"data": data, "banner": image},
+        authReq: true,
+        isMultiPart: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        singleCampaign.value = CampaignModel.fromJson(body["data"]);
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> updateCampaign(
+    String id,
+    String title,
+    String description,
+    String brand,
+    File? image,
+    String campaignType,
+    double budget,
+    DateTime duration,
+    String contentType,
+    String payoutDeadline,
+    Map<String, dynamic> expectedMetrics,
+    Map<String, String> otherFields,
+  ) async {
+    try {
+      campaignLoading(true);
+      final data = {
+        "title": title,
+        "description": description,
+        "brand": brand,
+        "campaign_type": campaignType,
+        "budget": budget,
+        "duration": duration.toIso8601String(),
+        "content_type": contentType,
+        "payout_deadline": payoutDeadline,
+        "expected_metrics": expectedMetrics,
+        "other_fields": otherFields,
+      };
+
+      Map<String, dynamic> payload = {"data": data};
+      if (image != null) {
+        payload.addAll({"banner": image});
+      }
+
+      final response = await api.patch(
+        "/sub-admin/campaigns/$id/edit",
+        payload,
+        authReq: true,
+        isMultiPart: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        singleCampaign.value = CampaignModel.fromJson(body["data"]);
+
+        for (int i = 0; i < campaigns.length; i++) {
+          if (campaigns.elementAt(i).id == id) {
+            campaigns.removeAt(i);
+            campaigns.insert(i, singleCampaign.value!);
+          }
+        }
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> getIssues(String id) async {
+    try {
+      issueLoading(true);
+      final response = await api.get(
+        "/sub-admin/campaigns/$id/issues",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+
+        issues.clear();
+        for (var i in data) {
+          issues.add(IssueModel.fromJson(i));
+        }
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      issueLoading(false);
+    }
+  }
+
+  
+  Future<String> readIssue(String id) async {
+    try {
+      final response = await api.get(
+        "/sub-admin/issues/$id/mark-as-read",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  
 
   // Influencers
   Future<String> getInfluencers({

@@ -35,120 +35,120 @@
 //                   return Padding(
 //                     padding: const EdgeInsets.only(bottom: 16),
 //                     child: InfluencerCard(
-//                       action: CustomButton(
-//                         text: "Assign",
-//                         height: 40,
-//                         width: null,
-//                         onTap: () {
-//                           showDialog(
-//                             context: context,
-//                             builder: (context) {
-//                               return Dialog(
-//                                 child: Container(
-//                                   padding: EdgeInsets.symmetric(
-//                                     horizontal: 16,
-//                                     vertical: 32,
-//                                   ),
-//                                   decoration: BoxDecoration(
-//                                     color: AppColors.green[600],
-//                                     borderRadius: BorderRadius.circular(4),
-//                                     border: Border.all(
-//                                       color: AppColors.green[400]!,
-//                                     ),
-//                                   ),
-//                                   child: Column(
-//                                     mainAxisSize: MainAxisSize.min,
-//                                     children: [
-//                                       Text(
-//                                         "Are you sure you want to assign",
-//                                         style: TextStyle(
-//                                           fontSize: 16,
-//                                           height: 24 / 16,
-//                                         ),
-//                                       ),
-//                                       const SizedBox(height: 8,),
-//                                       Row(
-//                                         mainAxisSize: MainAxisSize.min,
-//                                         children: [
-//                                           ClipRRect(
-//                                             borderRadius: BorderRadius.circular(
-//                                               2,
-//                                             ),
-//                                             child: Image.network(
-//                                               "https://picsum.photos/200/200",
-//                                               height: 24,
-//                                               width: 24,
-//                                             ),
-//                                           ),
-//                                           const SizedBox(width: 4),
-//                                           Text(
-//                                             "Sophia Carter",
-//                                             style: TextStyle(
-//                                               fontWeight: FontWeight.w600,
-//                                               fontSize: 16,
-//                                               color: AppColors.green[25],
-//                                             ),
-//                                           ),
-//                                         ],
-//                                       ),
-//                                       const SizedBox(height: 8,),
-//                                       Text("To"),
-//                                       const SizedBox(height: 8,),
-//                                       Row(
-//                                         mainAxisSize: MainAxisSize.min,
-//                                         children: [
-//                                           ClipRRect(
-//                                             borderRadius: BorderRadius.circular(
-//                                               2,
-//                                             ),
-//                                             child: Image.network(
-//                                               "https://picsum.photos/200/200",
-//                                               height: 24,
-//                                               width: 24,
-//                                             ),
-//                                           ),
-//                                           const SizedBox(width: 4),
-//                                           Text(
-//                                             "Samsung Galaxy Unpacked",
-//                                             style: TextStyle(
-//                                               fontWeight: FontWeight.w600,
-//                                               fontSize: 16,
-//                                               color: AppColors.green[25],
-//                                             ),
-//                                           ),
-//                                         ],
-//                                       ),
-//                                       const SizedBox(height: 32),
-//                                       Row(
-//                                         mainAxisAlignment:
-//                                             MainAxisAlignment.center,
-//                                         children: [
-//                                           CustomButton(
-//                                             text: "Cancel",
-//                                             height: 40,
-//                                             width: null,
-//                                             isSecondary: true,
-//                                             onTap: () => Get.back(),
-//                                           ),
-//                                           const SizedBox(width: 20),
-//                                           CustomButton(
-//                                             text: "Confirm",
-//                                             height: 40,
-//                                             width: null,
-//                                             onTap: () {
-//                                               Get.back();
-//                                             },
-//                                           ),
-//                                         ],
-//                                       ),
-//                                     ],
-//                                   ),
-//                                 ),
-//                               );
-//                             },
-//                           );
-//                         },
-//                       ),
+//                       // action: CustomButton(
+//                       //   text: "Assign",
+//                       //   height: 40,
+//                       //   width: null,
+//                       //   onTap: () {
+//                       //     showDialog(
+//                       //       context: context,
+//                       //       builder: (context) {
+//                       //         return Dialog(
+//                       //           child: Container(
+//                       //             padding: EdgeInsets.symmetric(
+//                       //               horizontal: 16,
+//                       //               vertical: 32,
+//                       //             ),
+//                       //             decoration: BoxDecoration(
+//                       //               color: AppColors.green[600],
+//                       //               borderRadius: BorderRadius.circular(4),
+//                       //               border: Border.all(
+//                       //                 color: AppColors.green[400]!,
+//                       //               ),
+//                       //             ),
+//                       //             child: Column(
+//                       //               mainAxisSize: MainAxisSize.min,
+//                       //               children: [
+//                       //                 Text(
+//                       //                   "Are you sure you want to assign",
+//                       //                   style: TextStyle(
+//                       //                     fontSize: 16,
+//                       //                     height: 24 / 16,
+//                       //                   ),
+//                       //                 ),
+//                       //                 const SizedBox(height: 8,),
+//                       //                 Row(
+//                       //                   mainAxisSize: MainAxisSize.min,
+//                       //                   children: [
+//                       //                     ClipRRect(
+//                       //                       borderRadius: BorderRadius.circular(
+//                       //                         2,
+//                       //                       ),
+//                       //                       child: Image.network(
+//                       //                         "https://picsum.photos/200/200",
+//                       //                         height: 24,
+//                       //                         width: 24,
+//                       //                       ),
+//                       //                     ),
+//                       //                     const SizedBox(width: 4),
+//                       //                     Text(
+//                       //                       "Sophia Carter",
+//                       //                       style: TextStyle(
+//                       //                         fontWeight: FontWeight.w600,
+//                       //                         fontSize: 16,
+//                       //                         color: AppColors.green[25],
+//                       //                       ),
+//                       //                     ),
+//                       //                   ],
+//                       //                 ),
+//                       //                 const SizedBox(height: 8,),
+//                       //                 Text("To"),
+//                       //                 const SizedBox(height: 8,),
+//                       //                 Row(
+//                       //                   mainAxisSize: MainAxisSize.min,
+//                       //                   children: [
+//                       //                     ClipRRect(
+//                       //                       borderRadius: BorderRadius.circular(
+//                       //                         2,
+//                       //                       ),
+//                       //                       child: Image.network(
+//                       //                         "https://picsum.photos/200/200",
+//                       //                         height: 24,
+//                       //                         width: 24,
+//                       //                       ),
+//                       //                     ),
+//                       //                     const SizedBox(width: 4),
+//                       //                     Text(
+//                       //                       "Samsung Galaxy Unpacked",
+//                       //                       style: TextStyle(
+//                       //                         fontWeight: FontWeight.w600,
+//                       //                         fontSize: 16,
+//                       //                         color: AppColors.green[25],
+//                       //                       ),
+//                       //                     ),
+//                       //                   ],
+//                       //                 ),
+//                       //                 const SizedBox(height: 32),
+//                       //                 Row(
+//                       //                   mainAxisAlignment:
+//                       //                       MainAxisAlignment.center,
+//                       //                   children: [
+//                       //                     CustomButton(
+//                       //                       text: "Cancel",
+//                       //                       height: 40,
+//                       //                       width: null,
+//                       //                       isSecondary: true,
+//                       //                       onTap: () => Get.back(),
+//                       //                     ),
+//                       //                     const SizedBox(width: 20),
+//                       //                     CustomButton(
+//                       //                       text: "Confirm",
+//                       //                       height: 40,
+//                       //                       width: null,
+//                       //                       onTap: () {
+//                       //                         Get.back();
+//                       //                       },
+//                       //                     ),
+//                       //                   ],
+//                       //                 ),
+//                       //               ],
+//                       //             ),
+//                       //           ),
+//                       //         );
+//                       //       },
+//                       //     );
+//                       //   },
+//                       // ),
 //                     ),
 //                   );
 //                 },

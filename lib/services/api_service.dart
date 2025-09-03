@@ -137,6 +137,13 @@ class ApiService {
                 (entry.value as File).path,
               ),
             );
+          } else if (entry.value is List<File>) {
+            // List of Files
+            for (var file in (entry.value as List<File>)) {
+              request.files.add(
+                await http.MultipartFile.fromPath(entry.key, file.path),
+              );
+            }
           } else {
             request.fields[entry.key] = jsonEncode(entry.value);
           }
@@ -152,7 +159,7 @@ class ApiService {
         );
       }
 
-      if (showAPICalls) _logResponse(response, 'POST', uri);
+      if (showAPICalls) _logResponse(response, 'PATCH', uri);
 
       return response;
     } catch (e) {

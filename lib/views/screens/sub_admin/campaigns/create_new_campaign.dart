@@ -2,31 +2,38 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
+import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/new_campaign.dart';
 
 class CreateNewCampaign extends StatefulWidget {
-  const CreateNewCampaign({super.key});
+  final CampaignModel? campaign;
+  const CreateNewCampaign({super.key, this.campaign});
 
   @override
   State<CreateNewCampaign> createState() => _CreateNewCampaignState();
 }
 
 class _CreateNewCampaignState extends State<CreateNewCampaign> {
+  final sub = Get.find<SubAdminController>();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController brandNameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController budgetController = TextEditingController();
   TextEditingController contentTypeController = TextEditingController();
+  TextEditingController campaignTypeController = TextEditingController();
   TextEditingController paymentController = TextEditingController();
 
-  DateTime? campaignStart;
+  // DateTime? campaignStart;
   DateTime? campaignEnd;
 
   File? imageFile;
@@ -35,6 +42,110 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
   List<String> titles = [];
   List<TextEditingController> metricsControllers = [TextEditingController()];
   List<String> metricsTitles = ["Views"];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.campaign != null) {
+      titleController.text = widget.campaign!.title;
+      brandNameController.text = widget.campaign!.brand;
+      descriptionController.text = widget.campaign!.description;
+      budgetController.text = widget.campaign!.budget.toString();
+      contentTypeController.text = widget.campaign!.contentType;
+      campaignTypeController.text = widget.campaign!.campaignType;
+      paymentController.text = widget.campaign!.payoutDeadline;
+
+      campaignEnd = widget.campaign!.duration;
+
+      metricsControllers.clear();
+      metricsTitles.clear();
+
+      for (var i in widget.campaign!.expectedMetrics!.entries) {
+        metricsTitles.add(i.key);
+        metricsControllers.add(TextEditingController(text: i.value));
+      }
+
+      for (var i in widget.campaign!.otherFields!.entries) {
+        titles.add(i.key);
+        controllers.add(TextEditingController(text: i.value));
+      }
+    }
+  }
+
+  void onCreate() async {
+    if (!validateInputs()) {
+      showSnackBar("Please fill up all the fields");
+      return;
+    }
+
+    Map<String, String> expectedMetrics = {};
+    for (int i = 0; i < metricsTitles.length; i++) {
+      expectedMetrics[metricsTitles[i]] = metricsControllers[i].text;
+    }
+    Map<String, String> otherFields = {};
+    for (int i = 0; i < titles.length; i++) {
+      otherFields[titles[i]] = controllers[i].text.trim();
+    }
+    final message = await sub.createCampaign(
+      titleController.text,
+      descriptionController.text,
+      brandNameController.text,
+      imageFile!,
+      campaignTypeController.text,
+      double.parse(budgetController.text),
+      campaignEnd!,
+      contentTypeController.text,
+      paymentController.text,
+      expectedMetrics,
+      otherFields,
+    );
+
+    if (message == "success") {
+      Get.to(() => NewCampaign(campaign: sub.singleCampaign.value!));
+    } else {
+      showSnackBar(message);
+    }
+  }
+
+  void onUpdate() async {
+    if (!validateInputs(skipImage: true)) {
+      showSnackBar("Please fill up all the fields");
+      return;
+    }
+
+    Map<String, String> expectedMetrics = {};
+    for (int i = 0; i < metricsTitles.length; i++) {
+      expectedMetrics[metricsTitles[i]] = metricsControllers[i].text;
+    }
+    Map<String, String> otherFields = {};
+    for (int i = 0; i < titles.length; i++) {
+      otherFields[titles[i]] = controllers[i].text.trim();
+    }
+    final message = await sub.updateCampaign(
+      widget.campaign!.id,
+      titleController.text,
+      descriptionController.text,
+      brandNameController.text,
+      imageFile,
+      campaignTypeController.text,
+      double.parse(budgetController.text),
+      campaignEnd!,
+      contentTypeController.text,
+      paymentController.text,
+      expectedMetrics,
+      otherFields,
+    );
+
+    if (message == "success") {
+      // ignore: use_build_context_synchronously
+      if (Navigator.canPop(context)) {
+        Get.back();
+      }
+      showSnackBar("Campaign updated successfully", isError: false);
+    } else {
+      showSnackBar(message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +181,8 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                       hintText:
                           imageFile != null
                               ? imageFile!.path.split('/').last
+                              : widget.campaign != null
+                              ? "Update picture"
                               : "Select a Picture",
                       isDisabled: true,
                       onTap: () async {
@@ -88,7 +201,10 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                           });
                         }
                       },
-                      controller: brandNameController,
+                    ),
+                    CustomTextField(
+                      hintText: "Campaign Type",
+                      controller: campaignTypeController,
                     ),
                     CustomTextField(
                       hintText: "Campaign Description",
@@ -97,30 +213,31 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                     CustomTextField(
                       hintText: "Campaign Budget",
                       controller: budgetController,
+                      textInputType: TextInputType.number,
                     ),
-                    CustomTextField(
-                      isDisabled: true,
-                      trailing: AppIcons.calendar,
-                      trailingColor: AppColors.red[400],
-                      onTap: () async {
-                        final DateTime? date = await showDatePicker(
-                          context: context,
-                          initialDate: campaignStart ?? DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2050),
-                        );
+                    // CustomTextField(
+                    //   isDisabled: true,
+                    //   trailing: AppIcons.calendar,
+                    //   trailingColor: AppColors.red[400],
+                    //   onTap: () async {
+                    //     final DateTime? date = await showDatePicker(
+                    //       context: context,
+                    //       initialDate: campaignStart ?? DateTime.now(),
+                    //       firstDate: DateTime(2000),
+                    //       lastDate: DateTime(2050),
+                    //     );
 
-                        if (date != null && date != campaignStart) {
-                          setState(() {
-                            campaignStart = date;
-                          });
-                        }
-                      },
-                      hintText:
-                          campaignStart == null
-                              ? "Campaign Start"
-                              : Formatter.dateFormatter(campaignStart!),
-                    ),
+                    //     if (date != null && date != campaignStart) {
+                    //       setState(() {
+                    //         campaignStart = date;
+                    //       });
+                    //     }
+                    //   },
+                    //   hintText:
+                    //       campaignStart == null
+                    //           ? "Campaign Start"
+                    //           : Formatter.dateFormatter(campaignStart!),
+                    // ),
                     CustomTextField(
                       isDisabled: true,
                       trailing: AppIcons.calendar,
@@ -149,7 +266,7 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                       controller: contentTypeController,
                     ),
                     CustomTextField(
-                      hintText: "Payment Deadline in Text",
+                      hintText: "Payment Deadline (Ex: in 90 days)",
                       controller: paymentController,
                     ),
                     for (int i = 0; i < titles.length; i++)
@@ -226,6 +343,7 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                             child: CustomTextField(
                               hintText: metricsTitles[i],
                               controller: metricsControllers[i],
+                              textInputType: TextInputType.number,
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -287,13 +405,17 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
                         ),
                       ),
                     ),
-                    CustomTextField(hintText: "Add notes...", lines: 5,),
+                    CustomTextField(hintText: "Add notes...", lines: 5),
                     const SizedBox(height: 16),
-                    CustomButton(
-                      text: "Launch Campaign",
-                      onTap: () {
-                        Get.to(() => NewCampaign());
-                      },
+                    Obx(
+                      () => CustomButton(
+                        text:
+                            widget.campaign == null
+                                ? "Launch Campaign"
+                                : "Update",
+                        isLoading: sub.campaignLoading.value,
+                        onTap: widget.campaign == null ? onCreate : onUpdate,
+                      ),
                     ),
                   ],
                 ),
@@ -372,5 +494,19 @@ class _CreateNewCampaignState extends State<CreateNewCampaign> {
         );
       },
     );
+  }
+
+  bool validateInputs({bool skipImage = false}) {
+    if (titleController.text.trim().isEmpty) return false;
+    if (brandNameController.text.trim().isEmpty) return false;
+    if (descriptionController.text.trim().isEmpty) return false;
+    if (budgetController.text.trim().isEmpty) return false;
+    if (contentTypeController.text.trim().isEmpty) return false;
+    if (campaignTypeController.text.trim().isEmpty) return false;
+    if (paymentController.text.trim().isEmpty) return false;
+    if (campaignEnd == null) return false;
+    if (!skipImage && imageFile == null) return false;
+
+    return true;
   }
 }

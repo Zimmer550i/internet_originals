@@ -253,7 +253,7 @@ class _AdminPaymentDetailsState extends State<AdminPaymentDetails> {
                                       ),
                                     ),
 
-                                  if (!sub.paymentLoading.value)
+                                  if (sub.paymentLoading.value)
                                     Center(
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),

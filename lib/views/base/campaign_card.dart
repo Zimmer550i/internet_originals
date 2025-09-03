@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/user_model.dart';
@@ -12,6 +13,8 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/campaign_issues.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/create_new_campaign.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/campaign_assigned.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_campaign_details.dart';
 import 'package:internet_originals/views/screens/talent/campaign/talent_feedback.dart';
@@ -83,6 +86,7 @@ class CampaignCard extends StatelessWidget {
 
   Row header() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(2),
@@ -118,6 +122,23 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
         ),
+        if (isDetailed &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.SUB_ADMIN)
+          InkWell(
+            onTap: () {
+              Get.to(() => CreateNewCampaign(campaign: campaign));
+            },
+            child: CustomSvg(asset: "assets/icons/edit.svg"),
+          ),
+        if (!isDetailed &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.SUB_ADMIN)
+          CustomSvg(
+            asset: "assets/icons/payments/warning_circle.svg",
+            size: 18,
+            color: Color(0xffFFDC00),
+          ),
       ],
     );
   }
@@ -186,27 +207,55 @@ class CampaignCard extends StatelessWidget {
 
         Padding(
           padding: const EdgeInsets.only(top: 12, bottom: 20),
-          child: GestureDetector(
-            onTap: () {
-              reportIssue(context);
-            },
-            behavior: HitTestBehavior.translucent,
-            child: Text(
-              "Report Issue",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-                color: AppColors.red[300],
-                decorationColor: AppColors.red[300],
-                decorationThickness: 2,
-                decoration: TextDecoration.underline,
+          child: Row(
+            spacing: 8,
+            children: [
+              if (Get.find<UserController>().userInfo.value!.role ==
+                  EUserRole.SUB_ADMIN)
+                CustomSvg(
+                  asset: "assets/icons/payments/warning_circle.svg",
+                  size: 18,
+                  color: Color(0xffFFDC00),
+                ),
+              if (Get.find<UserController>().userInfo.value!.role ==
+                  EUserRole.SUB_ADMIN)
+                Text(
+                  "${campaign.unreadIssueCount} Issue reported",
+                  style: TextStyle(fontSize: 16),
+                ),
+              GestureDetector(
+                onTap: () {
+                  if (Get.find<UserController>().userInfo.value!.role ==
+                      EUserRole.SUB_ADMIN) {
+                    Get.to(() => CampaignIssues(id: campaign.id));
+                  } else {
+                    reportIssue(context);
+                  }
+                },
+                behavior: HitTestBehavior.translucent,
+                child: Text(
+                  (Get.find<UserController>().userInfo.value!.role ==
+                          EUserRole.SUB_ADMIN)
+                      ? "See Issue"
+                      : "Report Issue",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: AppColors.red[300],
+                    decorationColor: AppColors.red[300],
+                    decorationThickness: 2,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
 
-        if (campaign.status == "PENDING")
+        if (campaign.status == "PENDING" &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.INFLUENCER)
           Row(
             children: [
               Expanded(
@@ -232,7 +281,9 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
 
-        if (campaign.status == "ACTIVE")
+        if (campaign.status == "ACTIVE" &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.INFLUENCER)
           Align(
             child: CustomButton(
               text: "Upload Matrix",
@@ -244,7 +295,9 @@ class CampaignCard extends StatelessWidget {
             ),
           ),
 
-        if (campaign.status == "COMPLETED")
+        if (campaign.status == "COMPLETED" &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.INFLUENCER)
           Align(
             child: CustomButton(
               text: "Give Feedback",
@@ -254,6 +307,32 @@ class CampaignCard extends StatelessWidget {
                 Get.to(() => TalentFeedback(campaign: campaign));
               },
             ),
+          ),
+
+        if (Get.find<UserController>().userInfo.value!.role ==
+            EUserRole.SUB_ADMIN)
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  text: "Add Influencers",
+                  width: null,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  isSecondary: true,
+                  // onTap: () => Get.to(() => AddInfluencers()),
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: CustomButton(
+                  text: "See Influencers",
+                  width: null,
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  isSecondary: true,
+                  // onTap: () => Get.to(() => AssignedInfluencers()),
+                ),
+              ),
+            ],
           ),
       ],
     );
