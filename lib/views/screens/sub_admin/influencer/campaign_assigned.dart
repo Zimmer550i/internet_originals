@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -118,13 +117,15 @@ class CampaignAssigned extends StatelessWidget {
               ),
               SizedBox(height: 36),
               CustomButton(
-                text: 'Back to Influencers',
+                text: 'Go Back',
                 width: MediaQuery.of(context).size.width * 0.6,
                 textSize: 16,
                 onTap: () {
-                  Get.until((route) {
-                    return route.settings.name == AppRoutes.subAdminApp;
-                  });
+                  Get.back();
+                  Get.back();
+                  // Get.until((route) {
+                  //   return route.settings.name == AppRoutes.subAdminApp;
+                  // });
                 },
               ),
             ],

@@ -42,9 +42,11 @@ class _CampaignIssuesState extends State<CampaignIssues> {
             child: Obx(
               () =>
                   sub.campaignLoading.value
-                      ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CustomLoading(),
+                      ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CustomLoading(),
+                        ),
                       )
                       : Column(
                         spacing: 16,

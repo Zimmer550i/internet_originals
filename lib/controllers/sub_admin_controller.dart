@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/issue_model.dart';
+import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/models/payment_model.dart';
 import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -19,12 +22,24 @@ class SubAdminController extends GetxController {
   RxList<IssueModel> issues = RxList.empty();
   RxList<PaymentModel> payments = RxList.empty();
   Rxn<PaymentModel> singlePayment = Rxn(null);
+  RxList<NotificationModel> notifications = RxList.empty();
+
 
   RxBool isLoading = RxBool(false);
   RxBool issueLoading = RxBool(false);
   RxBool paymentLoading = RxBool(false);
   RxBool campaignLoading = RxBool(false);
   RxBool influencerLoading = RxBool(false);
+  RxBool notificationLoading = RxBool(false);
+
+  
+  RxInt totalPages = RxInt(1);
+  RxInt currentPage = RxInt(1);
+
+  
+  Timer? _notificationTimer;
+  Duration notificationRefreshTime = Duration(minutes: 2);
+
 
   // Campaigns
   Future<String> getCampaigns({
@@ -478,5 +493,125 @@ class SubAdminController extends GetxController {
     }
 
     isLoading.value = false;
+  }
+  
+  // Notifications
+  Future<String> compromiseNotification(String id, DateTime dateTime) async {
+    try {
+      final response = await api.post(
+        "/sub-admin/notifications/$id/compromise",
+        {"date": dateTime.toIso8601String()},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String> getNotifications({bool getMore = false}) async {
+    try {
+      notificationLoading(true);
+
+      final response = await api.get(
+        "/sub-admin/notifications",
+        queryParams: {"page": currentPage.toString()},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
+
+        List<NotificationModel> temp = [];
+        for (var i in data) {
+          temp.add(NotificationModel.fromJson(i));
+        }
+        if (currentPage.value == 1) {
+          notifications.assignAll(temp);
+        } else {
+          notifications.addAll(temp);
+        }
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
+  void readAllNotifications() async {
+    try {
+      final response = await api.post(
+        "/sub-admin/notifications/read-all",
+        {},
+        authReq: true,
+      );
+
+      if (response.statusCode == 200) {
+        for (var i in notifications) {
+          i.status = "READ";
+        }
+      } else {
+        debugPrint("Error reading notifications");
+      }
+    } catch (e) {
+      debugPrint("Error reading notifications: ${e.toString()}");
+    }
+  }
+
+  void readNotifications(String id) async {
+    try {
+      final response = await api.post(
+        "/sub-admin/notifications/$id/read",
+        {},
+        authReq: true,
+      );
+
+      if (response.statusCode == 200) {
+        notifications.firstWhere((val) => val.id == id).status = "READ";
+      } else {
+        debugPrint("Error reading notifications");
+      }
+    } catch (e) {
+      debugPrint("Error reading notifications: ${e.toString()}");
+    }
+  }
+
+  void _startNotificationTimer() {
+    _notificationTimer?.cancel();
+
+    _notificationTimer = Timer.periodic(notificationRefreshTime, (timer) {
+      getNotifications();
+    });
+  }
+
+  void _stopNotificationTimer() {
+    _notificationTimer?.cancel();
+    _notificationTimer = null;
+  }
+
+  Future<String> refreshNotifications() async {
+    _stopNotificationTimer();
+    final result = await getNotifications();
+    _startNotificationTimer();
+    return result;
+  }
+
+  @override
+  void onClose() {
+    _stopNotificationTimer();
+    super.onClose();
   }
 }

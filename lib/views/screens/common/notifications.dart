@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/models/notification_model.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -16,17 +19,27 @@ class Notifications extends StatefulWidget {
 
 class _NotificationsState extends State<Notifications> {
   final talent = Get.find<TalentController>();
+  final sub = Get.find<SubAdminController>();
   final scrollController = ScrollController();
+  late bool isTalent;
 
   @override
   void initState() {
     super.initState();
+    isTalent =
+        Get.find<UserController>().userInfo.value!.role == EUserRole.INFLUENCER;
     populateData();
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent * 0.8) {
-        if (!talent.notificationLoading.value) {
-          talent.getNotifications(getMore: true);
+        if (!(isTalent
+            ? talent.notificationLoading.value
+            : sub.notificationLoading.value)) {
+          if (isTalent) {
+            talent.getNotifications(getMore: true);
+          } else {
+            sub.getNotifications(getMore: true);
+          }
         }
       }
     });
@@ -35,13 +48,17 @@ class _NotificationsState extends State<Notifications> {
   @override
   void dispose() {
     super.dispose();
-    talent.readAllNotifications();
+    if (isTalent) {
+      talent.readAllNotifications();
+    } else {
+      sub.readAllNotifications();
+    }
   }
 
   Map<DateTime, List<NotificationModel>> data = {};
 
   void populateData() {
-    final l = talent.notifications;
+    final l = isTalent ? talent.notifications : sub.notifications;
 
     for (var i in l) {
       final key = DateTime(
@@ -74,7 +91,9 @@ class _NotificationsState extends State<Notifications> {
                   ...getNotifications(data),
                   Obx(
                     () =>
-                        talent.notificationLoading.value
+                        (isTalent
+                                ? talent.notificationLoading.value
+                                : sub.notificationLoading.value)
                             ? CustomLoading()
                             : Container(),
                   ),
