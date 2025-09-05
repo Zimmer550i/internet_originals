@@ -14,6 +14,7 @@ import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/campaign_assigned.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/campaign_list.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/pending_influencer_details.dart';
+import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
 
 class InfluencerCard extends StatelessWidget {
   final UserModel influencer;
@@ -21,12 +22,14 @@ class InfluencerCard extends StatelessWidget {
   final bool showDetails;
   final String? status;
   final void Function()? callbackButton;
+  final bool sendNotification;
   const InfluencerCard({
     super.key,
     required this.influencer,
     this.campaign,
     this.status,
     this.callbackButton,
+    this.sendNotification = false,
     this.showDetails = false,
   });
 
@@ -204,7 +207,8 @@ class InfluencerCard extends StatelessWidget {
             ),
           if (influencer.role == EUserRole.INFLUENCER &&
               campaign == null &&
-              status == null)
+              status == null &&
+              !sendNotification)
             Center(
               child: CustomButton(
                 text: "Assign a Campaign",
@@ -216,6 +220,19 @@ class InfluencerCard extends StatelessWidget {
                 },
               ),
             ),
+          if (sendNotification)
+            Center(
+              child: CustomButton(
+                text: "Send Notification",
+                width: null,
+                height: 40,
+                textSize: 14,
+                onTap: () {
+                  Get.to(() => SendNotification(influencer: influencer));
+                },
+              ),
+            ),
+
           if (campaign != null && status == null)
             Center(
               child: CustomButton(

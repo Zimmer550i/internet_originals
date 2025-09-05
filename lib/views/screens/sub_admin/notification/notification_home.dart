@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/utils/app_colors.dart';
-import 'package:internet_originals/utils/app_icons.dart';
-import 'package:internet_originals/utils/custom_svg.dart';
-import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
+import 'package:internet_originals/views/base/compromised_notification_card.dart';
+import 'package:internet_originals/views/base/custom_loading.dart';
+import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/influencer_list.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/notification_templates.dart';
-import 'package:internet_originals/views/screens/sub_admin/notification/send_notification.dart';
+import 'package:internet_originals/views/base/influencer_card.dart';
+import 'package:internet_originals/views/base/notification_card.dart';
 
 class NotificationHome extends StatefulWidget {
   const NotificationHome({super.key});
@@ -18,6 +18,7 @@ class NotificationHome extends StatefulWidget {
 }
 
 class _NotificationHomeState extends State<NotificationHome> {
+  final sub = Get.find<SubAdminController>();
   int index = 0;
 
   @override
@@ -29,124 +30,108 @@ class _NotificationHomeState extends State<NotificationHome> {
         child: Column(
           children: [
             const SizedBox(height: 16),
-            CustomButton(
-              text: "Send Notification",
-              leading: "assets/icons/notification/send.svg",
-              onTap: () => Get.to(() => SendNotification()),
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: "See Templates",
-              leading: 'assets/icons/notification/template.svg',
-              isSecondary: true,
-              onTap:
-                  () => Get.to(() => NotificationTemplates(isEditable: true)),
-            ),
-            const SizedBox(height: 24),
+            // CustomButton(
+            //   text: "Send Notification",
+            //   leading: "assets/icons/notification/send.svg",
+            //   onTap: () => Get.to(() => SendNotification()),
+            // ),
+            // const SizedBox(height: 16),
+            // CustomButton(
+            //   text: "See Templates",
+            //   leading: 'assets/icons/notification/template.svg',
+            //   isSecondary: true,
+            //   onTap:
+            //       () => Get.to(() => NotificationTemplates(isEditable: true)),
+            // ),
+            // const SizedBox(height: 24),
             CustomTabBar(
-              options: ["Scheduled", "Sent"],
+              options: ["Influencers", "Scheduled", "Sent", "Compromise"],
+              width: 24,
               onChange: (val) {
                 setState(() {
                   index = val;
                 });
+                switch (index) {
+                  case 0:
+                    sub.getInfluencers();
+                    break;
+
+                  case 1:
+                    sub.getScheduledNotifications();
+                    break;
+
+                  case 2:
+                    sub.getSentNotifications();
+                    break;
+
+                  case 3:
+                    sub.getCompromiseNotifications();
+                    break;
+
+                  default:
+                }
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.green[600],
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: AppColors.green[400]!),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Soft Notification",
-                            style: TextStyle(
-                              fontSize: 12,
-                              height: 18 / 12,
-                              color: AppColors.red[300],
+              child: Obx(
+                () =>
+                    index != 0
+                        ? sub.notificationLoading.value
+                            ? Center(child: CustomLoading())
+                            : ListView.builder(
+                              itemCount: sub.apiData.length,
+                              itemBuilder: (context, i) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child:
+                                      index == 3
+                                          ? CompromisedNotificationCard(
+                                            data: sub.apiData.elementAt(i),
+                                          )
+                                          : NotificationCard(
+                                            data: sub.apiData.elementAt(i),
+                                          ),
+                                );
+                              },
+                            )
+                        : Column(
+                          children: [
+                            CustomSearchBar(
+                              hintText: 'Search by name or social handle',
+                              onChanged: (val) {
+                                sub.getInfluencers(searchText: val).then((
+                                  message,
+                                ) {
+                                  if (message != "success") {
+                                    showSnackBar(message);
+                                  }
+                                });
+                              },
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            "Deadline Reminder",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              height: 20 / 14,
-                              color: AppColors.green[25],
+                            const SizedBox(height: 20),
+                            Expanded(
+                              child:
+                                  sub.influencerLoading.value
+                                      ? Center(child: CustomLoading())
+                                      : ListView.builder(
+                                        itemCount: sub.influencers.length,
+                                        itemBuilder: (context, i) {
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 16,
+                                            ),
+                                            child: InfluencerCard(
+                                              influencer: sub.influencers
+                                                  .elementAt(i),
+                                              sendNotification: true,
+                                            ),
+                                          );
+                                        },
+                                      ),
                             ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Your campaign “Adidas Running” requires you to upload performance metrics",
-                            style: TextStyle(
-                              // color: AppColors.green[100],
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          GestureDetector(
-                            onTap: () => Get.to(() => InfluencerList()),
-                            behavior: HitTestBehavior.translucent,
-                            child: Text(
-                              "10 Talents",
-                              style: TextStyle(
-                                color: AppColors.red[300],
-                                fontSize: 12,
-                                height: 18 / 12,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.red[300],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            spacing: 8,
-                            children: [
-                              CustomSvg(
-                                asset: AppIcons.calendar,
-                                size: 16,
-                                color: AppColors.red[300],
-                              ),
-                              Text(
-                                "Feb 12, 2025 | ",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              CustomSvg(
-                                asset: AppIcons.clock,
-                                size: 16,
-                                color: AppColors.red[300],
-                              ),
-                              Text(
-                                "10:53 AM",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                          ],
+                        ),
               ),
             ),
           ],

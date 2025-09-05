@@ -8,9 +8,11 @@ class CustomTabBar extends StatefulWidget {
   final List<String> options;
   final int buttonsPerScreen;
   final Function(int) onChange;
+  final double width;
   const CustomTabBar({
     super.key,
     this.buttonsPerScreen = 3,
+    this.width = 20,
     required this.options,
     required this.onChange,
   });
@@ -50,7 +52,7 @@ class CustomTabBarState extends State<CustomTabBar> {
       child: AnimatedContainer(
         width:
             (MediaQuery.of(context).size.width -
-                ((widget.buttonsPerScreen + 1) * 20)) /
+                ((widget.buttonsPerScreen + 1) * widget.width)) /
             widget.buttonsPerScreen,
         duration: Duration(milliseconds: 100),
         height: 28,

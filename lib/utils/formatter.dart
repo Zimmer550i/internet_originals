@@ -38,35 +38,35 @@ class Formatter {
     return rtn;
   }
 
-  static String monthName(int month) {
+  static String monthName(int month, {bool short = false}) {
     switch (month) {
       case 1:
-        return "January";
+        return short ? "Jan" : "January";
       case 2:
-        return "February";
+        return short ? "Feb" : "February";
       case 3:
-        return "March";
+        return short ? "Mar" : "March";
       case 4:
-        return "April";
+        return short ? "Apr" : "April";
       case 5:
-        return "May";
+        return short ? "May" : "May";
       case 6:
-        return "June";
+        return short ? "Jun" : "June";
       case 7:
-        return "July";
+        return short ? "Jul" : "July";
       case 8:
-        return "August";
+        return short ? "Aug" : "August";
       case 9:
-        return "September";
+        return short ? "Sep" : "September";
       case 10:
-        return "October";
+        return short ? "Oct" : "October";
       case 11:
-        return "November";
+        return short ? "Nov" : "November";
       case 12:
-        return "December";
+        return short ? "Dec" : "December";
+      default:
+        return "Invalid Month";
     }
-
-    return "Invalid Month";
   }
 
   static String countdown(Duration duration) {

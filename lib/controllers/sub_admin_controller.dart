@@ -583,6 +583,113 @@ class SubAdminController extends GetxController {
   }
 
   // Notifications
+  Future<String> sendNotification(
+    String title,
+    String notificationBody,
+    String influencerId,
+    String type,
+    DateTime? scheduledTime,
+  ) async {
+    try {
+      notificationLoading(true);
+      Map<String, dynamic> payload = {
+        "title": title,
+        "body": notificationBody,
+        "influencerId": influencerId,
+        "type": type,
+      };
+
+      if (scheduledTime != null) {
+        payload.addAll({
+          "scheduledAt": scheduledTime.toIso8601String()
+        });
+      }
+
+      final response = await api.post(
+        "/sub-admin/notifications/send",
+        payload,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
+  Future<String> getSentNotifications() async {
+    try {
+      notificationLoading(true);
+      final response = await api.get(
+        "/sub-admin/notifications/sent",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        apiData.value = body['data'];
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
+  Future<String> getScheduledNotifications() async {
+    try {
+      notificationLoading(true);
+      final response = await api.get(
+        "/sub-admin/notifications/scheduled",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        apiData.value = body['data'];
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
+  Future<String> getCompromiseNotifications() async {
+    try {
+      notificationLoading(true);
+      final response = await api.get("/sub-admin/compromises", authReq: true);
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        apiData.value = body['data'];
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      notificationLoading(false);
+    }
+  }
+
   Future<String> compromiseNotification(String id, DateTime dateTime) async {
     try {
       final response = await api.post(
