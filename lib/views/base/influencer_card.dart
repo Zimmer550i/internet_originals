@@ -19,10 +19,14 @@ class InfluencerCard extends StatelessWidget {
   final UserModel influencer;
   final CampaignModel? campaign;
   final bool showDetails;
+  final String? status;
+  final void Function()? callbackButton;
   const InfluencerCard({
     super.key,
     required this.influencer,
     this.campaign,
+    this.status,
+    this.callbackButton,
     this.showDetails = false,
   });
 
@@ -109,7 +113,9 @@ class InfluencerCard extends StatelessWidget {
                   style: TextStyle(fontSize: 14, height: 20 / 14),
                 ),
               const SizedBox(height: 12),
-              if (showDetails && influencer.role == EUserRole.USER)
+              if (showDetails &&
+                  influencer.role == EUserRole.USER &&
+                  status == null)
                 Row(
                   children: [
                     Expanded(
@@ -180,7 +186,9 @@ class InfluencerCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          if (influencer.role == EUserRole.USER && !showDetails)
+          if (influencer.role == EUserRole.USER &&
+              !showDetails &&
+              status == null)
             Center(
               child: CustomButton(
                 text: "View Details",
@@ -194,7 +202,9 @@ class InfluencerCard extends StatelessWidget {
                 },
               ),
             ),
-          if (influencer.role == EUserRole.INFLUENCER && campaign == null)
+          if (influencer.role == EUserRole.INFLUENCER &&
+              campaign == null &&
+              status == null)
             Center(
               child: CustomButton(
                 text: "Assign a Campaign",
@@ -206,7 +216,7 @@ class InfluencerCard extends StatelessWidget {
                 },
               ),
             ),
-          if (campaign != null)
+          if (campaign != null && status == null)
             Center(
               child: CustomButton(
                 text: "Assign",
@@ -220,6 +230,44 @@ class InfluencerCard extends StatelessWidget {
                     campaign: campaign!,
                   );
                 },
+              ),
+            ),
+          if (status == "ACTIVE")
+            Row(
+              spacing: 4,
+              children: [
+                CustomSvg(
+                  asset: "assets/icons/payments/warning_circle.svg",
+                  size: 18,
+                  color: Color(0xffFFDC00),
+                ),
+                Text(
+                  "Status: Pending Submission",
+                  style: TextStyle(fontSize: 14, height: 20 / 14),
+                ),
+              ],
+            ),
+          if (status == "COMPLETED")
+            Row(
+              spacing: 4,
+              children: [
+                CustomSvg(asset: "assets/icons/tick_circle.svg", size: 18),
+                Text(
+                  "Status: Metrics Submitted",
+                  style: TextStyle(fontSize: 14, height: 20 / 14),
+                ),
+              ],
+            ),
+          if (status == "COMPLETED")
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Center(
+                child: CustomButton(
+                  height: 40,
+                  text: "Check Metrics",
+                  width: null,
+                  onTap: callbackButton,
+                ),
               ),
             ),
         ],

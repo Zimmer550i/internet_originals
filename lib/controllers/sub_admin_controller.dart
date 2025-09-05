@@ -23,7 +23,7 @@ class SubAdminController extends GetxController {
   RxList<PaymentModel> payments = RxList.empty();
   Rxn<PaymentModel> singlePayment = Rxn(null);
   RxList<NotificationModel> notifications = RxList.empty();
-
+  RxList apiData = RxList.empty();
 
   RxBool isLoading = RxBool(false);
   RxBool issueLoading = RxBool(false);
@@ -32,14 +32,11 @@ class SubAdminController extends GetxController {
   RxBool influencerLoading = RxBool(false);
   RxBool notificationLoading = RxBool(false);
 
-  
   RxInt totalPages = RxInt(1);
   RxInt currentPage = RxInt(1);
 
-  
   Timer? _notificationTimer;
   Duration notificationRefreshTime = Duration(minutes: 2);
-
 
   // Campaigns
   Future<String> getCampaigns({
@@ -245,7 +242,6 @@ class SubAdminController extends GetxController {
     }
   }
 
-  
   Future<String> readIssue(String id) async {
     try {
       final response = await api.get(
@@ -255,7 +251,6 @@ class SubAdminController extends GetxController {
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-
         return "success";
       } else {
         return body['message'] ?? "Unexpected Error!";
@@ -265,7 +260,99 @@ class SubAdminController extends GetxController {
     }
   }
 
-  
+  Future<String> assignedInfluencers(String id) async {
+    try {
+      campaignLoading(true);
+      final response = await api.get(
+        "/sub-admin/campaigns/$id/influencers",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+
+        apiData.clear();
+        apiData.addAll(data);
+
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> requestRevision(String campaignId, String influencerId) async {
+    try {
+      campaignLoading(true);
+      final response = await api.get(
+        "/sub-admin/campaigns/$campaignId/$influencerId/request-revision",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> approveMetrics(String campaignId, String influencerId) async {
+    try {
+      campaignLoading(true);
+      final response = await api.get(
+        "/sub-admin/campaigns/$campaignId/$influencerId/approve-metrics",
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
+
+  Future<String> reviewInfluencer(String influencerId, List<int> values) async {
+    try {
+      campaignLoading(true);
+      final payload = {
+        "Rate Influencer Performance": values.first,
+        "Overall Experience": values.last,
+      };
+      final response = await api.post(
+        "/sub-admin/influencers/$influencerId/review",
+        payload,
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error!";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      campaignLoading(false);
+    }
+  }
 
   // Influencers
   Future<String> getInfluencers({
@@ -494,7 +581,7 @@ class SubAdminController extends GetxController {
 
     isLoading.value = false;
   }
-  
+
   // Notifications
   Future<String> compromiseNotification(String id, DateTime dateTime) async {
     try {

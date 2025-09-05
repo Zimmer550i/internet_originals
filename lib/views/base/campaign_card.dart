@@ -14,6 +14,7 @@ import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
+import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/campaign_issues.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/create_new_campaign.dart';
 import 'package:internet_originals/views/screens/sub_admin/influencer/campaign_assigned.dart';
@@ -324,14 +325,15 @@ class CampaignCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 20),
-              // TODO: Complete this
               Expanded(
                 child: CustomButton(
                   text: "See Influencers",
                   width: null,
                   padding: EdgeInsets.symmetric(vertical: 10),
                   isSecondary: true,
-                  // onTap: () => Get.to(() => AssignedInfluencers()),
+                  onTap:
+                      () =>
+                          Get.to(() => AssignedInfluencers(campaign: campaign)),
                 ),
               ),
             ],

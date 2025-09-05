@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/models/user_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
 class Rating extends StatefulWidget {
-  const Rating({super.key});
+  final UserModel influencer;
+  const Rating({super.key, required this.influencer});
 
   @override
   State<Rating> createState() => _RatingState();
@@ -62,19 +67,23 @@ class _RatingState extends State<Rating> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
-                            child: Image.network(
-                              "https://picsum.photos/200/200",
-                              height: 44,
-                              width: 44,
-                              fit: BoxFit.cover,
-                            ),
+                            child:
+                                widget.influencer.avatar != null
+                                    ? Image.network(
+                                      (ApiService().baseUrl +
+                                          widget.influencer.avatar!),
+                                      height: 44,
+                                      width: 44,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : SizedBox(height: 44, width: 44),
                           ),
                           const SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Sophia Carter",
+                                widget.influencer.name,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18,
@@ -85,12 +94,20 @@ class _RatingState extends State<Rating> {
                               Row(
                                 spacing: 4,
                                 children: [
-                                  for (int i = 0; i < 4; i++)
+                                  for (
+                                    int i = 0;
+                                    i < widget.influencer.rating.round();
+                                    i++
+                                  )
                                     CustomSvg(
                                       asset: AppIcons.starDark,
                                       size: 16,
                                     ),
-                                  for (int i = 0; i < 1; i++)
+                                  for (
+                                    int i = 0;
+                                    i < 5 - widget.influencer.rating.round();
+                                    i++
+                                  )
                                     CustomSvg(asset: AppIcons.star, size: 16),
                                 ],
                               ),
@@ -103,16 +120,40 @@ class _RatingState extends State<Rating> {
                       const SizedBox(height: 36),
                       ratingWidget("Overall Experience", 1),
                       const SizedBox(height: 40),
-                      CustomButton(
-                        text: "Submit",
-                        width: null,
-                        height: 40,
-                        onTap: () {
-                          Get.until((route) {
-                            return Get.currentRoute == AppRoutes.subAdminApp;
-                          });
-                        },
-                      ),
+                      Obx(() {
+                        final sub = Get.find<SubAdminController>();
+
+                        return CustomButton(
+                          text: "Submit",
+                          width: null,
+                          height: 40,
+                          isLoading: sub.campaignLoading.value,
+                          onTap: () {
+                            sub
+                                .reviewInfluencer(widget.influencer.id, ratings)
+                                .then((message) {
+                                  if (message == "success") {
+                                    if (!mounted) {
+                                      Get.until((route) {
+                                        return Get.currentRoute ==
+                                            AppRoutes.subAdminApp;
+                                      });
+                                    }
+                                    showSnackBar(
+                                      "Influencer review successfully submitted",
+                                      isError: false,
+                                    );
+                                    if (mounted) {
+                                      Get.back();
+                                      Get.back();
+                                    }
+                                  } else {
+                                    showSnackBar(message);
+                                  }
+                                });
+                          },
+                        );
+                      }),
                     ],
                   ),
                 ),
