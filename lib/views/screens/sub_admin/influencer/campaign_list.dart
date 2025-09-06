@@ -19,6 +19,8 @@ class CampaignList extends StatefulWidget {
 
 class _CampaignListState extends State<CampaignList> {
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -26,6 +28,18 @@ class _CampaignListState extends State<CampaignList> {
     sub.getCampaigns().then((message) {
       if (message != "success") {
         showSnackBar(message);
+      }
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getCampaigns(searchText: searchController.text, loadMore: true)
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
       }
     });
   }
@@ -40,12 +54,14 @@ class _CampaignListState extends State<CampaignList> {
         height: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 24),
         child: SingleChildScrollView(
+          controller: scrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 12),
               CustomSearchBar(
                 hintText: 'Search Campaigns by name',
+                controller: searchController,
                 onChanged: (val) {
                   sub.getCampaigns(searchText: val).then((message) {
                     if (message != "success") {
@@ -55,26 +71,23 @@ class _CampaignListState extends State<CampaignList> {
                 },
               ),
               Obx(
-                () =>
-                    sub.campaignLoading.value
-                        ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CustomLoading(),
-                          ),
-                        )
-                        : Column(
-                          children: [
-                            for (var i in sub.campaigns)
-                              Padding(
-                                padding: EdgeInsets.only(top: 18),
-                                child: CampaignCard(
-                                  campaign: i,
-                                  influencer: widget.influencer,
-                                ),
-                              ),
-                          ],
+                () => Column(
+                  children: [
+                    for (var i in sub.campaigns)
+                      Padding(
+                        padding: EdgeInsets.only(top: 18),
+                        child: CampaignCard(
+                          campaign: i,
+                          influencer: widget.influencer,
                         ),
+                      ),
+                    if (sub.campaignLoading.value)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(child: CustomLoading()),
+                      ),
+                  ],
+                ),
               ),
               // ..._campaigns.map((item) {
               //   return Padding(

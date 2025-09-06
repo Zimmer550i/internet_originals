@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
+import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
@@ -21,12 +22,30 @@ class CampaignsHome extends StatefulWidget {
 class _CampaignsHomeState extends State<CampaignsHome> {
   final sub = Get.find<SubAdminController>();
   bool showingResult = false;
+  int tabIndex = 0;
   TextEditingController searchController = TextEditingController();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     sub.getCampaigns();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getCampaigns(
+              searchText: searchController.text,
+              showCompleted: tabIndex == 1,
+              loadMore: true,
+            )
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
+      }
+    });
   }
 
   void filterInfo(String val) {
@@ -86,9 +105,7 @@ class _CampaignsHomeState extends State<CampaignsHome> {
               Expanded(
                 child: Obx(
                   () =>
-                      sub.campaignLoading.value
-                          ? CustomLoading()
-                          : sub.campaigns.isEmpty
+                      sub.campaigns.isEmpty
                           ? Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -96,16 +113,31 @@ class _CampaignsHomeState extends State<CampaignsHome> {
                               style: TextStyle(color: AppColors.green.shade100),
                             ),
                           )
-                          : ListView.builder(
-                            itemCount: sub.campaigns.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: CampaignCard(
-                                  campaign: sub.campaigns.elementAt(index),
-                                ),
-                              );
-                            },
+                          : SingleChildScrollView(
+                            controller: scrollController,
+                            child: Column(
+                              children: [
+                                if (sub.campaignLoading.value)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(child: CustomLoading()),
+                                  ),
+                                for (int i = 0; i < sub.campaigns.length; i++)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 16.0,
+                                    ),
+                                    child: CampaignCard(
+                                      campaign: sub.campaigns.elementAt(i),
+                                    ),
+                                  ),
+                                if (sub.campaignLoading.value)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Center(child: CustomLoading()),
+                                  ),
+                              ],
+                            ),
                           ),
                 ),
               ),

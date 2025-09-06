@@ -19,6 +19,8 @@ class InfluencerHome extends StatefulWidget {
 class _InfluencerHomeState extends State<InfluencerHome> {
   int selectedOption = 0;
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -26,6 +28,22 @@ class _InfluencerHomeState extends State<InfluencerHome> {
     sub.getInfluencers(getPending: true).then((message) {
       if (message != "success") {
         showSnackBar(message);
+      }
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getInfluencers(
+              searchText: searchController.text,
+              getPending: selectedOption == 0,
+              loadMore: true,
+            )
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
       }
     });
   }
@@ -36,6 +54,7 @@ class _InfluencerHomeState extends State<InfluencerHome> {
       appBar: HomeBar(isHome: false),
       backgroundColor: AppColors.green[700],
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
@@ -60,6 +79,7 @@ class _InfluencerHomeState extends State<InfluencerHome> {
               if (selectedOption == 1)
                 CustomSearchBar(
                   hintText: 'Search by name or social handle',
+                  controller: searchController,
                   onChanged: (val) {
                     sub
                         .getInfluencers(
@@ -76,12 +96,7 @@ class _InfluencerHomeState extends State<InfluencerHome> {
 
               Obx(
                 () =>
-                    sub.influencerLoading.value
-                        ? Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CustomLoading(),
-                        )
-                        : sub.influencers.isEmpty
+                    sub.influencers.isEmpty
                         ? Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
@@ -95,6 +110,11 @@ class _InfluencerHomeState extends State<InfluencerHome> {
                               Padding(
                                 padding: EdgeInsets.only(top: 12),
                                 child: InfluencerCard(influencer: i),
+                              ),
+                            if (sub.influencerLoading.value)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CustomLoading(),
                               ),
                           ],
                         ),

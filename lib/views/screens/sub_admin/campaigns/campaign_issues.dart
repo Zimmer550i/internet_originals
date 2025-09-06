@@ -20,6 +20,7 @@ class CampaignIssues extends StatefulWidget {
 
 class _CampaignIssuesState extends State<CampaignIssues> {
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
@@ -29,6 +30,17 @@ class _CampaignIssuesState extends State<CampaignIssues> {
         showSnackBar(message);
       }
     });
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub.getIssues(widget.id, loadMore: true).then((message) {
+          if (message != "success") {
+            showSnackBar(message);
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -36,139 +48,123 @@ class _CampaignIssuesState extends State<CampaignIssues> {
     return Scaffold(
       appBar: CustomAppBar(title: "Issues"),
       body: SingleChildScrollView(
+        controller: scrollController,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: SafeArea(
             child: Obx(
-              () =>
-                  sub.campaignLoading.value
-                      ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CustomLoading(),
-                        ),
-                      )
-                      : Column(
-                        spacing: 16,
+              () => Column(
+                spacing: 16,
+                children: [
+                  for (var i in sub.issues)
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: AppColors.green[600],
+                        border: Border.all(color: AppColors.green[400]!),
+                      ),
+                      child: Column(
                         children: [
-                          for (var i in sub.issues)
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                child:
+                                    i.influencerAvatar != null
+                                        ? Image.network(
+                                          (ApiService().baseUrl +
+                                              i.influencerAvatar!),
+                                          height: 44,
+                                          width: 44,
+                                          fit: BoxFit.cover,
+                                        )
+                                        : SizedBox(height: 44, width: 44),
                               ),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4),
-                                color: AppColors.green[600],
-                                border: Border.all(
-                                  color: AppColors.green[400]!,
-                                ),
-                              ),
-                              child: Column(
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ClipRRect(
-                                        child:
-                                            i.influencerAvatar != null
-                                                ? Image.network(
-                                                  (ApiService().baseUrl +
-                                                      i.influencerAvatar!),
-                                                  height: 44,
-                                                  width: 44,
-                                                  fit: BoxFit.cover,
-                                                )
-                                                : SizedBox(
-                                                  height: 44,
-                                                  width: 44,
-                                                ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            i.influencerName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 18,
-                                              color: AppColors.green[25],
-                                              height: 28 / 18,
-                                            ),
-                                          ),
-                                          Row(
-                                            spacing: 4,
-                                            children: [
-                                              for (
-                                                int j = 0;
-                                                j < i.influencerRating.round();
-                                                j++
-                                              )
-                                                CustomSvg(
-                                                  asset: AppIcons.starDark,
-                                                  size: 16,
-                                                ),
-                                              for (
-                                                int j = 0;
-                                                j <
-                                                    5 -
-                                                        i.influencerRating
-                                                            .round();
-                                                j++
-                                              )
-                                                CustomSvg(
-                                                  asset: AppIcons.star,
-                                                  size: 16,
-                                                ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
                                   Text(
-                                    i.content * 50,
+                                    i.influencerName,
                                     style: TextStyle(
-                                      color: AppColors.green[50],
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                      color: AppColors.green[25],
+                                      height: 28 / 18,
                                     ),
                                   ),
-                                  const SizedBox(height: 32),
-                                  CustomButton(
-                                    text: i.unread ? "Mark as Read" : "Read",
-                                    leading:
-                                        i.unread
-                                            ? null
-                                            : "assets/icons/payments/double_check.svg",
-                                    isDisabled: !i.unread,
-                                    width: null,
-                                    onTap: () {
-                                      sub
-                                          .issues
-                                          .firstWhere((val) => val.id == i.id)
-                                          .unread = false;
-
-                                      sub.readIssue(i.id).then((message) {
-                                        if (message != "success") {
-                                          showSnackBar(message);
-                                          sub
-                                              .issues
-                                              .firstWhere(
-                                                (val) => val.id == i.id,
-                                              )
-                                              .unread = true;
-                                        }
-                                      });
-                                    },
+                                  Row(
+                                    spacing: 4,
+                                    children: [
+                                      for (
+                                        int j = 0;
+                                        j < i.influencerRating.round();
+                                        j++
+                                      )
+                                        CustomSvg(
+                                          asset: AppIcons.starDark,
+                                          size: 16,
+                                        ),
+                                      for (
+                                        int j = 0;
+                                        j < 5 - i.influencerRating.round();
+                                        j++
+                                      )
+                                        CustomSvg(
+                                          asset: AppIcons.star,
+                                          size: 16,
+                                        ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            i.content * 50,
+                            style: TextStyle(color: AppColors.green[50]),
+                          ),
+                          const SizedBox(height: 32),
+                          CustomButton(
+                            text: i.unread ? "Mark as Read" : "Read",
+                            leading:
+                                i.unread
+                                    ? null
+                                    : "assets/icons/payments/double_check.svg",
+                            isDisabled: !i.unread,
+                            width: null,
+                            onTap: () {
+                              sub
+                                  .issues
+                                  .firstWhere((val) => val.id == i.id)
+                                  .unread = false;
+
+                              sub.readIssue(i.id).then((message) {
+                                if (message != "success") {
+                                  showSnackBar(message);
+                                  sub
+                                      .issues
+                                      .firstWhere((val) => val.id == i.id)
+                                      .unread = true;
+                                }
+                              });
+                            },
+                          ),
                         ],
                       ),
+                    ),
+                  if (sub.campaignLoading.value)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(child: CustomLoading()),
+                    ),
+                ],
+              ),
             ),
           ),
         ),

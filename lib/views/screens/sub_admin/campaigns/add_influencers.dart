@@ -18,6 +18,8 @@ class AddInfluencers extends StatefulWidget {
 
 class _AddInfluencersState extends State<AddInfluencers> {
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
+  final searchController = TextEditingController();
 
   @override
   void initState() {
@@ -25,6 +27,19 @@ class _AddInfluencersState extends State<AddInfluencers> {
     sub.getInfluencers().then((message) {
       if (message != "success") {
         showSnackBar(message);
+      }
+    });
+
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getInfluencers(searchText: searchController.text, loadMore: true)
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
       }
     });
   }
@@ -41,25 +56,49 @@ class _AddInfluencersState extends State<AddInfluencers> {
               padding: const EdgeInsets.only(bottom: 20.0, top: 12),
               child: CustomSearchBar(
                 hintText: "Search by name or social handle",
+                controller: searchController,
+                onChanged: (val) {
+                  sub.getInfluencers(searchText: val).then((message) {
+                    if (message != "success") {
+                      showSnackBar(message);
+                    }
+                  });
+                },
               ),
             ),
             Expanded(
               child: Obx(
-                () =>
-                    sub.influencerLoading.value
-                        ? CustomLoading()
-                        : ListView.builder(
-                          itemCount: sub.influencers.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: InfluencerCard(
-                                influencer: sub.influencers.elementAt(index),
-                                campaign: widget.campaign,
-                              ),
-                            );
-                          },
-                        ),
+                () => ListView.builder(
+                  controller: scrollController,
+                  itemCount: sub.influencers.length,
+                  itemBuilder: (context, index) {
+                    if (index == sub.influencers.length - 1) {
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: InfluencerCard(
+                              influencer: sub.influencers.elementAt(index),
+                              campaign: widget.campaign,
+                            ),
+                          ),
+                          if (sub.influencerLoading.value)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(child: CustomLoading()),
+                            ),
+                        ],
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: InfluencerCard(
+                        influencer: sub.influencers.elementAt(index),
+                        campaign: widget.campaign,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],

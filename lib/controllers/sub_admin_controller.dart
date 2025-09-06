@@ -42,15 +42,28 @@ class SubAdminController extends GetxController {
   Future<String> getCampaigns({
     String? searchText,
     bool showCompleted = false,
+    bool loadMore = false,
   }) async {
     try {
-      campaignLoading(true);
-
       Map<String, dynamic> queryParams = {};
-      if (searchText != null) {
+      if (searchText != null && searchText != "") {
         queryParams['search'] = searchText;
       }
 
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
+      campaignLoading(true);
       final response = await api.get(
         "/sub-admin/campaigns/${showCompleted ? "completed" : "active"}",
         queryParams: queryParams,
@@ -60,14 +73,19 @@ class SubAdminController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = body['data'];
-        // totalPages.value = body['meta']['pagination']['totalPages'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<CampaignModel> temp = [];
         for (var i in data) {
           temp.add(CampaignModel.fromJson(i));
         }
 
-        campaigns.value = temp;
+        if (loadMore) {
+          campaigns.addAll(temp);
+        } else {
+          campaigns.value = temp;
+        }
 
         return "success";
       } else {
@@ -214,8 +232,23 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> getIssues(String id) async {
+  Future<String> getIssues(String id, {bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       issueLoading(true);
       final response = await api.get(
         "/sub-admin/campaigns/$id/issues",
@@ -225,6 +258,8 @@ class SubAdminController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         issues.clear();
         for (var i in data) {
@@ -358,18 +393,39 @@ class SubAdminController extends GetxController {
   Future<String> getInfluencers({
     bool getPending = false,
     String? searchText,
+    bool loadMore = false
   }) async {
     try {
+      Map<String, dynamic> queryParams = {};
+      if (searchText != null && searchText != "") {
+        queryParams['search'] = searchText;
+      }
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       influencerLoading(true);
       final response = await api.get(
         "/sub-admin/influencers${getPending ? "/pending-influencers" : ""}",
         authReq: true,
-        queryParams: searchText != null ? {"search": searchText} : null,
+        queryParams: queryParams,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         final List<UserModel> temp = [];
         for (var i in data) {
@@ -436,8 +492,23 @@ class SubAdminController extends GetxController {
   }
 
   // Payments
-  Future<String> getPayments(String status) async {
+  Future<String> getPayments(String status, {bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       paymentLoading(true);
       final response = await api.get(
         "/sub-admin/payments",
@@ -448,6 +519,8 @@ class SubAdminController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         final List<PaymentModel> temp = [];
         for (var i in data) {
@@ -600,9 +673,7 @@ class SubAdminController extends GetxController {
       };
 
       if (scheduledTime != null) {
-        payload.addAll({
-          "scheduledAt": scheduledTime.toIso8601String()
-        });
+        payload.addAll({"scheduledAt": scheduledTime.toIso8601String()});
       }
 
       final response = await api.post(
@@ -624,8 +695,23 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> getSentNotifications() async {
+  Future<String> getSentNotifications({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       notificationLoading(true);
       final response = await api.get(
         "/sub-admin/notifications/sent",
@@ -635,6 +721,8 @@ class SubAdminController extends GetxController {
 
       if (response.statusCode == 200) {
         apiData.value = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         return "success";
       } else {
@@ -647,8 +735,23 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> getScheduledNotifications() async {
+  Future<String> getScheduledNotifications({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       notificationLoading(true);
       final response = await api.get(
         "/sub-admin/notifications/scheduled",
@@ -658,6 +761,8 @@ class SubAdminController extends GetxController {
 
       if (response.statusCode == 200) {
         apiData.value = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         return "success";
       } else {
@@ -670,14 +775,31 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> getCompromiseNotifications() async {
+  Future<String> getCompromiseNotifications({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       notificationLoading(true);
       final response = await api.get("/sub-admin/compromises", authReq: true);
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         apiData.value = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
 
         return "success";
       } else {
@@ -690,7 +812,7 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> compromiseNotification(String id, DateTime dateTime) async {
+  Future<String> compromiseNotification(String id, DateTime dateTime, ) async {
     try {
       final response = await api.post(
         "/sub-admin/notifications/$id/compromise",
@@ -709,19 +831,34 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> getNotifications({bool getMore = false}) async {
+  Future<String> getNotifications({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       notificationLoading(true);
 
       final response = await api.get(
         "/sub-admin/notifications",
-        queryParams: {"page": currentPage.toString()},
         authReq: true,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<NotificationModel> temp = [];

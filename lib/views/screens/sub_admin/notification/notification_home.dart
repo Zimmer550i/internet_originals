@@ -19,6 +19,8 @@ class NotificationHome extends StatefulWidget {
 
 class _NotificationHomeState extends State<NotificationHome> {
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
+  final searchController = TextEditingController();
   int index = 0;
 
   @override
@@ -27,6 +29,18 @@ class _NotificationHomeState extends State<NotificationHome> {
     sub.getInfluencers().then((message) {
       if (message != "success") {
         showSnackBar(message);
+      }
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getCampaigns(searchText: searchController.text, loadMore: true)
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
       }
     });
   }
@@ -109,6 +123,7 @@ class _NotificationHomeState extends State<NotificationHome> {
                           children: [
                             CustomSearchBar(
                               hintText: 'Search by name or social handle',
+                              controller: searchController,
                               onChanged: (val) {
                                 sub.getInfluencers(searchText: val).then((
                                   message,
@@ -121,24 +136,41 @@ class _NotificationHomeState extends State<NotificationHome> {
                             ),
                             const SizedBox(height: 20),
                             Expanded(
-                              child:
-                                  sub.influencerLoading.value
-                                      ? Center(child: CustomLoading())
-                                      : ListView.builder(
-                                        itemCount: sub.influencers.length,
-                                        itemBuilder: (context, i) {
-                                          return Padding(
-                                            padding: const EdgeInsets.only(
-                                              bottom: 16,
+                              child: ListView.builder(
+                                itemCount: sub.influencers.length,
+                                itemBuilder: (context, i) {
+                                  if (i == sub.influencers.length - 1) {
+                                    return Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 16,
+                                          ),
+                                          child: InfluencerCard(
+                                            influencer: sub.influencers
+                                                .elementAt(i),
+                                            sendNotification: true,
+                                          ),
+                                        ),
+                                        if (sub.influencerLoading.value)
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Center(
+                                              child: CustomLoading(),
                                             ),
-                                            child: InfluencerCard(
-                                              influencer: sub.influencers
-                                                  .elementAt(i),
-                                              sendNotification: true,
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                          ),
+                                      ],
+                                    );
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: InfluencerCard(
+                                      influencer: sub.influencers.elementAt(i),
+                                      sendNotification: true,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ],
                         ),
