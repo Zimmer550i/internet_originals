@@ -35,19 +35,35 @@ class TalentController extends GetxController {
   Duration notificationRefreshTime = Duration(minutes: 2);
 
   // Tasks
-  Future<String> getTasks({bool getMore = false}) async {
+  Future<String> getTasks({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       taskLoading(true);
 
       final response = await api.get(
         "/influencer/tasks/pending",
-        queryParams: {"page": currentPage.toString()},
+        queryParams: queryParams,
         authReq: true,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<CampaignModel> temp = [];
@@ -94,11 +110,25 @@ class TalentController extends GetxController {
   }
 
   // Campaigns
-  Future<String> getCampaigns({String? status, bool getMore = false}) async {
+  Future<String> getCampaigns({String? status, bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       campaignLoading(true);
 
-      var queryParams = {"page": currentPage.toString()};
       if (status != null) {
         queryParams['status'] = status;
       }
@@ -112,6 +142,7 @@ class TalentController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<CampaignModel> temp = [];
@@ -251,17 +282,34 @@ class TalentController extends GetxController {
   }
 
   // Payments
-  Future<String> getPendingPayment() async {
+  Future<String> getPendingPayment({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       paymentLoading(true);
       final response = await api.get(
         "/influencer/payments/pending-payment",
+        queryParams: queryParams,
         authReq: true,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<CampaignModel> temp = [];
@@ -287,17 +335,34 @@ class TalentController extends GetxController {
     }
   }
 
-  Future<String> getPaidPayment() async {
+  Future<String> getPaidPayment({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       paymentLoading(true);
       final response = await api.get(
         "/influencer/payments/paid-payment",
+        queryParams: queryParams,
         authReq: true,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<CampaignModel> temp = [];
@@ -357,7 +422,7 @@ class TalentController extends GetxController {
         files == null ? {} : {"invoices": files},
         queryParams: {"method": files == null ? "cash" : "invoice"},
         authReq: true,
-        isMultiPart: files != null
+        isMultiPart: files != null,
       );
       final body = jsonDecode(resposne.body);
 
@@ -376,6 +441,7 @@ class TalentController extends GetxController {
   // Profile
   Future<String?> getPolicies(String specific) async {
     try {
+      isLoading(true);
       final response = await api.get("/context-pages/$specific", authReq: true);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -385,6 +451,8 @@ class TalentController extends GetxController {
       }
     } catch (e) {
       showSnackBar(e.toString());
+    } finally {
+      isLoading(false);
     }
 
     return null;
@@ -410,19 +478,35 @@ class TalentController extends GetxController {
     }
   }
 
-  Future<String> getNotifications({bool getMore = false}) async {
+  Future<String> getNotifications({bool loadMore = false}) async {
     try {
+      Map<String, dynamic> queryParams = {};
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
       notificationLoading(true);
 
       final response = await api.get(
         "/influencer/notifications",
-        queryParams: {"page": currentPage.toString()},
+        queryParams: queryParams,
         authReq: true,
       );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
 
         List<NotificationModel> temp = [];

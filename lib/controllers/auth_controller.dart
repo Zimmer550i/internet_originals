@@ -202,6 +202,7 @@ class AuthController extends GetxController {
     String? token = await SharedPrefsService.get('token');
     if (token != null) {
       debugPrint('🔍 Token found. Fetching user info...');
+      debugPrint('🪙 Token: $token');
       final message = await Get.find<UserController>().getInfo();
       if (message == "success") {
         isLoggedIn.value = true;

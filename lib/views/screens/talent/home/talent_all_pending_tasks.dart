@@ -28,7 +28,7 @@ class _TalentAllPendingTasksState extends State<TalentAllPendingTasks> {
       if (scrollController.position.pixels >=
               scrollController.position.maxScrollExtent * 0.8) {
         if (!talent.notificationLoading.value) {
-          talent.getTasks(getMore: true);
+          talent.getTasks(loadMore: true);
         }
       }
     });

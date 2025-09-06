@@ -36,7 +36,7 @@ class _NotificationsState extends State<Notifications> {
             ? talent.notificationLoading.value
             : sub.notificationLoading.value)) {
           if (isTalent) {
-            talent.getNotifications(getMore: true);
+            talent.getNotifications(loadMore: true);
           } else {
             sub.getNotifications(loadMore: true);
           }
