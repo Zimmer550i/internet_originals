@@ -494,7 +494,7 @@ class SubAdminController extends GetxController {
   // Payments
   Future<String> getPayments(String status, {bool loadMore = false}) async {
     try {
-      Map<String, dynamic> queryParams = {};
+      Map<String, dynamic> queryParams = {"status": status};
 
       if (loadMore) {
         if (campaignLoading.value) {
@@ -513,7 +513,7 @@ class SubAdminController extends GetxController {
       final response = await api.get(
         "/sub-admin/payments",
         authReq: true,
-        queryParams: {"status": status},
+        queryParams: queryParams,
       );
       final body = jsonDecode(response.body);
 
@@ -628,31 +628,6 @@ class SubAdminController extends GetxController {
     }
 
     return null;
-  }
-
-  Future<void> updatePolicies(String specific, String data) async {
-    isLoading.value = true;
-
-    try {
-      final payload = <String, dynamic>{"description": data, "type": specific};
-      final response = await api.post(
-        "/setting/create",
-        payload,
-        authReq: true,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        showSnackBar("Updated Successfully", isError: false);
-      } else {
-        showSnackBar(
-          jsonDecode(response.body)['message'] ?? "Connection Error",
-        );
-      }
-    } catch (e) {
-      showSnackBar(e.toString());
-    }
-
-    isLoading.value = false;
   }
 
   // Notifications

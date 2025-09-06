@@ -34,13 +34,45 @@ class _NotificationHomeState extends State<NotificationHome> {
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent * 0.8) {
-        sub
-            .getCampaigns(searchText: searchController.text, loadMore: true)
-            .then((message) {
+        switch (index) {
+          case 0:
+            sub
+                .getInfluencers(
+                  searchText:
+                      searchController.text.isNotEmpty
+                          ? searchController.text
+                          : null,
+                  loadMore: true,
+                )
+                .then((message) {
+                  if (message != "success") {
+                    showSnackBar(message);
+                  }
+                });
+            break;
+          case 1:
+            sub.getScheduledNotifications(loadMore: true).then((message) {
               if (message != "success") {
                 showSnackBar(message);
               }
             });
+            break;
+          case 2:
+            sub.getSentNotifications(loadMore: true).then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
+            break;
+          case 3:
+            sub.getCompromiseNotifications(loadMore: true).then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
+            break;
+          default:
+        }
       }
     });
   }
@@ -101,11 +133,40 @@ class _NotificationHomeState extends State<NotificationHome> {
               child: Obx(
                 () =>
                     index != 0
-                        ? sub.notificationLoading.value
+                        ? sub.notificationLoading.value && sub.apiData.isEmpty
                             ? Center(child: CustomLoading())
                             : ListView.builder(
+                              controller: scrollController,
                               itemCount: sub.apiData.length,
                               itemBuilder: (context, i) {
+                                if (i == sub.apiData.length - 1) {
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 16,
+                                        ),
+                                        child:
+                                            index == 3
+                                                ? CompromisedNotificationCard(
+                                                  data: sub.apiData.elementAt(
+                                                    i,
+                                                  ),
+                                                )
+                                                : NotificationCard(
+                                                  data: sub.apiData.elementAt(
+                                                    i,
+                                                  ),
+                                                ),
+                                      ),
+                                      if (sub.notificationLoading.value)
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(child: CustomLoading()),
+                                        ),
+                                    ],
+                                  );
+                                }
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 16),
                                   child:

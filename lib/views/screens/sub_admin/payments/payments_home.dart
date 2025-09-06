@@ -17,6 +17,7 @@ class AdminPaymentsHome extends StatefulWidget {
 
 class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
   final sub = Get.find<SubAdminController>();
+  final scrollController = ScrollController();
   int selectedOption = 0;
 
   @override
@@ -25,6 +26,21 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
     sub.getPayments("pending").then((message) {
       if (message != "success") {
         showSnackBar(message);
+      }
+    });
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent * 0.8) {
+        sub
+            .getPayments(
+              selectedOption == 0 ? "pending" : "paid",
+              loadMore: true,
+            )
+            .then((message) {
+              if (message != "success") {
+                showSnackBar(message);
+              }
+            });
       }
     });
   }
@@ -58,13 +74,9 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
             SizedBox(height: 12),
             Obx(
               () => SingleChildScrollView(
+                controller: scrollController,
                 child: Column(
                   children: [
-                    if (sub.paymentLoading.value)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CustomLoading(),
-                      ),
                     if (sub.payments.isEmpty && !sub.paymentLoading.value)
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -79,6 +91,11 @@ class _AdminPaymentsHomeState extends State<AdminPaymentsHome> {
                           padding: EdgeInsets.only(top: 12),
                           child: AdminPaymentItem(payment: i),
                         ),
+                    if (sub.paymentLoading.value)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: CustomLoading(),
+                      ),
                   ],
                 ),
               ),

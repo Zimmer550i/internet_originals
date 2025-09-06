@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/views/screens/sub_admin/settings/about_us.dart';
-import 'package:internet_originals/views/screens/sub_admin/settings/privacy_policy.dart';
-import 'package:internet_originals/views/screens/sub_admin/settings/terms_service.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/payments/cach_payment_submitted.dart';
 import 'package:internet_originals/views/screens/talent/payments/invoice_submitted.dart';
-import 'package:internet_originals/views/screens/talent/profile/about_us.dart';
+import 'package:internet_originals/views/screens/common/about_us.dart';
 import 'package:internet_originals/views/screens/talent/profile/add_socials.dart';
 import 'package:internet_originals/views/screens/talent/profile/change_password.dart';
 import 'package:internet_originals/views/screens/talent/profile/personal_information.dart';
-import 'package:internet_originals/views/screens/talent/profile/privacy_policy.dart';
+import 'package:internet_originals/views/screens/common/privacy_policy.dart';
 import 'package:internet_originals/views/screens/talent/profile/settings_security.dart';
 import 'package:internet_originals/views/screens/talent/profile/social_added.dart';
 import 'package:internet_originals/views/screens/talent/profile/social_platforms.dart';
-import 'package:internet_originals/views/screens/talent/profile/terms_service.dart';
+import 'package:internet_originals/views/screens/common/terms_service.dart';
 import 'package:internet_originals/views/screens/talent/talent_app.dart';
 
 final GlobalKey subAdminAppKey = GlobalKey();
@@ -32,7 +29,7 @@ class AppRoutes {
   static String aboutUs = "/about_us";
   static String addSocials = "/add_socials";
   static String socialAdded = "/social_added";
-  
+
   static String invoiceSubmitted = "/invoice_submitted";
   static String cashPaymentSubmitted = "/cash_payment_submitted";
 
@@ -44,7 +41,6 @@ class AppRoutes {
   static String notificationHistory = "/notification_history";
   static String sendNotification = "/send_notification";
   static String notificationTemplates = "/notification_templates";
-
 
   static Map<String, Widget> routeWidgets = {
     talentApp: TalentApp(key: talentAppKey),
@@ -61,9 +57,9 @@ class AppRoutes {
     invoiceSubmitted: InvoiceSubmitted(),
     cashPaymentSubmitted: CashPaymentSubmitted(),
     adminPersonalInformation: PersonalInformation(),
-    adminPrivacyPolicy: AdminPrivacyPolicy(),
-    adminTermsService: AdminTermsService(),
-    adminAboutUs: AdminAboutUs(),
+    adminPrivacyPolicy: PrivacyPolicy(),
+    adminTermsService: TermsService(),
+    adminAboutUs: AboutUs(),
   };
 
   static List<GetPage> pages = [
