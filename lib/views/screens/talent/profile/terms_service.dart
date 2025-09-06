@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -23,7 +24,7 @@ class _TermsServiceState extends State<TermsService> {
   }
 
   fetchData() async {
-    final text = await talent.getPolicies('terms');
+    final text = await talent.getPolicies('terms-condition');
     if (mounted) {
       setState(() {
         terms = text;
@@ -34,7 +35,7 @@ class _TermsServiceState extends State<TermsService> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Terms & Service'),
+      appBar: CustomAppBar(title: 'Terms & Condition'),
       backgroundColor: AppColors.green[700],
       body: Container(
         width: double.infinity,
@@ -70,15 +71,7 @@ class _TermsServiceState extends State<TermsService> {
                       style: TextStyle(color: AppColors.red),
                     );
                   } else {
-                    return Text(
-                      terms!,
-                      style: TextStyle(
-                        color: AppColors.dark[100],
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    );
+                    return Html(data: terms!);
                   }
                 }),
               ),

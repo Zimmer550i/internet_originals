@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -23,7 +24,7 @@ class _AboutUsState extends State<AboutUs> {
   }
 
   fetchData() async {
-    final text = await talent.getPolicies('about');
+    final text = await talent.getPolicies('about-us');
     if (mounted) {
       setState(() {
         aboutUs = text;
@@ -34,7 +35,7 @@ class _AboutUsState extends State<AboutUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Privacy Policy'),
+      appBar: CustomAppBar(title: 'About Us'),
       backgroundColor: AppColors.green[700],
       body: Container(
         width: double.infinity,
@@ -70,15 +71,7 @@ class _AboutUsState extends State<AboutUs> {
                       style: TextStyle(color: AppColors.red),
                     );
                   } else {
-                    return Text(
-                      aboutUs!,
-                      style: TextStyle(
-                        color: AppColors.dark[100],
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    );
+                    return Html(data: aboutUs!);
                   }
                 }),
               ),

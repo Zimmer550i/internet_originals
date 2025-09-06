@@ -22,6 +22,16 @@ class _NotificationHomeState extends State<NotificationHome> {
   int index = 0;
 
   @override
+  void initState() {
+    super.initState();
+    sub.getInfluencers().then((message) {
+      if (message != "success") {
+        showSnackBar(message);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HomeBar(),

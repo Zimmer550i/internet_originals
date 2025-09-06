@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/sub_admin_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -17,6 +18,7 @@ class _AdminAboutUsState extends State<AdminAboutUs> {
   final subAdmin = Get.find<SubAdminController>();
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  String? apiData;
 
   bool _enabled = false;
 
@@ -33,9 +35,10 @@ class _AdminAboutUsState extends State<AdminAboutUs> {
   }
 
   void fetchData() async {
-    final text = await subAdmin.getPolicies("about");
+    final text = await subAdmin.getPolicies("about-us");
     if (text != null) {
       setState(() {
+        apiData = text;
         _controller.text = text;
       });
     }
@@ -83,6 +86,10 @@ class _AdminAboutUsState extends State<AdminAboutUs> {
                       if (subAdmin.isLoading.value) {
                         return CustomLoading();
                       } else {
+                        if (!_enabled && apiData != null) {
+                          return Html(data: apiData);
+                        }
+
                         return TextField(
                           controller: _controller,
                           focusNode: _focusNode,

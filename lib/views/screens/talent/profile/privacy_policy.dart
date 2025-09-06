@@ -1,3 +1,4 @@
+import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
@@ -23,7 +24,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
   }
 
   fetchData() async {
-    final text = await talent.getPolicies('privacy');
+    final text = await talent.getPolicies('privacy-policy');
     if (mounted) {
       setState(() {
         policy = text;
@@ -70,15 +71,7 @@ class _PrivacyPolicyState extends State<PrivacyPolicy> {
                       style: TextStyle(color: AppColors.red),
                     );
                   } else {
-                    return Text(
-                      policy!,
-                      style: TextStyle(
-                        color: AppColors.dark[100],
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    );
+                    return Html(data: policy!);
                   }
                 }),
               ),

@@ -541,10 +541,10 @@ class SubAdminController extends GetxController {
 
   Future<String?> getPolicies(String specific) async {
     try {
-      final response = await api.get("/setting/get/$specific", authReq: true);
+      final response = await api.get("/context-pages/$specific", authReq: true);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body)['data']['description'];
+        return jsonDecode(response.body)['data'];
       } else {
         showSnackBar(
           jsonDecode(response.body)['message'] ?? "Connection Error",
