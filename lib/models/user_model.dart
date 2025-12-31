@@ -8,6 +8,7 @@ enum EUserRole {
   INFLUENCER,
   ADMIN,
   SUB_ADMIN,
+  MANAGER
 }
 
 class UserModel {

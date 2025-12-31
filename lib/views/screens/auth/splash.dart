@@ -7,10 +7,12 @@ import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/screens/auth/account_under_review.dart';
 import 'package:internet_originals/views/screens/auth/email_verification.dart';
+import 'package:internet_originals/views/screens/auth/login.dart';
 import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/auth/user_information.dart';
+import 'package:internet_originals/views/screens/manager/manager_app.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -43,7 +45,10 @@ class _SplashState extends State<Splash> {
         } else {
           Get.to(() => UserInformation());
         }
+      } else if (role == EUserRole.MANAGER) {
+        Get.offAll(() => ManagerApp());
       } else if (role == EUserRole.GUEST) {
+        Get.offAll(() => Login());
         Get.to(() => EmailVerification());
         auth.sendOtp(user.userInfo.value!.email);
         showSnackBar(
@@ -51,7 +56,7 @@ class _SplashState extends State<Splash> {
           isError: false,
         );
       }
-    }else {
+    } else {
       Get.off(() => Onboarding(), transition: Transition.noTransition);
     }
 

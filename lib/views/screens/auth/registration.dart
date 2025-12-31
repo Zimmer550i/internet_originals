@@ -28,6 +28,8 @@ class _RegistrationState extends State<Registration> {
   TextEditingController passController = TextEditingController();
   TextEditingController confirmPassController = TextEditingController();
 
+  int? role;
+
   String? nameError;
   String? emailError;
   String? phoneError;
@@ -50,11 +52,17 @@ class _RegistrationState extends State<Registration> {
       isLoading = true;
     });
 
-    final message = await auth.signup(name, email, phone, pass);
+    final message = await auth.signup(
+      name,
+      email,
+      phone,
+      pass,
+      isManager: role == 1,
+    );
 
     if (message == "success") {
       showSnackBar("OTP Sent to $email", isError: false);
-      Get.to(() => EmailVerification());
+      Get.to(() => EmailVerification(email: emailController.text));
     } else {
       showSnackBar(message);
     }
@@ -116,7 +124,12 @@ class _RegistrationState extends State<Registration> {
                     errorText: conPassError,
                   ),
                   const SizedBox(height: 40),
-                  CustomButton(text: "Register", isLoading: isLoading, onTap: registrationCallback),
+                  CustomButton(
+                    text: "Register",
+                    isLoading: isLoading,
+                    // onTap: registrationCallback,
+                    onTap: showRolePicker,
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -149,6 +162,144 @@ class _RegistrationState extends State<Registration> {
           ),
         ),
       ),
+    );
+  }
+
+  void showRolePicker() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) {
+        return SafeArea(
+          child: Container(
+            padding: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.green.shade700,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              border: Border(top: BorderSide(color: AppColors.red)),
+            ),
+            child: StatefulBuilder(
+              builder: (context, setModalState) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 30),
+                    Text(
+                      "Select your role",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
+                      ),
+                    ),
+                    const SizedBox(height: 44),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setModalState(() {
+                              role = 0;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.green,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                width: 2,
+                                color:
+                                    role == 0
+                                        ? AppColors.red.shade400
+                                        : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              spacing: 8,
+                              children: [
+                                CustomSvg(
+                                  asset: "assets/icons/influencer.svg",
+                                  size: 52,
+                                  color:
+                                      role == 0
+                                          ? AppColors.red.shade400
+                                          : AppColors.dark.shade100,
+                                ),
+                                Text(
+                                  "Influencer",
+                                  style: TextStyle(
+                                    color:
+                                        role == 0
+                                            ? AppColors.red.shade400
+                                            : AppColors.dark.shade100,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setModalState(() {
+                              role = 1;
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.green,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(
+                                width: 2,
+                                color:
+                                    role == 1
+                                        ? AppColors.red.shade400
+                                        : Colors.transparent,
+                              ),
+                            ),
+                            child: Column(
+                              spacing: 8,
+                              children: [
+                                CustomSvg(
+                                  asset: "assets/icons/manager.svg",
+                                  size: 52,
+                                  color:
+                                      role == 1
+                                          ? AppColors.red.shade400
+                                          : AppColors.dark.shade100,
+                                ),
+                                Text(
+                                  "Manager",
+                                  style: TextStyle(
+                                    color:
+                                        role == 1
+                                            ? AppColors.red.shade400
+                                            : AppColors.dark.shade100,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 50),
+                    CustomButton(
+                      onTap: () {
+                        Get.back();
+                        registrationCallback();
+                      },
+                      isDisabled: role == null,
+                      text: "Continue",
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 

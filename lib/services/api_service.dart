@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:internet_originals/services/shared_prefs_service.dart';
 
 class ApiService {
-  final String devUrl = "http://10.10.12.48:3929/api/v1";
+  final String devUrl = "http://10.10.12.126:3929/api/v1";
   final String prodUrl = "";
   final bool inDevelopment = true;
   final bool showAPICalls = true;

@@ -39,15 +39,14 @@ class AuthController extends GetxController {
     String name,
     String email,
     String phone,
-    String password,
-  ) async {
+    String password, {
+    bool isManager = false,
+  }) async {
     try {
-      final response = await api.post("/auth/register", {
-        "name": name,
-        "email": email,
-        "password": password,
-        "phone": phone,
-      });
+      final response = await api.post(
+        isManager ? "/auth/register-manager" : "/auth/register",
+        {"name": name, "email": email, "password": password, "phone": phone},
+      );
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -179,14 +178,12 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<String> resetPassword(
-    String pass,
-    String token,
-  ) async {
+  Future<String> resetPassword(String pass, String token) async {
     try {
-      final response = await api.post("/auth/reset-password?reset_token=$token", {
-        "password": pass,
-      });
+      final response = await api.post(
+        "/auth/reset-password?reset_token=$token",
+        {"password": pass},
+      );
 
       if (response.statusCode == 200) {
         return "success";
