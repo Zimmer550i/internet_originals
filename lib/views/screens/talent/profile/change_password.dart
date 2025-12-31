@@ -54,7 +54,8 @@ class _ChangePasswordState extends State<ChangePassword> {
       Get.until(
         (route) =>
             Get.currentRoute == AppRoutes.talentApp ||
-            Get.currentRoute == AppRoutes.subAdminApp,
+            Get.currentRoute == AppRoutes.subAdminApp ||
+            Get.currentRoute == AppRoutes.managerApp,
       );
       showSnackBar("Password successfully changed", isError: false);
     } else {

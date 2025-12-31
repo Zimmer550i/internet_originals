@@ -477,7 +477,8 @@ class CampaignCard extends StatelessWidget {
                             Get.until(
                               (route) =>
                                   Get.currentRoute == AppRoutes.talentApp ||
-                                  Get.currentRoute == AppRoutes.subAdminApp,
+                                  Get.currentRoute == AppRoutes.subAdminApp ||
+                                  Get.currentRoute == AppRoutes.managerApp,
                             );
 
                             Get.find<TalentController>()

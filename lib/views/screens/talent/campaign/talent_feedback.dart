@@ -36,7 +36,8 @@ class _TalentFeedbackState extends State<TalentFeedback> {
       Get.until(
         (route) =>
             Get.currentRoute == AppRoutes.talentApp ||
-            Get.currentRoute == AppRoutes.subAdminApp,
+            Get.currentRoute == AppRoutes.subAdminApp ||
+            Get.currentRoute == AppRoutes.managerApp,
       );
     } else {
       showSnackBar(message);

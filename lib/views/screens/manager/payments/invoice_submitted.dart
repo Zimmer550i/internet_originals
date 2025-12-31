@@ -65,7 +65,8 @@ class InvoiceSubmitted extends StatelessWidget {
                   Get.until(
                     (route) =>
                         (Get.currentRoute == AppRoutes.talentApp) ||
-                        (Get.currentRoute == AppRoutes.subAdminApp),
+                        (Get.currentRoute == AppRoutes.subAdminApp ||
+                            Get.currentRoute == AppRoutes.managerApp),
                   );
                 },
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/views/screens/manager/manager_app.dart';
 import 'package:internet_originals/views/screens/sub_admin/sub_admin_app.dart';
 import 'package:internet_originals/views/screens/talent/payments/cach_payment_submitted.dart';
 import 'package:internet_originals/views/screens/talent/payments/invoice_submitted.dart';
@@ -19,6 +20,7 @@ final GlobalKey subAdminAppKey = GlobalKey();
 class AppRoutes {
   static String talentApp = "/talent_home";
   static String subAdminApp = "/sub_admin_home";
+  static String managerApp = "/manager_home";
 
   static String personalInformation = "/personal_information";
   static String socialPlatforms = "/social_platforms";
@@ -45,6 +47,7 @@ class AppRoutes {
   static Map<String, Widget> routeWidgets = {
     talentApp: TalentApp(key: talentAppKey),
     subAdminApp: SubAdminApp(key: subAdminAppKey),
+    managerApp: ManagerApp(key: managerAppKey),
     personalInformation: PersonalInformation(),
     socialPlatforms: SocialPlatforms(),
     settingsSecurity: SettingsSecurity(),

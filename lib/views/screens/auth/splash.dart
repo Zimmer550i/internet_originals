@@ -12,7 +12,6 @@ import 'package:internet_originals/views/screens/auth/onboarding.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/screens/auth/user_information.dart';
-import 'package:internet_originals/views/screens/manager/manager_app.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -46,7 +45,7 @@ class _SplashState extends State<Splash> {
           Get.to(() => UserInformation());
         }
       } else if (role == EUserRole.MANAGER) {
-        Get.offAll(() => ManagerApp());
+        Get.offNamed(AppRoutes.managerApp);
       } else if (role == EUserRole.GUEST) {
         Get.offAll(() => Login());
         Get.to(() => EmailVerification());
