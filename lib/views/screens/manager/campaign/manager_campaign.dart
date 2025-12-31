@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/campaign_card.dart';
@@ -8,17 +8,17 @@ import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 
-class TalentCampaign extends StatefulWidget {
-  const TalentCampaign({super.key});
+class ManagerCampaign extends StatefulWidget {
+  const ManagerCampaign({super.key});
 
   @override
-  State<TalentCampaign> createState() => _TalentCampaignState();
+  State<ManagerCampaign> createState() => _ManagerCampaignState();
 }
 
-class _TalentCampaignState extends State<TalentCampaign> {
+class _ManagerCampaignState extends State<ManagerCampaign> {
   int selectedTab = 0;
-  final talent = Get.find<TalentController>();
-  List<String> status = ["pending", "active", "completed"];
+  final manager = Get.find<ManagerController>();
+  List<String> status = ["active", "completed"];
 
   @override
   void initState() {
@@ -27,7 +27,7 @@ class _TalentCampaignState extends State<TalentCampaign> {
   }
 
   void getData() async {
-    talent.getCampaigns(status: status[selectedTab].toUpperCase()).then((val) {
+    manager.getCampaigns(status: status[selectedTab]).then((val) {
       if (val != "success") {
         showSnackBar(val);
       }
@@ -45,8 +45,8 @@ class _TalentCampaignState extends State<TalentCampaign> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24),
               child: CustomTabBar(
-                key: talentCampaignTabBarKey,
-                options: ["Request", "Active", "Completed"],
+                // key: managerCampaignTabBarKey,
+                options: ["Active", "Completed"],
                 onChange: (val) {
                   setState(() {
                     selectedTab = val;
@@ -58,9 +58,9 @@ class _TalentCampaignState extends State<TalentCampaign> {
             Expanded(
               child: Obx(
                 () =>
-                    talent.campaignLoading.value
+                    manager.campaignLoading.value
                         ? Center(child: CustomLoading())
-                          : talent.campaigns.isEmpty
+                          : manager.campaigns.isEmpty
                           ? Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -69,12 +69,12 @@ class _TalentCampaignState extends State<TalentCampaign> {
                             ),
                           )
                         : ListView.builder(
-                          itemCount: talent.campaigns.length,
+                          itemCount: manager.campaigns.length,
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16.0),
                               child: CampaignCard(
-                                campaign: talent.campaigns.elementAt(index),
+                                campaign: manager.campaigns.elementAt(index),
                               ),
                             );
                           },

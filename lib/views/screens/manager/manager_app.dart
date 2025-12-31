@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
-import 'package:internet_originals/views/screens/talent/campaign/talent_campaign.dart';
-import 'package:internet_originals/views/screens/talent/home/talent_home.dart';
-import 'package:internet_originals/views/screens/talent/payments/payments_home.dart';
-import 'package:internet_originals/views/screens/talent/profile/profile.dart';
+import 'package:internet_originals/views/screens/manager/campaign/manager_campaign.dart';
+import 'package:internet_originals/views/screens/manager/home/manager_home.dart';
+import 'package:internet_originals/views/screens/manager/influencer/manager_influencer_home.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_payments_home.dart';
+import 'package:internet_originals/views/screens/sub_admin/settings/settings.dart';
 
 final GlobalKey<ManagerAppState> managerAppKey = GlobalKey<ManagerAppState>();
 
@@ -20,26 +21,35 @@ class ManagerAppState extends State<ManagerApp> {
   int index = 0;
 
   List<Widget> pages = [
-    TalentHome(),
-    TalentCampaign(),
-    PaymentsHome(),
-    Profile(),
+    ManagerHome(),
+    ManagerCampaign(),
+    ManagerPaymentsHome(),
+    ManagerInfluencerHome(),
+    SettingsHome(),
   ];
 
-  List<String> labels = ["Home", "Campaigns", "Payments", "Profile"];
+  List<String> labels = [
+    "Home",
+    "Campaigns",
+    "Payments",
+    "Influencers",
+    "Settings",
+  ];
 
   List<String> icons = [
     AppIcons.home,
     AppIcons.campaigns,
     AppIcons.payments,
-    AppIcons.profile,
+    AppIcons.influencers,
+    AppIcons.settings,
   ];
 
   List<String> iconsDark = [
     AppIcons.homeDark,
     AppIcons.campaignsDark,
     AppIcons.paymentsDark,
-    AppIcons.profileDark,
+    AppIcons.influencersDark,
+    AppIcons.settingsDark,
   ];
 
   @override

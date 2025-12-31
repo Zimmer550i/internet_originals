@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/models/social_platform.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 
@@ -13,6 +14,7 @@ class ManagerController extends GetxController {
   // Fields
   final api = ApiService();
 
+  RxList<UserModel> influencers = RxList.empty();
   RxList<CampaignModel> tasks = RxList.empty();
   RxList<CampaignModel> campaigns = RxList.empty();
   RxList<CampaignModel> payments = RxList.empty();
@@ -24,15 +26,16 @@ class ManagerController extends GetxController {
   RxBool campaignLoading = RxBool(false);
   RxBool paymentLoading = RxBool(false);
   RxBool notificationLoading = RxBool(false);
+  RxBool influencerLoading = RxBool(false);
 
   RxInt totalPages = RxInt(1);
   RxInt currentPage = RxInt(1);
+  RxInt activeCampaigns = RxInt(0);
+  RxInt pendingMetrics = RxInt(0);
+  RxInt connectedTalents = RxInt(0);
   RxnNum totalEarning = RxnNum();
   RxnNum pendingPayments = RxnNum();
   RxnNum paidEarning = RxnNum();
-
-  Timer? _notificationTimer;
-  Duration notificationRefreshTime = Duration(minutes: 2);
 
   // Tasks
   Future<String> getTasks({bool loadMore = false}) async {
@@ -55,7 +58,7 @@ class ManagerController extends GetxController {
       taskLoading(true);
 
       final response = await api.get(
-        "/manager/tasks/pending",
+        "/manager/pending-tasks",
         queryParams: queryParams,
         authReq: true,
       );
@@ -65,6 +68,10 @@ class ManagerController extends GetxController {
         final data = body['data'];
         currentPage.value = body['meta']['pagination']['page'];
         totalPages.value = body['meta']['pagination']['totalPages'];
+
+        activeCampaigns.value = body['meta']['activeCampaigns'];
+        pendingMetrics.value = body['meta']['pendingMetrics'];
+        connectedTalents.value = body['meta']['connectedInfluencers'];
 
         List<CampaignModel> temp = [];
         for (var i in data) {
@@ -130,7 +137,7 @@ class ManagerController extends GetxController {
       campaignLoading(true);
 
       if (status != null) {
-        queryParams['status'] = status;
+        queryParams['tab'] = status;
       }
 
       final response = await api.get(
@@ -299,7 +306,7 @@ class ManagerController extends GetxController {
 
       paymentLoading(true);
       final response = await api.get(
-        "/manager/payments/pending-payment",
+        "/manager/payments?tab=pending",
         queryParams: queryParams,
         authReq: true,
       );
@@ -352,7 +359,7 @@ class ManagerController extends GetxController {
 
       paymentLoading(true);
       final response = await api.get(
-        "/manager/payments/paid-payment",
+        "/manager/payments?tab=paid",
         queryParams: queryParams,
         authReq: true,
       );
@@ -389,17 +396,14 @@ class ManagerController extends GetxController {
   Future<String> getEarnings() async {
     try {
       paymentLoading(true);
-      final resposne = await api.get(
-        "/manager/payments/get-earnings",
-        authReq: true,
-      );
+      final resposne = await api.get("/manager/earnings", authReq: true);
       final body = jsonDecode(resposne.body);
 
       if (resposne.statusCode == 200) {
         final data = body['data'];
-        pendingPayments.value = data['pending'];
-        paidEarning.value = data['paid'];
-        totalEarning.value = data['total'];
+        pendingPayments.value = num.tryParse(data['pending']);
+        paidEarning.value = num.tryParse(data['paid']);
+        totalEarning.value = num.tryParse(data['total']);
 
         return "success";
       } else {
@@ -546,47 +550,69 @@ class ManagerController extends GetxController {
     }
   }
 
-  void readNotifications(String id) async {
+  // Influencers
+  Future<String> getInfluencers(
+    int selectedOption, {
+    String? searchText,
+    bool loadMore = false,
+  }) async {
     try {
-      final response = await api.post(
-        "/manager/notifications/$id/read",
-        {},
+      Map<String, dynamic> queryParams = {};
+      if (searchText != null && searchText != "") {
+        queryParams['search'] = searchText;
+      }
+
+      if (loadMore) {
+        if (campaignLoading.value) {
+          return "success";
+        }
+        if (currentPage.value < totalPages.value) {
+          currentPage.value = currentPage.value + 1;
+        } else {
+          return "success";
+        }
+
+        queryParams['page'] = (currentPage.value).toString();
+      }
+
+      if (selectedOption == 0) {
+        queryParams['tab'] = "all";
+      } else {
+        queryParams['tab'] = "connected";
+      }
+
+      influencerLoading(true);
+      final response = await api.get(
+        "/manager/influencers",
         authReq: true,
+        queryParams: queryParams,
       );
+      final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        notifications.firstWhere((val) => val.id == id).status = "READ";
+        final data = body['data'];
+        currentPage.value = body['meta']['pagination']['page'];
+        totalPages.value = body['meta']['pagination']['totalPages'];
+
+        final List<UserModel> temp = [];
+        for (var i in data) {
+          temp.add(UserModel.fromJson(i));
+        }
+
+        if (temp.isNotEmpty) {
+          influencers.value = temp;
+        } else {
+          influencers.clear();
+        }
+
+        return "success";
       } else {
-        debugPrint("Error reading notifications");
+        return body['message'] ?? "Unexpected Error";
       }
     } catch (e) {
-      debugPrint("Error reading notifications: ${e.toString()}");
+      return e.toString();
+    } finally {
+      influencerLoading(false);
     }
-  }
-
-  void _startNotificationTimer() {
-    _notificationTimer?.cancel();
-
-    _notificationTimer = Timer.periodic(notificationRefreshTime, (timer) {
-      getNotifications();
-    });
-  }
-
-  void _stopNotificationTimer() {
-    _notificationTimer?.cancel();
-    _notificationTimer = null;
-  }
-
-  Future<String> refreshNotifications() async {
-    _stopNotificationTimer();
-    final result = await getNotifications();
-    _startNotificationTimer();
-    return result;
-  }
-
-  @override
-  void onClose() {
-    _stopNotificationTimer();
-    super.onClose();
   }
 }

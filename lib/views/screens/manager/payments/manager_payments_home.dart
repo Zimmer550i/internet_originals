@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/talent/payments/earnings.dart';
-import 'package:internet_originals/views/screens/talent/payments/pending_payment_item.dart';
+import 'package:internet_originals/views/screens/manager/payments/earnings.dart';
+import 'package:internet_originals/views/screens/manager/payments/pending_payment_item.dart';
 
-class PaymentsHome extends StatefulWidget {
-  const PaymentsHome({super.key});
+class ManagerPaymentsHome extends StatefulWidget {
+  const ManagerPaymentsHome({super.key});
 
   @override
-  State<PaymentsHome> createState() => _PaymentsHomeState();
+  State<ManagerPaymentsHome> createState() => _ManagerPaymentsHomeState();
 }
 
-class _PaymentsHomeState extends State<PaymentsHome> {
-  final talent = Get.find<TalentController>();
+class _ManagerPaymentsHomeState extends State<ManagerPaymentsHome> {
+  final manager = Get.find<ManagerController>();
   final List<String> _pageOptions = ["Pending", "Paid", "Earnings"];
   int selectedOption = 0;
 
@@ -29,19 +29,19 @@ class _PaymentsHomeState extends State<PaymentsHome> {
 
   void getData() {
     if (selectedOption == 0) {
-      talent.getPendingPayment().then((message) {
+      manager.getPendingPayment().then((message) {
         if (message != "success") {
           showSnackBar(message);
         }
       });
     } else if (selectedOption == 1) {
-      talent.getPaidPayment().then((message) {
+      manager.getPaidPayment().then((message) {
         if (message != "success") {
           showSnackBar(message);
         }
       });
     } else {
-      // talent.().then((message) {
+      // manager.().then((message) {
       //   if (message != "success") {
       //     showSnackBar(message);
       //   }
@@ -74,12 +74,12 @@ class _PaymentsHomeState extends State<PaymentsHome> {
                   selectedOption == 2
                       ? Earnings()
                       : Obx(() {
-                        if (talent.paymentLoading.value) {
+                        if (manager.paymentLoading.value) {
                           return CustomLoading();
                         }
 
                         if (selectedOption != 2) {
-                          if (talent.payments.isEmpty) {
+                          if (manager.payments.isEmpty) {
                             return Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Text(
@@ -91,12 +91,12 @@ class _PaymentsHomeState extends State<PaymentsHome> {
                             );
                           }
                           return ListView.builder(
-                            itemCount: talent.payments.length,
+                            itemCount: manager.payments.length,
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
                                 child: PendingPaymentItem(
-                                  campaign: talent.payments.elementAt(index),
+                                  campaign: manager.payments.elementAt(index),
                                 ),
                               );
                             },

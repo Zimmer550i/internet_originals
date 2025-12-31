@@ -56,6 +56,23 @@ class InfluencerCard extends StatelessWidget {
                           height: 44,
                           width: 44,
                           fit: BoxFit.cover,
+                          errorBuilder:
+                              (context, error, stackTrace) => Container(
+                                height: 44,
+                                width: 44,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: AppColors.dark.shade400,
+                                  )
+                                ),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.error_outline,
+                                    color: AppColors.red,
+                                  ),
+                                ),
+                              ),
                         )
                         : SizedBox(height: 44, width: 44),
               ),

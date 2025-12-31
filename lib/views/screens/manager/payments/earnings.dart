@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
@@ -13,12 +16,18 @@ class Earnings extends StatefulWidget {
 }
 
 class _EarningsState extends State<Earnings> {
-  final talent = Get.find<TalentController>();
+  late dynamic controller;
 
   @override
   void initState() {
     super.initState();
-    talent.getEarnings().then((message) {
+    if (Get.find<UserController>().userInfo.value!.role == EUserRole.MANAGER) {
+      controller = Get.find<ManagerController>();
+    } else {
+      controller = Get.find<TalentController>();
+    }
+
+    controller.getEarnings().then((message) {
       if (message != "success") {
         showSnackBar(message);
       }
@@ -33,7 +42,7 @@ class _EarningsState extends State<Earnings> {
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.15,
           child: Obx(
-            () => talent.paymentLoading.value ? CustomLoading() : Container(),
+            () => controller.paymentLoading.value ? CustomLoading() : Container(),
           ),
         ),
         Text(
@@ -56,17 +65,15 @@ class _EarningsState extends State<Earnings> {
                 color: AppColors.red[500],
               ),
             ),
-            Expanded(
-              child: Obx(
-                () => Text(
-                  talent.totalEarning.value != null
-                      ? addCommas(talent.totalEarning.value!)
-                      : "_ _ _",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 56,
-                    color: Color(0xFFFFFFFF),
-                  ),
+            Obx(
+              () => Text(
+                controller.totalEarning.value != null
+                    ? addCommas(controller.totalEarning.value!)
+                    : "_ _ _",
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 56,
+                  color: Color(0xFFFFFFFF),
                 ),
               ),
             ),
@@ -97,7 +104,7 @@ class _EarningsState extends State<Earnings> {
                   SizedBox(height: 8),
                   Obx(
                     () => Text(
-                      "\$ ${talent.paidEarning.value != null ? addCommas(talent.paidEarning.value!) : "_ _ _"}",
+                      "\$ ${controller.paidEarning.value != null ? addCommas(controller.paidEarning.value!) : "_ _ _"}",
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 28,
@@ -130,7 +137,7 @@ class _EarningsState extends State<Earnings> {
                   SizedBox(height: 8),
                   Obx(
                     () => Text(
-                      "\$ ${talent.pendingPayments.value != null ? addCommas(talent.pendingPayments.value!) : "_ _ _"}",
+                      "\$ ${controller.pendingPayments.value != null ? addCommas(controller.pendingPayments.value!) : "_ _ _"}",
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 28,

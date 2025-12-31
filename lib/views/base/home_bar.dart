@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/user_controller.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
@@ -46,12 +47,13 @@ class _HomeBarState extends State<HomeBar> {
           if (!widget.isHome)
             CustomSvg(asset: AppIcons.logo, width: 76, height: 25),
           Spacer(),
-          GestureDetector(
-            onTap: () {
-              Get.to(() => Notifications());
-            },
-            child: CustomSvg(asset: AppIcons.bellWithAlert),
-          ),
+          if (user.userInfo.value!.role != EUserRole.MANAGER)
+            GestureDetector(
+              onTap: () {
+                Get.to(() => Notifications());
+              },
+              child: CustomSvg(asset: AppIcons.bellWithAlert),
+            ),
           const SizedBox(width: 20),
         ],
       ),
