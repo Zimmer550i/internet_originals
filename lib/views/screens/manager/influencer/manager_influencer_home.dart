@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/manager_controller.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
+import 'package:internet_originals/utils/custom_modal.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
+import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_searchbar.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
@@ -101,7 +104,30 @@ class _ManagerInfluencerHomeState extends State<ManagerInfluencerHome> {
                             for (var i in manager.influencers)
                               Padding(
                                 padding: EdgeInsets.only(top: 12),
-                                child: InfluencerCard(influencer: i),
+                                child: InfluencerCard(
+                                  influencer: i,
+                                  button: CustomButton(
+                                    onTap: () => handleRequest(i),
+                                    text:
+                                        selectedOption == 1
+                                            ? "Remove Connection"
+                                            : manager.recentRequests.contains(
+                                              i.id,
+                                            )
+                                            ? "Request Sent"
+                                            : "Send Connection Request",
+                                    isDisabled: manager.recentRequests.contains(
+                                      i.id,
+                                    ),
+                                    width: null,
+                                    height: 40,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 12,
+                                    ),
+                                    textSize: 14,
+                                  ),
+                                ),
                               ),
                             if (manager.influencers.isEmpty)
                               Padding(
@@ -135,5 +161,53 @@ class _ManagerInfluencerHomeState extends State<ManagerInfluencerHome> {
         ),
       ),
     );
+  }
+
+  void handleRequest(UserModel influencer) async {
+    if (selectedOption == 0) {
+      showCustomModal(
+        context: context,
+        title: "Send connection request to",
+        highlight: "${influencer.name}?",
+        leftButtonText: "Cancel",
+        rightButtonText: "Confirm",
+        onLeftButtonClick: () => Get.back(),
+        onRightButtonClick: () {
+          Get.back();
+          manager.sendConnectionRequest(influencer.id).then((message) {
+            if (message == "success") {
+              showSnackBar(
+                "Connection request sent to ${influencer.name}",
+                isError: false,
+              );
+            } else {
+              showSnackBar(message);
+            }
+          });
+        },
+      );
+    } else {
+      showCustomModal(
+        context: context,
+        title: "Remove connection with",
+        highlight: "${influencer.name}?",
+        leftButtonText: "Cancel",
+        rightButtonText: "Confirm",
+        onLeftButtonClick: () => Get.back(),
+        onRightButtonClick: () {
+          Get.back();
+          manager.removeConnection(influencer.id).then((message) {
+            if (message == "success") {
+              showSnackBar(
+                "Removed connection with ${influencer.name}",
+                isError: false,
+              );
+            } else {
+              showSnackBar(message);
+            }
+          });
+        },
+      );
+    }
   }
 }

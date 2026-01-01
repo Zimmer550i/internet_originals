@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/controllers/sub_admin_controller.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/models/user_model.dart';
@@ -23,6 +24,7 @@ class InfluencerCard extends StatelessWidget {
   final String? status;
   final void Function()? callbackButton;
   final bool sendNotification;
+  final Widget? button;
   const InfluencerCard({
     super.key,
     required this.influencer,
@@ -31,10 +33,13 @@ class InfluencerCard extends StatelessWidget {
     this.callbackButton,
     this.sendNotification = false,
     this.showDetails = false,
+    this.button,
   });
 
   @override
   Widget build(BuildContext context) {
+    final user = Get.find<UserController>();
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -64,7 +69,7 @@ class InfluencerCard extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
                                     color: AppColors.dark.shade400,
-                                  )
+                                  ),
                                 ),
                                 child: Center(
                                   child: Icon(
@@ -206,6 +211,7 @@ class InfluencerCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+          if (button != null) Center(child: button!),
           if (influencer.role == EUserRole.USER &&
               !showDetails &&
               status == null)
@@ -223,6 +229,7 @@ class InfluencerCard extends StatelessWidget {
               ),
             ),
           if (influencer.role == EUserRole.INFLUENCER &&
+              user.userInfo.value!.role == EUserRole.SUB_ADMIN &&
               campaign == null &&
               status == null &&
               !sendNotification)

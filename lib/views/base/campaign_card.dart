@@ -12,6 +12,7 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
@@ -90,15 +91,7 @@ class CampaignCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: Image.network(
-            ApiService().baseUrl + campaign.banner,
-            height: 44,
-            width: 44,
-            fit: BoxFit.cover,
-          ),
-        ),
+        CustomNetworkedImage(url: "${ApiService().baseUrl}${campaign.banner}"),
         const SizedBox(width: 12),
         Expanded(
           child: Column(

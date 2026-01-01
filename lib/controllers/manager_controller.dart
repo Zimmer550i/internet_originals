@@ -21,6 +21,8 @@ class ManagerController extends GetxController {
   RxList<NotificationModel> notifications = RxList.empty();
   RxList<SocialPlatformModel> socialPlatforms = RxList();
 
+  RxList<String> recentRequests = RxList.empty();
+
   RxBool isLoading = RxBool(false);
   RxBool taskLoading = RxBool(false);
   RxBool campaignLoading = RxBool(false);
@@ -613,6 +615,56 @@ class ManagerController extends GetxController {
       return e.toString();
     } finally {
       influencerLoading(false);
+    }
+  }
+
+  Future<String> sendConnectionRequest(String id) async {
+    try {
+      isLoading(true);
+
+      final response = await api.post("/manager/influencers", {
+        "influencerId": id,
+      }, authReq: true);
+
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        recentRequests.add(id);
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<String> removeConnection(String id) async {
+    try {
+      isLoading(true);
+
+      final response = await api.delete(
+        "/manager/influencers",
+        data: {"influencerId": id},
+        authReq: true,
+      );
+
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final index = influencers.indexWhere((i) => i.id == id);
+        influencers.removeAt(index);
+        
+        return "success";
+      } else {
+        return body['message'] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      isLoading(false);
     }
   }
 }

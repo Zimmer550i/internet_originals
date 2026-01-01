@@ -169,11 +169,19 @@ class ApiService {
   }
 
   // Delete
-  Future<http.Response> delete(String endpoint, {bool authReq = false}) async {
+  Future<http.Response> delete(
+    String endpoint, {
+    Map<String, dynamic>? data,
+    bool authReq = false,
+  }) async {
     try {
       final headers = await _getHeaders(authReq);
       final uri = Uri.parse('$baseUrl$endpoint');
-      final response = await http.delete(uri, headers: headers);
+      final response = await http.delete(
+        uri,
+        headers: headers,
+        body: jsonEncode(data),
+      );
 
       if (showAPICalls) _logResponse(response, 'DELETE', uri);
 

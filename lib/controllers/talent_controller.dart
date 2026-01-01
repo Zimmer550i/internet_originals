@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/models/connection_model.dart';
 import 'package:internet_originals/models/notification_model.dart';
 import 'package:internet_originals/models/social_platform.dart';
 import 'package:internet_originals/services/api_service.dart';
@@ -18,6 +19,7 @@ class TalentController extends GetxController {
   RxList<CampaignModel> payments = RxList.empty();
   RxList<NotificationModel> notifications = RxList.empty();
   RxList<SocialPlatformModel> socialPlatforms = RxList();
+  RxList<ConnectionModel> connections = RxList.empty();
 
   RxBool isLoading = RxBool(false);
   RxBool taskLoading = RxBool(false);
@@ -527,6 +529,89 @@ class TalentController extends GetxController {
       return e.toString();
     } finally {
       notificationLoading(false);
+    }
+  }
+
+  Future<String> getConnections() async {
+    try {
+      isLoading(true);
+
+      final response = await api.get("/influencer/manager", authReq: true);
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final data = body['data'];
+
+        connections.clear();
+        for (var i in data) {
+          try {
+            connections.add(ConnectionModel.fromJson(i));
+          } catch (e) {
+            debugPrint(e.toString());
+            debugPrint("Data: $i");
+          }
+        }
+
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<String> addConnection(String id) async {
+    try {
+      isLoading(true);
+
+      final response = await api.post("/influencer/manager", {
+        "managerId": id,
+      }, authReq: true);
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final index = connections.indexWhere((i) => i.id == id);
+        if (index != -1) {
+          connections[index] = connections[index].copyWith(isConnected: true);
+        }
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  Future<String> removeConnection(String id) async {
+    try {
+      isLoading(true);
+
+      final response = await api.delete(
+        "/influencer/manager",
+        data: {"managerId": id},
+        authReq: true,
+      );
+      final body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final index = connections.indexWhere((i) => i.id == id);
+        if (index != -1) {
+          connections[index] = connections[index].copyWith(isConnected: false);
+        }
+        return "success";
+      } else {
+        return body["message"] ?? "Unexpected Error";
+      }
+    } catch (e) {
+      return e.toString();
+    } finally {
+      isLoading(false);
     }
   }
 

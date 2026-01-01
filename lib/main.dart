@@ -9,7 +9,6 @@ import 'package:internet_originals/utils/app_constants.dart';
 import 'package:internet_originals/utils/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'controllers/localization_controller.dart';
 import 'controllers/theme_controller.dart';
@@ -62,31 +61,24 @@ class MyApp extends StatelessWidget {
       builder: (themeController) {
         return GetBuilder<LocalizationController>(
           builder: (localizeController) {
-            return ScreenUtilInit(
-              designSize: const Size(393, 852),
-              minTextAdapt: true,
-              splitScreenMode: true,
-              builder: (_, child) {
-                return GetMaterialApp(
-                  title: AppConstants.APP_NAME,
-                  debugShowCheckedModeBanner: false,
-                  scaffoldMessengerKey: rootScaffoldMessengerKey,
-                  navigatorKey: Get.key,
-                  // theme: themeController.darkTheme ? dark(): light(),
-                  theme: dark(),
-                  defaultTransition: Transition.cupertino,
-                  locale: localizeController.locale,
-                  translations: Messages(languages: languages),
-                  fallbackLocale: Locale(
-                    AppConstants.languages[0].languageCode,
-                    AppConstants.languages[0].countryCode,
-                  ),
-                  transitionDuration: const Duration(milliseconds: 500),
-                  getPages: AppRoutes.pages,
-                  // initialRoute: AppRoutes.designPattern,
-                  home: Splash(),
-                );
-              },
+            return GetMaterialApp(
+              title: AppConstants.APP_NAME,
+              debugShowCheckedModeBanner: false,
+              scaffoldMessengerKey: rootScaffoldMessengerKey,
+              navigatorKey: Get.key,
+              // theme: themeController.darkTheme ? dark(): light(),
+              theme: dark(),
+              defaultTransition: Transition.cupertino,
+              locale: localizeController.locale,
+              translations: Messages(languages: languages),
+              fallbackLocale: Locale(
+                AppConstants.languages[0].languageCode,
+                AppConstants.languages[0].countryCode,
+              ),
+              transitionDuration: const Duration(milliseconds: 500),
+              getPages: AppRoutes.pages,
+              // initialRoute: AppRoutes.designPattern,
+              home: Splash(),
             );
           },
         );

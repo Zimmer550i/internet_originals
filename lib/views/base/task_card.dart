@@ -5,6 +5,7 @@ import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_pending_task.dart';
 
 class TaskCard extends StatelessWidget {
@@ -29,14 +30,8 @@ class TaskCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(2),
-                  child: Image.network(
-                    ApiService().baseUrl + task.banner,
-                    height: 44,
-                    width: 44,
-                    fit: BoxFit.cover,
-                  ),
+                child: CustomNetworkedImage(
+                  url: ApiService().baseUrl + task.banner,
                 ),
               ),
               const SizedBox(width: 12),
@@ -51,10 +46,7 @@ class TaskCard extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
-                    Text(
-                      task.brand,
-                      style: TextStyle(fontSize: 14),
-                    ),
+                    Text(task.brand, style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
@@ -88,7 +80,7 @@ class TaskCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => TalentPendingTask(task: task,));
+                  Get.to(() => TalentPendingTask(task: task));
                 },
                 child: CustomSvg(asset: AppIcons.redArrowRight, size: 35),
               ),

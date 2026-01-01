@@ -10,6 +10,7 @@ import 'package:internet_originals/views/base/profile_picture.dart';
 import 'package:get/get.dart';
 import 'package:internet_originals/views/base/pull_to_refresh.dart';
 import 'package:internet_originals/views/screens/auth/splash.dart';
+import 'package:internet_originals/views/screens/talent/profile/talent_connections.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -62,6 +63,13 @@ class _ProfileState extends State<Profile> {
                 title: "Personal Information",
                 onTap: () {
                   Get.toNamed(AppRoutes.personalInformation);
+                },
+              ),
+              ProfileTab(
+                leadingIcon: "assets/icons/connections.svg",
+                title: "See Connection",
+                onTap: () {
+                  Get.to(() => TalentConnections());
                 },
               ),
               ProfileTab(
