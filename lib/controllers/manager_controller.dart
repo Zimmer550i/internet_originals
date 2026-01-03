@@ -269,7 +269,7 @@ class ManagerController extends GetxController {
     }
   }
 
-  Future<String> uploadMatrix(String id, Map<String, dynamic> data) async {
+  Future<String> uploadMatrix(Map<String, dynamic> data) async {
     try {
       campaignLoading(true);
       final response = await api.post(

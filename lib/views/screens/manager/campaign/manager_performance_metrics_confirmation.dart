@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -60,6 +61,7 @@ class ManagerPerformanceMetricsConfirmation extends StatelessWidget {
                         Get.currentRoute == AppRoutes.subAdminApp ||
                         Get.currentRoute == AppRoutes.managerApp,
                   );
+                  Get.find<ManagerController>().getCampaigns(status: "active");
                 },
                 child: Text(
                   "Back to Campaign",

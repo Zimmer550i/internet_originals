@@ -58,7 +58,7 @@ class _ManagerPerformanceMetricsState extends State<ManagerPerformanceMetrics> {
       data[titles[i]] = int.parse(controllers[i].text);
     }
 
-    final message = await manager.uploadMatrix(widget.campaign.id, data);
+    final message = await manager.uploadMatrix(data);
 
     if (message == "success") {
       Get.to(
