@@ -14,6 +14,7 @@ import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
+import 'package:internet_originals/views/base/profile_picture.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/campaign_issues.dart';
@@ -50,6 +51,26 @@ class CampaignCard extends StatelessWidget {
           header(),
           const SizedBox(height: 12),
           isDetailed ? detailedInfo(context) : shortInfo(),
+          const SizedBox(height: 8),
+          if (campaign.influencer != null && !isDetailed)
+            Row(
+              children: [
+                Text("Your Connected Talent"),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: AppColors.green[25],
+                    shape: BoxShape.circle,
+                  ),
+                  child: ProfilePicture(
+                    image:
+                        "${ApiService().baseUrl}${campaign.influencer?['avatar']}",
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
           if (!isDetailed && influencer == null)
             Padding(
               padding: const EdgeInsets.only(top: 16),
@@ -247,6 +268,26 @@ class CampaignCard extends StatelessWidget {
             ],
           ),
         ),
+
+        if (campaign.influencer != null)
+          Row(
+            children: [
+              Text("Your Connected Talent"),
+              Spacer(),
+              Container(
+                padding: EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: AppColors.green[25],
+                  shape: BoxShape.circle,
+                ),
+                child: ProfilePicture(
+                  image:
+                      "${ApiService().baseUrl}${campaign.influencer?['avatar']}",
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
 
         if (campaign.status == "PENDING" &&
             Get.find<UserController>().userInfo.value!.role ==

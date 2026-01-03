@@ -3,6 +3,7 @@ class CampaignModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String status;
+  final String? statusText;
   final String campaignId;
   final String influencerId;
   final String? influencerAgreementProof;
@@ -13,6 +14,8 @@ class CampaignModel {
   final bool isPaymentDone;
   final bool isTimeout;
   final bool isRevision;
+  final bool isCompletedByManager;
+  final String? managerId;
   final String paymentStatus;
   final String title;
   final String description;
@@ -23,17 +26,19 @@ class CampaignModel {
   final String contentType;
   final String payoutDeadline;
   final Map<String, dynamic>? expectedMetrics;
+  final Map<String, dynamic>? influencer;
   final Map<String, dynamic>? otherFields;
   final num rating;
-  final bool? isPaymentRequested; // ✅ new field
-  final int? unreadIssueCount; // ✅ new field
-  final int? readIssueCount; // ✅ new field
+  final bool? isPaymentRequested;
+  final int? unreadIssueCount;
+  final int? readIssueCount;
 
   CampaignModel({
     required this.id,
     required this.createdAt,
     required this.updatedAt,
     required this.status,
+    this.statusText,
     required this.campaignId,
     required this.influencerId,
     this.influencerAgreementProof,
@@ -44,6 +49,8 @@ class CampaignModel {
     required this.isPaymentDone,
     required this.isTimeout,
     required this.isRevision,
+    required this.isCompletedByManager,
+    this.managerId,
     required this.paymentStatus,
     required this.title,
     required this.description,
@@ -54,11 +61,12 @@ class CampaignModel {
     required this.contentType,
     required this.payoutDeadline,
     this.expectedMetrics,
+    this.influencer,
     this.otherFields,
     required this.rating,
-    this.isPaymentRequested, // ✅ added to constructor
-    this.unreadIssueCount, // ✅ added to constructor
-    this.readIssueCount, // ✅ added to constructor
+    this.isPaymentRequested,
+    this.unreadIssueCount,
+    this.readIssueCount,
   });
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) {
@@ -67,6 +75,7 @@ class CampaignModel {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       status: json['status'] ?? '',
+      statusText: json['statusText'],
       campaignId: json['campaignId'] ?? '',
       influencerId: json['influencerId'] ?? '',
       influencerAgreementProof: json['influencerAgreementProof'],
@@ -77,6 +86,8 @@ class CampaignModel {
       isPaymentDone: json['isPaymentDone'] ?? false,
       isTimeout: json['isTimeout'] ?? false,
       isRevision: json['isRevision'] ?? false,
+      isCompletedByManager: json['isCompletedByManager'] ?? false,
+      managerId: json['managerId'],
       paymentStatus: json['paymentStatus'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
@@ -87,11 +98,12 @@ class CampaignModel {
       contentType: json['content_type'] ?? '',
       payoutDeadline: json['payout_deadline'] ?? '',
       expectedMetrics: json['expected_metrics'],
+      influencer: json['influencer'],
       otherFields: json['other_fields'],
       rating: json['rating'] ?? 0,
-      isPaymentRequested: json['isPaymentRequested'], // ✅ added here
-      unreadIssueCount: json['unreadIssueCount'], // ✅ added here
-      readIssueCount: json['readIssueCount'], // ✅ added here
+      isPaymentRequested: json['isPaymentRequested'],
+      unreadIssueCount: json['unreadIssueCount'],
+      readIssueCount: json['readIssueCount'],
     );
   }
 
@@ -101,6 +113,7 @@ class CampaignModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'status': status,
+      'statusText': statusText,
       'campaignId': campaignId,
       'influencerId': influencerId,
       'influencerAgreementProof': influencerAgreementProof,
@@ -111,6 +124,8 @@ class CampaignModel {
       'isPaymentDone': isPaymentDone,
       'isTimeout': isTimeout,
       'isRevision': isRevision,
+      'isCompletedByManager': isCompletedByManager,
+      'managerId': managerId,
       'paymentStatus': paymentStatus,
       'title': title,
       'description': description,
@@ -121,11 +136,12 @@ class CampaignModel {
       'content_type': contentType,
       'payout_deadline': payoutDeadline,
       'expected_metrics': expectedMetrics,
+      'influencer': influencer,
       'other_fields': otherFields,
       'rating': rating,
-      'isPaymentRequested': isPaymentRequested, // ✅ added to toJson
-      'unreadIssueCount': unreadIssueCount, // ✅ added to toJson
-      'readIssueCount': readIssueCount, // ✅ added to toJson
+      'isPaymentRequested': isPaymentRequested,
+      'unreadIssueCount': unreadIssueCount,
+      'readIssueCount': readIssueCount,
     };
   }
 }

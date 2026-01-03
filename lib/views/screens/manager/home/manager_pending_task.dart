@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -9,19 +9,21 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
-import 'package:internet_originals/views/screens/talent/home/talent_pending_task_completion.dart';
+import 'package:internet_originals/views/base/profile_picture.dart';
+import 'package:internet_originals/views/screens/manager/home/manager_pending_task_completion.dart';
 
-class TalentPendingTask extends StatefulWidget {
+class ManagerPendingTask extends StatefulWidget {
   final CampaignModel task;
-  const TalentPendingTask({super.key, required this.task});
+  const ManagerPendingTask({super.key, required this.task});
 
   @override
-  State<TalentPendingTask> createState() => _TalentPendingTaskState();
+  State<ManagerPendingTask> createState() => _ManagerPendingTaskState();
 }
 
-class _TalentPendingTaskState extends State<TalentPendingTask> {
-  final talent = Get.find<TalentController>();
+class _ManagerPendingTaskState extends State<ManagerPendingTask> {
+  final manager = Get.find<ManagerController>();
   final TextEditingController controller = TextEditingController();
   bool isUploading = false;
 
@@ -67,18 +69,10 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(2),
-                              child: Image.network(
-                                ApiService().baseUrl +
-                                    widget.task.banner,
-                                height: 44,
-                                width: 44,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
+                          CustomNetworkedImage(
+                            url: ApiService().baseUrl + widget.task.banner,
+                            height: 44,
+                            width: 44,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -165,6 +159,26 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                         ],
                       ),
 
+                      if (widget.task.influencer != null)
+                        Row(
+                          children: [
+                            Text("Your Connected Talent"),
+                            Spacer(),
+                            Container(
+                              padding: EdgeInsets.all(1),
+                              decoration: BoxDecoration(
+                                color: AppColors.green[25],
+                                shape: BoxShape.circle,
+                              ),
+                              child: ProfilePicture(
+                                image:
+                                    "${ApiService().baseUrl}${widget.task.influencer?['avatar']}",
+                                size: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+
                       if (isUploading)
                         CustomTextField(
                           hintText: "Post Link",
@@ -176,7 +190,7 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                           alignment: Alignment.center,
                           child: CustomButton(
                             text: isUploading ? "Submit" : "Upload Link",
-                            isLoading: talent.taskLoading.value,
+                            isLoading: manager.taskLoading.value,
                             width: null,
                             textSize: 14,
                             height: null,
@@ -186,13 +200,14 @@ class _TalentPendingTaskState extends State<TalentPendingTask> {
                             ),
                             onTap: () async {
                               if (isUploading && controller.text != "") {
-                                final message = await talent.submitPostLink(
-                                  widget.task.id,
-                                  controller.text.trim(),
+                                final message = await manager.submitPostLink(
+                                  influencerId: widget.task.influencerId,
+                                  taskid: widget.task.id,
+                                  link: controller.text.trim(),
                                 );
 
                                 if (message == "success") {
-                                  Get.to(() => TalentPendingTaskCompletion());
+                                  Get.to(() => ManagerPendingTaskCompletion());
                                   showSnackBar(
                                     "Post submitter succesfully",
                                     isError: false,

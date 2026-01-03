@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
+import 'package:internet_originals/controllers/user_controller.dart';
 import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/models/user_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_networked_image.dart';
+import 'package:internet_originals/views/base/profile_picture.dart';
+import 'package:internet_originals/views/screens/manager/home/manager_pending_task.dart';
 import 'package:internet_originals/views/screens/talent/home/talent_pending_task.dart';
 
 class TaskCard extends StatelessWidget {
@@ -80,12 +84,36 @@ class TaskCard extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.to(() => TalentPendingTask(task: task));
+                  if (Get.find<UserController>().userInfo.value!.role ==
+                      EUserRole.MANAGER) {
+                    Get.to(() => ManagerPendingTask(task: task));
+                  } else {
+                    Get.to(() => TalentPendingTask(task: task));
+                  }
                 },
                 child: CustomSvg(asset: AppIcons.redArrowRight, size: 35),
               ),
             ],
           ),
+          if (task.influencer != null)
+            Row(
+              children: [
+                Text("Your Connected Talent"),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: AppColors.green[25],
+                    shape: BoxShape.circle,
+                  ),
+                  child: ProfilePicture(
+                    image:
+                        "${ApiService().baseUrl}${task.influencer?['avatar']}",
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );

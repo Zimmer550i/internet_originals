@@ -96,14 +96,18 @@ class ManagerController extends GetxController {
     }
   }
 
-  Future<String> submitPostLink(String taskid, String link) async {
+  Future<String> submitPostLink({
+    required String influencerId,
+    required String taskid,
+    required String link
+  }) async {
     try {
       taskLoading(true);
-      final response = await api.post(
-        "/manager/campaigns/$taskid/submit-post-link",
-        {"postLink": link},
-        authReq: true,
-      );
+      final response = await api.post("/manager/submit-post-link", {
+        "campaignId": taskid,
+        "influencerId": influencerId,
+        "postLink": link,
+      }, authReq: true);
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -656,7 +660,7 @@ class ManagerController extends GetxController {
       if (response.statusCode == 200) {
         final index = influencers.indexWhere((i) => i.id == id);
         influencers.removeAt(index);
-        
+
         return "success";
       } else {
         return body['message'] ?? "Unexpected Error";

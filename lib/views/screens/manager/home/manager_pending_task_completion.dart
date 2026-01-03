@@ -6,8 +6,8 @@ import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
-class TalentPendingTaskCompletion extends StatelessWidget {
-  const TalentPendingTaskCompletion({super.key});
+class ManagerPendingTaskCompletion extends StatelessWidget {
+  const ManagerPendingTaskCompletion({super.key});
 
   @override
   Widget build(BuildContext context) {
