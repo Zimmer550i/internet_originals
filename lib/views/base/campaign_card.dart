@@ -15,6 +15,8 @@ import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/base/profile_picture.dart';
+import 'package:internet_originals/views/screens/manager/campaign/manager_campaign_details.dart';
+import 'package:internet_originals/views/screens/manager/campaign/manager_performance_metrics.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/campaign_issues.dart';
@@ -80,7 +82,12 @@ class CampaignCard extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
                   textSize: 14,
                   onTap: () {
-                    Get.to(() => TalentCampaignDetails(campaign: campaign));
+                    if (Get.find<UserController>().userInfo.value!.role ==
+                        EUserRole.MANAGER) {
+                      Get.to(() => ManagerCampaignDetails(campaign: campaign));
+                    } else {
+                      Get.to(() => TalentCampaignDetails(campaign: campaign));
+                    }
                   },
                 ),
               ),
@@ -270,23 +277,26 @@ class CampaignCard extends StatelessWidget {
         ),
 
         if (campaign.influencer != null)
-          Row(
-            children: [
-              Text("Your Connected Talent"),
-              Spacer(),
-              Container(
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  color: AppColors.green[25],
-                  shape: BoxShape.circle,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Row(
+              children: [
+                Text("Your Connected Talent"),
+                Spacer(),
+                Container(
+                  padding: EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: AppColors.green[25],
+                    shape: BoxShape.circle,
+                  ),
+                  child: ProfilePicture(
+                    image:
+                        "${ApiService().baseUrl}${campaign.influencer?['avatar']}",
+                    size: 24,
+                  ),
                 ),
-                child: ProfilePicture(
-                  image:
-                      "${ApiService().baseUrl}${campaign.influencer?['avatar']}",
-                  size: 24,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
 
         if (campaign.status == "PENDING" &&
@@ -327,6 +337,20 @@ class CampaignCard extends StatelessWidget {
               textSize: 14,
               onTap: () {
                 Get.to(() => TalentPerformanceMetrics(campaign: campaign));
+              },
+            ),
+          ),
+
+        if (campaign.status == "ACTIVE" &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.MANAGER)
+          Align(
+            child: CustomButton(
+              text: "Upload Matrix",
+              width: null,
+              textSize: 14,
+              onTap: () {
+                Get.to(() => ManagerPerformanceMetrics(campaign: campaign));
               },
             ),
           ),

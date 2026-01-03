@@ -6,11 +6,11 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/app_icons.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
-import 'package:internet_originals/views/screens/talent/payments/payment_selection.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_payment_selection.dart';
 
-class TalentPerformanceMetricsConfirmation extends StatelessWidget {
+class ManagerPerformanceMetricsConfirmation extends StatelessWidget {
   final CampaignModel campaign;
-  const TalentPerformanceMetricsConfirmation({
+  const ManagerPerformanceMetricsConfirmation({
     super.key,
     required this.campaign,
   });
@@ -46,7 +46,7 @@ class TalentPerformanceMetricsConfirmation extends StatelessWidget {
                 text: "Send Payment Request",
                 width: null,
                 onTap: () {
-                  Get.to(() => PaymentSelection(campaign: campaign));
+                  Get.to(() => ManagerPaymentSelection(campaign: campaign));
                 },
               ),
               const SizedBox(height: 12),

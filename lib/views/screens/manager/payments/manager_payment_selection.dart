@@ -8,15 +8,15 @@ import 'package:get/get.dart';
 import 'package:internet_originals/views/screens/talent/payments/payment_terms.dart';
 import 'package:internet_originals/views/screens/talent/payments/submit_invoice.dart';
 
-class PaymentSelection extends StatefulWidget {
+class ManagerPaymentSelection extends StatefulWidget {
   final CampaignModel campaign;
-  const PaymentSelection({super.key, required this.campaign});
+  const ManagerPaymentSelection({super.key, required this.campaign});
 
   @override
-  State<PaymentSelection> createState() => _PaymentSelectionState();
+  State<ManagerPaymentSelection> createState() => _ManagerPaymentSelectionState();
 }
 
-class _PaymentSelectionState extends State<PaymentSelection> {
+class _ManagerPaymentSelectionState extends State<ManagerPaymentSelection> {
   final List<String> _paymentOptions = [
     'Submit Invoice',
     'Receive Cash Payment',

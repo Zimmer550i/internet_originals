@@ -67,7 +67,7 @@ class ApiService {
               );
             }
           } else {
-            request.fields[entry.key] = jsonEncode(entry.value);
+            request.fields[entry.key] = entry.value.toString();
           }
         }
 

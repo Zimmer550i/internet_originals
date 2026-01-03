@@ -273,7 +273,7 @@ class ManagerController extends GetxController {
     try {
       campaignLoading(true);
       final response = await api.post(
-        "/manager/campaigns/$id/upload-matrix",
+        "/manager/upload-matrix",
         data,
         isMultiPart: true,
         authReq: true,

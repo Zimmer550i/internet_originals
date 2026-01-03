@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
@@ -11,20 +11,21 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/base/custom_text_field.dart';
-import 'package:internet_originals/views/screens/talent/campaign/talent_performance_metrics_confirmation.dart';
+import 'package:internet_originals/views/screens/manager/campaign/manager_performance_metrics_confirmation.dart';
 
-class TalentPerformanceMetrics extends StatefulWidget {
+class ManagerPerformanceMetrics extends StatefulWidget {
   final CampaignModel campaign;
-  const TalentPerformanceMetrics({super.key, required this.campaign});
+  const ManagerPerformanceMetrics({super.key, required this.campaign});
 
   @override
-  State<TalentPerformanceMetrics> createState() =>
-      _TalentPerformanceMetricsState();
+  State<ManagerPerformanceMetrics> createState() =>
+      _ManagerPerformanceMetricsState();
 }
 
-class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
-  final talent = Get.find<TalentController>();
+class _ManagerPerformanceMetricsState extends State<ManagerPerformanceMetrics> {
+  final manager = Get.find<ManagerController>();
   List<TextEditingController> controllers = [];
   List<String> titles = [];
   File? _imageFile;
@@ -34,8 +35,12 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
     super.initState();
 
     titles = widget.campaign.expectedMetrics?.keys.toList() ?? [];
-    for (var _ in titles) {
-      controllers.add(TextEditingController());
+    for (var title in titles) {
+      controllers.add(
+        TextEditingController(
+          text: widget.campaign.matrix?[title].toString() ?? "",
+        ),
+      );
     }
   }
 
@@ -46,17 +51,18 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
       data["screenshot"] = _imageFile;
     }
 
+    data['campaignId'] = widget.campaign.id;
+    data['influencerId'] = widget.campaign.influencerId;
+
     for (int i = 0; i < titles.length; i++) {
       data[titles[i]] = int.parse(controllers[i].text);
     }
 
-    final message = await talent.uploadMatrix(widget.campaign.id, data);
+    final message = await manager.uploadMatrix(widget.campaign.id, data);
 
     if (message == "success") {
       Get.to(
-        () => TalentPerformanceMetricsConfirmation(
-          campaign: widget.campaign,
-        ),
+        () => ManagerPerformanceMetricsConfirmation(campaign: widget.campaign),
       );
     } else {
       showSnackBar(message);
@@ -115,7 +121,7 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
                             width: double.infinity,
                             padding: EdgeInsets.symmetric(
                               horizontal: 2,
-                              vertical: _imageFile == null ? 24 : 2,
+                              vertical: 2,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.green[600],
@@ -123,27 +129,41 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child:
-                                _imageFile != null
+                                _imageFile == null &&
+                                        widget.campaign.screenshot != null
+                                    ? CustomNetworkedImage(
+                                      url:
+                                          ApiService().baseUrl +
+                                          widget.campaign.screenshot!,
+                                      height: 90,
+                                      fit: BoxFit.fitWidth,
+                                    )
+                                    : _imageFile != null
                                     ? Image.file(
                                       _imageFile!,
                                       height: 90,
                                       fit: BoxFit.fitWidth,
                                     )
-                                    : Column(
-                                      children: [
-                                        CustomSvg(
-                                          asset: AppIcons.addImage,
-                                          size: 40,
-                                          color: AppColors.green[100],
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          "Upload Insights Screenshot",
-                                          style: TextStyle(
+                                    : Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 24,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          CustomSvg(
+                                            asset: AppIcons.addImage,
+                                            size: 40,
                                             color: AppColors.green[100],
                                           ),
-                                        ),
-                                      ],
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            "Upload Insights Screenshot",
+                                            style: TextStyle(
+                                              color: AppColors.green[100],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                           ),
                         ),
@@ -151,7 +171,7 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
                         Obx(
                           () => CustomButton(
                             text: "Submit",
-                            isLoading: talent.campaignLoading.value,
+                            isLoading: manager.campaignLoading.value,
                             width: null,
                             onTap: () {
                               uploadData();
@@ -173,14 +193,8 @@ class _TalentPerformanceMetricsState extends State<TalentPerformanceMetrics> {
   Row header() {
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(2),
-          child: Image.network(
-            ApiService().baseUrl + widget.campaign.banner,
-            height: 44,
-            width: 44,
-            fit: BoxFit.cover,
-          ),
+        CustomNetworkedImage(
+          url: ApiService().baseUrl + widget.campaign.banner,
         ),
         const SizedBox(width: 12),
         Expanded(
