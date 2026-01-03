@@ -6,7 +6,7 @@ import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
-import 'package:internet_originals/views/screens/manager/payments/earnings.dart';
+import 'package:internet_originals/views/screens/common/earnings.dart';
 import 'package:internet_originals/views/screens/manager/payments/pending_payment_item.dart';
 
 class ManagerPaymentsHome extends StatefulWidget {
@@ -40,12 +40,6 @@ class _ManagerPaymentsHomeState extends State<ManagerPaymentsHome> {
           showSnackBar(message);
         }
       });
-    } else {
-      // manager.().then((message) {
-      //   if (message != "success") {
-      //     showSnackBar(message);
-      //   }
-      // });
     }
   }
 

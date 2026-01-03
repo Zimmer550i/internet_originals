@@ -17,6 +17,7 @@ import 'package:internet_originals/views/base/custom_text_field.dart';
 import 'package:internet_originals/views/base/profile_picture.dart';
 import 'package:internet_originals/views/screens/manager/campaign/manager_campaign_details.dart';
 import 'package:internet_originals/views/screens/manager/campaign/manager_performance_metrics.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_payment_selection.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/add_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/assigned_influencers.dart';
 import 'package:internet_originals/views/screens/sub_admin/campaigns/campaign_issues.dart';
@@ -365,6 +366,22 @@ class CampaignCard extends StatelessWidget {
               textSize: 14,
               onTap: () {
                 Get.to(() => TalentFeedback(campaign: campaign));
+              },
+            ),
+          ),
+
+        if (campaign.status == "COMPLETED" &&
+            campaign.paymentStatus == "PENDING" &&
+            Get.find<UserController>().userInfo.value!.role ==
+                EUserRole.MANAGER)
+          Align(
+            child: CustomButton(
+              text: "Send Payment Request",
+              width: null,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              textSize: 14,
+              onTap: () {
+                Get.to(() => ManagerPaymentSelection(campaign: campaign));
               },
             ),
           ),
