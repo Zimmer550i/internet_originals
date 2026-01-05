@@ -5,8 +5,8 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
-class InvoiceSubmitted extends StatelessWidget {
-  const InvoiceSubmitted({super.key});
+class ManagerInvoiceSubmitted extends StatelessWidget {
+  const ManagerInvoiceSubmitted({super.key});
 
   @override
   Widget build(BuildContext context) {

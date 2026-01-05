@@ -99,7 +99,7 @@ class ManagerController extends GetxController {
   Future<String> submitPostLink({
     required String influencerId,
     required String taskid,
-    required String link
+    required String link,
   }) async {
     try {
       taskLoading(true);
@@ -295,7 +295,7 @@ class ManagerController extends GetxController {
   // Payments
   Future<String> getPendingPayment({bool loadMore = false}) async {
     try {
-      Map<String, dynamic> queryParams = {};
+      Map<String, dynamic> queryParams = {"tab": "pending"};
 
       if (loadMore) {
         if (campaignLoading.value) {
@@ -312,7 +312,7 @@ class ManagerController extends GetxController {
 
       paymentLoading(true);
       final response = await api.get(
-        "/manager/payments?tab=pending",
+        "/manager/payments",
         queryParams: queryParams,
         authReq: true,
       );
@@ -348,7 +348,7 @@ class ManagerController extends GetxController {
 
   Future<String> getPaidPayment({bool loadMore = false}) async {
     try {
-      Map<String, dynamic> queryParams = {};
+      Map<String, dynamic> queryParams = {"tab": "paid"};
 
       if (loadMore) {
         if (campaignLoading.value) {
@@ -365,7 +365,7 @@ class ManagerController extends GetxController {
 
       paymentLoading(true);
       final response = await api.get(
-        "/manager/payments?tab=paid",
+        "/manager/payments",
         queryParams: queryParams,
         authReq: true,
       );

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/controllers/talent_controller.dart';
 import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
@@ -11,15 +12,15 @@ import 'package:internet_originals/views/base/custom_attachment.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:get/get.dart';
 
-class SubmitInvoice extends StatefulWidget {
+class ManagerSubmitInvoice extends StatefulWidget {
   final CampaignModel campaign;
-  const SubmitInvoice({super.key, required this.campaign});
+  const ManagerSubmitInvoice({super.key, required this.campaign});
 
   @override
-  State<SubmitInvoice> createState() => _SubmitInvoiceState();
+  State<ManagerSubmitInvoice> createState() => _ManagerSubmitInvoiceState();
 }
 
-class _SubmitInvoiceState extends State<SubmitInvoice> {
+class _ManagerSubmitInvoiceState extends State<ManagerSubmitInvoice> {
   List<File?> files = [null, null];
 
   @override
@@ -86,7 +87,7 @@ class _SubmitInvoiceState extends State<SubmitInvoice> {
                           data.add(files[1]!);
                         }
 
-                        Get.find<TalentController>()
+                        Get.find<ManagerController>()
                             .requestForPayment(widget.campaign.id, data)
                             .then((message) {
                               if (message == "success") {

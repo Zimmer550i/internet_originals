@@ -7,7 +7,7 @@ import 'package:internet_originals/views/base/custom_loading.dart';
 import 'package:internet_originals/views/base/custom_tab_bar.dart';
 import 'package:internet_originals/views/base/home_bar.dart';
 import 'package:internet_originals/views/screens/common/earnings.dart';
-import 'package:internet_originals/views/screens/manager/payments/pending_payment_item.dart';
+import 'package:internet_originals/views/base/pending_payment_item.dart';
 
 class ManagerPaymentsHome extends StatefulWidget {
   const ManagerPaymentsHome({super.key});

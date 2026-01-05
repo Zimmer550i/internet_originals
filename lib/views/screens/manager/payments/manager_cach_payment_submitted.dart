@@ -3,8 +3,8 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
-class CashPaymentSubmitted extends StatelessWidget {
-  const CashPaymentSubmitted({super.key});
+class ManagerCachPaymentSubmitted extends StatelessWidget {
+  const ManagerCachPaymentSubmitted({super.key});
 
   @override
   Widget build(BuildContext context) {

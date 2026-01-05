@@ -4,14 +4,14 @@ import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 
-class PaidCampaignDetails extends StatefulWidget {
+class ManagerPaidCampaignDetails extends StatefulWidget {
   final String imageUrl;
   final String title;
   final String company;
   final int amount;
   final int paidOn;
 
-  const PaidCampaignDetails({
+  const ManagerPaidCampaignDetails({
     super.key,
     required this.imageUrl,
     required this.title,
@@ -21,10 +21,10 @@ class PaidCampaignDetails extends StatefulWidget {
   });
 
   @override
-  State<PaidCampaignDetails> createState() => _PaidCampaignDetailsState();
+  State<ManagerPaidCampaignDetails> createState() => _ManagerPaidCampaignDetailsState();
 }
 
-class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
+class _ManagerPaidCampaignDetailsState extends State<ManagerPaidCampaignDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

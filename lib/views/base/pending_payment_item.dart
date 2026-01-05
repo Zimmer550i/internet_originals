@@ -6,6 +6,7 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/utils/formatter.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 import 'package:internet_originals/views/screens/talent/payments/payment_selection.dart';
 
 enum PendingPaymentItemStatus { pending, sent }
@@ -36,14 +37,8 @@ class _PendingPaymentItemState extends State<PendingPaymentItem> {
         children: [
           Row(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(2),
-                child: Image.network(
-                  ApiService().baseUrl + widget.campaign.banner,
-                  height: 44,
-                  width: 44,
-                  fit: BoxFit.cover,
-                ),
+              CustomNetworkedImage(
+                url: ApiService().baseUrl + widget.campaign.banner,
               ),
               const SizedBox(width: 12),
               Expanded(

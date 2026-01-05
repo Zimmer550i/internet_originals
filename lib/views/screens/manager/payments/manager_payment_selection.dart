@@ -5,15 +5,16 @@ import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:internet_originals/views/base/custom_radio_options.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/views/screens/talent/payments/payment_terms.dart';
-import 'package:internet_originals/views/screens/talent/payments/submit_invoice.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_payment_terms.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_submit_invoice.dart';
 
 class ManagerPaymentSelection extends StatefulWidget {
   final CampaignModel campaign;
   const ManagerPaymentSelection({super.key, required this.campaign});
 
   @override
-  State<ManagerPaymentSelection> createState() => _ManagerPaymentSelectionState();
+  State<ManagerPaymentSelection> createState() =>
+      _ManagerPaymentSelectionState();
 }
 
 class _ManagerPaymentSelectionState extends State<ManagerPaymentSelection> {
@@ -60,9 +61,9 @@ class _ManagerPaymentSelectionState extends State<ManagerPaymentSelection> {
               width: MediaQuery.of(context).size.width * 0.5,
               onTap: () {
                 if (_selectedPaymentOption == 'Submit Invoice') {
-                  Get.to(() => SubmitInvoice(campaign: widget.campaign));
+                  Get.to(() => ManagerSubmitInvoice(campaign: widget.campaign));
                 } else {
-                  Get.to(() => PaymentTerms(campaign: widget.campaign));
+                  Get.to(() => ManagerPaymentTerms(campaign: widget.campaign));
                 }
               },
             ),

@@ -8,15 +8,15 @@ import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 
-class PaymentTerms extends StatefulWidget {
+class ManagerPaymentTerms extends StatefulWidget {
   final CampaignModel campaign;
-  const PaymentTerms({super.key, required this.campaign});
+  const ManagerPaymentTerms({super.key, required this.campaign});
 
   @override
-  State<PaymentTerms> createState() => _PaymentTermsState();
+  State<ManagerPaymentTerms> createState() => _ManagerPaymentTermsState();
 }
 
-class _PaymentTermsState extends State<PaymentTerms> {
+class _ManagerPaymentTermsState extends State<ManagerPaymentTerms> {
   bool _agreed = false;
 
   final String termsService =
