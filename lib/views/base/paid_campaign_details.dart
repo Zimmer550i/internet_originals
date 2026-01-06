@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:internet_originals/models/campaign_model.dart';
+import 'package:internet_originals/services/api_service.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
-import 'package:internet_originals/utils/formatter.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
+import 'package:internet_originals/views/base/custom_networked_image.dart';
 
 class PaidCampaignDetails extends StatefulWidget {
-  final String imageUrl;
-  final String title;
-  final String company;
-  final int amount;
-  final int paidOn;
+  final CampaignModel campaign;
 
-  const PaidCampaignDetails({
-    super.key,
-    required this.imageUrl,
-    required this.title,
-    required this.company,
-    required this.amount,
-    required this.paidOn,
-  });
+  const PaidCampaignDetails({super.key, required this.campaign});
 
   @override
   State<PaidCampaignDetails> createState() => _PaidCampaignDetailsState();
@@ -51,14 +42,8 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                 children: [
                   Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          widget.imageUrl,
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.cover,
-                        ),
+                      CustomNetworkedImage(
+                        url: ApiService().baseUrl + widget.campaign.banner,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -66,7 +51,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              widget.title,
+                              widget.campaign.title,
                               style: TextStyle(
                                 color: AppColors.dark[50],
                                 fontSize: 18,
@@ -75,7 +60,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                               overflow: TextOverflow.ellipsis,
                             ),
                             Text(
-                              widget.company,
+                              widget.campaign.brand,
                               style: TextStyle(
                                 color: AppColors.dark[50],
                                 fontSize: 14,
@@ -89,7 +74,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Promote event on instagram',
+                    widget.campaign.title,
                     style: TextStyle(
                       color: AppColors.dark[50],
                       fontSize: 13,
@@ -107,7 +92,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        '\$${widget.amount}',
+                        '\$${widget.campaign.budget}',
                         style: TextStyle(
                           color: Color(0xFFFFFFFF),
                           fontSize: 15,
@@ -127,7 +112,7 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        'Due Date: ${Formatter.prettyDate(widget.paidOn)}',
+                        'Due Date: ${widget.campaign.payoutDeadline}',
                         style: TextStyle(
                           color: Color(0xFFFFFFFF),
                           fontSize: 13,
@@ -142,70 +127,48 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                     style: TextStyle(
                       color: AppColors.dark[50],
                       fontSize: 15,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomSvg(
-                        asset: 'assets/icons/payments/eye.svg',
-                        width: 18,
-                        height: 18,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Views: 15,200',
+                  for (var i
+                      in (widget.campaign.matrix as Map<String, dynamic>)
+                          .entries)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Text(
+                        '${i.key}: ${i.value}',
                         style: TextStyle(
                           color: Color(0xFFFFFFFF),
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
                   const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomSvg(
-                        asset: 'assets/icons/payments/heart.svg',
-                        width: 18,
-                        height: 18,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Likes: 2,100',
-                        style: TextStyle(
-                          color: Color(0xFFFFFFFF),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
+
+                  if (widget.campaign.screenshot != null)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Screenshot:',
+                          style: TextStyle(
+                            color: AppColors.dark[50],
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      CustomSvg(
-                        asset: 'assets/icons/payments/share.svg',
-                        width: 18,
-                        height: 18,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Shares: 500',
-                        style: TextStyle(
-                          color: Color(0xFFFFFFFF),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
+                        const SizedBox(height: 12),
+                        CustomNetworkedImage(
+                          url:
+                              ApiService().baseUrl +
+                              widget.campaign.screenshot!,
+                          height: 80,
+                          width: double.infinity,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
+                      ],
+                    ),
                 ],
               ),
             ),

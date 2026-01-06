@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
-import 'package:internet_originals/helpers/route.dart';
+import 'package:internet_originals/controllers/manager_controller.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_cach_payment_submitted.dart';
 
 class ManagerPaymentTerms extends StatefulWidget {
   final CampaignModel campaign;
@@ -95,15 +95,19 @@ class _ManagerPaymentTermsState extends State<ManagerPaymentTerms> {
                       width: null,
                       isDisabled: !_agreed,
                       isLoading:
-                          Get.find<TalentController>().paymentLoading.value,
+                          Get.find<ManagerController>().paymentLoading.value,
                       height: 40,
                       onTap: () {
                         if (_agreed) {
-                          Get.find<TalentController>()
-                              .requestForPayment(widget.campaign.id, null)
+                          Get.find<ManagerController>()
+                              .requestForPayment(
+                                widget.campaign.id,
+                                widget.campaign.influencerId,
+                                null,
+                              )
                               .then((message) {
                                 if (message == "success") {
-                                  Get.toNamed(AppRoutes.cashPaymentSubmitted);
+                                  Get.to(() => ManagerCachPaymentSubmitted());
                                 } else {
                                   showSnackBar(message);
                                 }

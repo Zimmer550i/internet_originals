@@ -37,15 +37,17 @@ class _CustomAttachmentState extends State<CustomAttachment> {
         ),
         child: Row(
           children: [
-            Text(
-              file?.path.split("/").last ?? widget.text,
-              style: TextStyle(
-                color: AppColors.dark[50],
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
+            Expanded(
+              child: Text(
+                file?.path.split("/").last ?? widget.text,
+                style: TextStyle(
+                  color: AppColors.dark[50],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
-            Spacer(),
+            const SizedBox(width: 8),
             CustomSvg(
               asset: 'assets/icons/payments/attachment.svg',
               width: 18,

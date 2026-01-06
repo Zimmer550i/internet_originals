@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:internet_originals/controllers/manager_controller.dart';
-import 'package:internet_originals/controllers/talent_controller.dart';
-import 'package:internet_originals/helpers/route.dart';
 import 'package:internet_originals/models/campaign_model.dart';
 import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/show_snackbar.dart';
@@ -11,6 +9,7 @@ import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_attachment.dart';
 import 'package:internet_originals/views/base/custom_button.dart';
 import 'package:get/get.dart';
+import 'package:internet_originals/views/screens/manager/payments/manager_invoice_submitted.dart';
 
 class ManagerSubmitInvoice extends StatefulWidget {
   final CampaignModel campaign;
@@ -77,7 +76,7 @@ class _ManagerSubmitInvoiceState extends State<ManagerSubmitInvoice> {
                       width: null,
                       height: 40,
                       isLoading:
-                          Get.find<TalentController>().paymentLoading.value,
+                          Get.find<ManagerController>().paymentLoading.value,
                       onTap: () {
                         final List<File> data = [];
                         if (files[0] != null) {
@@ -88,10 +87,14 @@ class _ManagerSubmitInvoiceState extends State<ManagerSubmitInvoice> {
                         }
 
                         Get.find<ManagerController>()
-                            .requestForPayment(widget.campaign.id, data)
+                            .requestForPayment(
+                              widget.campaign.id,
+                              widget.campaign.influencerId,
+                              data,
+                            )
                             .then((message) {
                               if (message == "success") {
-                                Get.toNamed(AppRoutes.invoiceSubmitted);
+                                Get.to(() => ManagerInvoiceSubmitted());
                               } else {
                                 showSnackBar(message);
                               }

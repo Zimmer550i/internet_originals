@@ -422,13 +422,21 @@ class ManagerController extends GetxController {
     }
   }
 
-  Future<String> requestForPayment(String id, List<File>? files) async {
+  Future<String> requestForPayment(
+    String campaignId,
+    String influencerId,
+    List<File>? files,
+  ) async {
     try {
       paymentLoading(true);
       final resposne = await api.post(
-        "/manager/campaigns/$id/request-for-payment",
-        files == null ? {} : {"invoices": files},
-        queryParams: {"method": files == null ? "cash" : "invoice"},
+        "/manager/send-payment-request",
+        {
+          "campaignId": campaignId,
+          "influencerId": influencerId,
+          "method": files == null ? "CASH" : "INVOICE",
+          "invoices": files,
+        },
         authReq: true,
         isMultiPart: files != null,
       );
