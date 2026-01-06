@@ -5,6 +5,7 @@ import 'package:internet_originals/utils/app_colors.dart';
 import 'package:internet_originals/utils/custom_svg.dart';
 import 'package:internet_originals/views/base/custom_app_bar.dart';
 import 'package:internet_originals/views/base/custom_networked_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaidCampaignDetails extends StatefulWidget {
   final CampaignModel campaign;
@@ -122,13 +123,39 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  Text(
-                    'Performance:',
-                    style: TextStyle(
-                      color: AppColors.dark[50],
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        'Performance:',
+                        style: TextStyle(
+                          color: AppColors.dark[50],
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Spacer(),
+                      if (widget.campaign.postLink != null)
+                        GestureDetector(
+                          onTap: () async {
+                            final url = Uri.parse(widget.campaign.postLink!);
+                            if (await canLaunchUrl(url)) {
+                              launchUrl(url);
+                            }
+                          },
+                          child: Text(
+                            'Link',
+                            style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              decoration: TextDecoration.underline,
+                              decorationStyle: TextDecorationStyle.solid,
+                              decorationThickness: 3,
+                              decorationColor: AppColors.red,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   for (var i
@@ -160,12 +187,20 @@ class _PaidCampaignDetailsState extends State<PaidCampaignDetails> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        CustomNetworkedImage(
-                          url:
-                              ApiService().baseUrl +
-                              widget.campaign.screenshot!,
-                          height: 80,
-                          width: double.infinity,
+                        GestureDetector(
+                          onTap: () async {
+                            final url = Uri.parse(widget.campaign.screenshot!);
+                            if (await canLaunchUrl(url)) {
+                              launchUrl(url);
+                            }
+                          },
+                          child: CustomNetworkedImage(
+                            url:
+                                ApiService().baseUrl +
+                                widget.campaign.screenshot!,
+                            height: 80,
+                            width: double.infinity,
+                          ),
                         ),
                       ],
                     ),
