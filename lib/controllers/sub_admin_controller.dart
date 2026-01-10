@@ -38,6 +38,12 @@ class SubAdminController extends GetxController {
   Timer? _notificationTimer;
   Duration notificationRefreshTime = Duration(minutes: 2);
 
+  @override
+  void dispose() {
+    super.dispose();
+    _stopNotificationTimer();
+  }
+
   // Campaigns
   Future<String> getCampaigns({
     String? searchText,
@@ -393,7 +399,7 @@ class SubAdminController extends GetxController {
   Future<String> getInfluencers({
     bool getPending = false,
     String? searchText,
-    bool loadMore = false
+    bool loadMore = false,
   }) async {
     try {
       Map<String, dynamic> queryParams = {};
@@ -787,7 +793,7 @@ class SubAdminController extends GetxController {
     }
   }
 
-  Future<String> compromiseNotification(String id, DateTime dateTime, ) async {
+  Future<String> compromiseNotification(String id, DateTime dateTime) async {
     try {
       final response = await api.post(
         "/sub-admin/notifications/$id/compromise",
@@ -825,10 +831,7 @@ class SubAdminController extends GetxController {
 
       notificationLoading(true);
 
-      final response = await api.get(
-        "/sub-admin/notifications",
-        authReq: true,
-      );
+      final response = await api.get("/sub-admin/notifications", authReq: true);
       final body = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
@@ -911,7 +914,11 @@ class SubAdminController extends GetxController {
   Future<String> refreshNotifications() async {
     _stopNotificationTimer();
     final result = await getNotifications();
-    _startNotificationTimer();
+    if (result == "success") {
+      _startNotificationTimer();
+    } else {
+      _stopNotificationTimer();
+    }
     return result;
   }
 

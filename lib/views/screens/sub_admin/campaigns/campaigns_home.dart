@@ -46,6 +46,7 @@ class _CampaignsHomeState extends State<CampaignsHome> {
             });
       }
     });
+    sub.refreshNotifications();
   }
 
   void filterInfo(String val) {

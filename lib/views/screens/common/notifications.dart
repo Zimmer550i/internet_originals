@@ -29,6 +29,11 @@ class _NotificationsState extends State<Notifications> {
     isTalent =
         Get.find<UserController>().userInfo.value!.role == EUserRole.INFLUENCER;
     populateData();
+    if (isTalent) {
+      talent.refreshNotifications();
+    } else {
+      sub.refreshNotifications();
+    }
     scrollController.addListener(() {
       if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent * 0.8) {

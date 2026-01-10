@@ -36,6 +36,12 @@ class TalentController extends GetxController {
   Timer? _notificationTimer;
   Duration notificationRefreshTime = Duration(minutes: 2);
 
+  @override
+  void dispose() {
+    super.dispose();
+    _stopNotificationTimer();
+  }
+
   // Tasks
   Future<String> getTasks({bool loadMore = false}) async {
     try {
@@ -669,7 +675,11 @@ class TalentController extends GetxController {
   Future<String> refreshNotifications() async {
     _stopNotificationTimer();
     final result = await getNotifications();
-    _startNotificationTimer();
+    if (result == "success") {
+      _startNotificationTimer();
+    } else {
+      _stopNotificationTimer();
+    }
     return result;
   }
 

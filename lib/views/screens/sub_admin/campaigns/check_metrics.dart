@@ -148,7 +148,6 @@ class _AdminPaymentDetailsState extends State<CheckMetrics> {
                                   "${i.key.substring(0, 1).toUpperCase() + i.key.substring(1)}: ${Formatter.formatNumberMagnitude(i.value['value'].toDouble())}",
                               secondaryText: "(Goal: ${i.value['goal']})",
                             ),
-                            //TODO: Complete this page later
                           // if (widget.matrix.postLink != null)
                           //   InkWell(
                           //     onTap: () {
